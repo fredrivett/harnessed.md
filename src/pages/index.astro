@@ -50,21 +50,21 @@
 				<p>The harness has two parts:</p>
 				<ul>
 					<li><strong>Guides</strong> (feedforward) — steer the agent <em>before</em> it acts: documentation, architectural rules, constraints, linters</li>
-					<li><strong>Sensors</strong> (feedback) — verify <em>after</em> it acts and self-correct: tests, CI, type checks, structural analysis</li>
+					<li><strong>Verify</strong> (pre-ship) — check the work before it ships: tests, linting, CI, type checks</li>
+					<li><strong>Observe</strong> (post-ship) — watch it in production: error monitoring, usage patterns, performance</li>
 				</ul>
 				<pre class="diagram">{`
-    ╭·····································╮
-    ·    failures become new guides       ·
-    ·                                     ·
-    ▼                                     ·
-  Guides (feedforward)                    ·
-    │                                     ·
-    │ constrain + direct                  ·
-    ▼                                     ·
-  Agent builds ◄───────┐                  ·
-    │                  │                  ·
-    ▼                  │ no               ·
-  Sensors (feedback) ··╁··················╯
+  Intent
+    │
+    ▼
+  Guides ◄·····························╮
+    │                                  ·
+    │ constrain + direct          evolve
+    ▼                                  ·
+  Agent builds ◄───────┐              ·
+    │                  │              ·
+    ▼                  │ no           ·
+  Verify ··············╁··············╯
     │                  │
     ▼                  │
   Pass? ───────────────┘
@@ -73,8 +73,13 @@
     │
     ▼
   Ship
+    │
+    ▼
+  Observe ·····→ Intent
+    ·
+    ······························╯
 `}</pre>
-				<p>The system gets better over time. Every sensor failure is a candidate for a new guide — you don't fix the code, you fix the harness so it never breaks that way again. That's what makes it engineering, not configuration.</p>
+				<p>The system gets better over time. Signals from verification and observation feed back into the guides — you don't just fix the code, you evolve the harness so it never breaks that way again. That's what makes it engineering, not configuration.</p>
 			</section>
 
 			<hr />
