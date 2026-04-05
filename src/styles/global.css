@@ -162,6 +162,12 @@ pre {
 	overflow-x: auto;
 }
 
+pre.astro-code {
+	display: inline-block;
+	background-color: var(--code-bg) !important;
+	color: var(--text-secondary) !important;
+}
+
 pre code {
 	background: none;
 	padding: 0;
