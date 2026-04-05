@@ -43,10 +43,12 @@ const { title, description, class: className } = Astro.props;
 		</main>
 
 		<footer>
+			<div data-herenow></div>
 			<p class="gibson">"The future is already here — it's just not evenly distributed." — <a href="https://en.wikiquote.org/wiki/William_Gibson" target="_blank" rel="noopener">William Gibson</a></p>
 			<p class="credits"><a href="https://github.com/fredrivett/harnessed.md" target="_blank" rel="noopener">harnessed.md</a> by <a href="https://x.com/fredrivett" target="_blank" rel="noopener">fredrivett</a> · <a href="/llms.txt">llms.txt</a></p>
 		</footer>
 
+		<script is:inline src="https://api.herenow.fyi/widget.js" async></script>
 		<script>
 			import '../scripts/theme.ts';
 		</script>
