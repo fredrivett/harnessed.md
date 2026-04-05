@@ -31,7 +31,7 @@ const current = getStored();
 apply(current);
 
 document.getElementById('theme-toggle')?.addEventListener('click', () => {
-	const next = themes[(themes.indexOf(getStored()) + 1) % themes.length];
+	const next = themes[(themes.indexOf(getStored()) + 1) % themes.length]!;
 	localStorage.setItem('theme', next);
 	apply(next);
 });

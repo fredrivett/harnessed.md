@@ -3,6 +3,7 @@ import { getEntry, getCollection } from 'astro:content';
 
 export const GET: APIRoute = async () => {
 	const home = await getEntry('pages', 'home');
+	if (!home) throw new Error('Missing pages/home entry');
 	const { title, description, quote, reading } = home.data;
 	const companies = await getCollection('companies');
 

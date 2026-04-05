@@ -14,7 +14,7 @@ export default defineConfig({
 			[rehypeAutolinkHeadings, {
 				behavior: 'prepend',
 				properties: { className: ['heading-hash'] },
-				content: (node) => {
+				content: (node: { tagName: string }) => {
 					const depth = Number(node.tagName.charAt(1));
 					return [h('span', '#'.repeat(depth))];
 				},

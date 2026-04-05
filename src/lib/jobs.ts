@@ -63,9 +63,9 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	let match;
 
 	while ((match = cardRegex.exec(rolesSection)) !== null) {
-		const dept = match[1].trim();
-		const title = match[2].trim();
-		const applyUrl = match[3];
+		const dept = match[1]!.trim();
+		const title = match[2]!.trim();
+		const applyUrl = match[3]!;
 		if (title.includes("Don't see your role")) continue;
 		jobs.push({ title, url: applyUrl, location: '—', department: dept, company: '' });
 	}
@@ -74,14 +74,14 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	if (jobs.length === 0) {
 		const linkRegex = /<a\s[^>]*href="(\/careers\/[^"]*_[^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
 		while ((match = linkRegex.exec(html)) !== null) {
-			const href = match[1];
+			const href = match[1]!;
 			if (href.includes('?')) continue;
-			const inner = match[2];
+			const inner = match[2]!;
 			const h4Match = inner.match(/<h4[^>]*>([^<]+)<\/h4>/);
-			if (!h4Match) continue;
+			if (!h4Match?.[1]) continue;
 			const title = h4Match[1].trim();
 			const spanMatch = inner.match(/<span[^>]*>([^<]+)<\/span>/);
-			const loc = spanMatch ? spanMatch[1].trim() : '';
+			const loc = spanMatch?.[1]?.trim() ?? '';
 			const location = loc && loc !== 'Apply' ? loc : '—';
 			jobs.push({ title, url: `${baseUrl}${href}`, location, department: '', company: '' });
 		}

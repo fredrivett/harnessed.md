@@ -73,8 +73,8 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 				th.setAttribute('aria-sort', asc ? 'ascending' : 'descending');
 
 				rows.sort((a, b) => {
-					const aVal = a.children[idx].getAttribute('data-value') || '';
-					const bVal = b.children[idx].getAttribute('data-value') || '';
+					const aVal = a.children[idx]?.getAttribute('data-value') || '';
+					const bVal = b.children[idx]?.getAttribute('data-value') || '';
 					if (type === 'number') {
 						return asc ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
 					}

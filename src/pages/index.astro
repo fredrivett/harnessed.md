@@ -4,6 +4,7 @@ import { getEntry, getCollection, render } from 'astro:content';
 import { fetchJobs, type Job } from '../lib/jobs';
 
 const home = await getEntry('pages', 'home');
+if (!home) throw new Error('Missing pages/home entry');
 const { quote, reading, description } = home.data;
 const { Content } = await render(home);
 
@@ -13,7 +14,7 @@ const jobResults = await Promise.all(
 	companies.map((c) => fetchJobs(c.data.name, c.data.ats))
 );
 const jobsByCompany = new Map<string, Job[]>();
-companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]));
+companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]!));
 ---
 
 <Base title={`harnessed.md — ${description}`} description={description} class="narrow">
@@ -93,7 +94,7 @@ companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]));
 	</section>
 
 	<script>
-		const form = document.querySelector('.newsletter form');
+		const form = document.querySelector('.newsletter form') as HTMLFormElement | null;
 		form?.addEventListener('submit', () => {
 			setTimeout(() => {
 				form.hidden = true;
