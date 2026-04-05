@@ -32,7 +32,7 @@ const companies = defineCollection({
 		}),
 		description: z.string(),
 		headcount: z.enum(['1-10', '11-50', '51-200', '201-1000', '1001-5000', '5000+']),
-		stage: z.enum(['bootstrapped', 'seed', 'series-a', 'series-b', 'series-c', 'growth', 'public', 'private']),
+		stage: z.enum(['bootstrapped', 'seed', 'series-a', 'series-b', 'series-c', 'late-stage', 'growth', 'public']),
 		ats: z.object({
 			provider: z.enum(['greenhouse', 'ashby', 'careers-page']),
 			boardId: z.string(),

@@ -6,7 +6,7 @@ reference:
   url: https://www.anthropic.com/engineering/harness-design-long-running-apps
 description: Multi-agent harness for long-running coding sessions
 headcount: "1001-5000"
-stage: private
+stage: late-stage
 ats:
   provider: greenhouse
   boardId: anthropic
