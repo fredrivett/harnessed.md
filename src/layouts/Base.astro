@@ -3,9 +3,12 @@ interface Props {
 	title: string;
 	description: string;
 	class?: string;
+	image?: string;
 }
 
-const { title, description, class: className } = Astro.props;
+const { title, description, class: className, image } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://www.harnessed.md');
+const ogImage = image ?? new URL('/og.png', canonicalUrl).href;
 ---
 
 <html lang="en" data-theme="auto">
@@ -27,6 +30,18 @@ const { title, description, class: className } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalUrl.href} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl.href} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
 	</head>
 	<body>
 		<main class={className}>

@@ -5,6 +5,7 @@ import { h } from 'hastscript';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://www.harnessed.md',
 	markdown: {
 		shikiConfig: {
 			theme: 'css-variables',
