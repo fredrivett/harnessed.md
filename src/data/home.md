@@ -24,7 +24,7 @@ reading:
     tag: How Every codes with agents
 ---
 
-## What is a harnessed company?
+## What's a harnessed company?
 
 Engineering has fundamentally changed.
 
