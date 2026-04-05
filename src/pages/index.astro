@@ -15,7 +15,7 @@
 	<body>
 		<main>
 			<header>
-				<h1>harnessed<span class="ext">.md</span></h1>
+				<h1 id="harnessed"><a class="heading-hash" href="#harnessed">#</a>harnessed<span class="ext">.md</span></h1>
 			</header>
 
 			<blockquote class="hero-quote">
@@ -30,7 +30,7 @@
 			<hr />
 
 			<section class="what">
-				<h2>What is a harnessed company?</h2>
+				<h2 id="what"><a class="heading-hash" href="#what">##</a>What is a harnessed company?</h2>
 				<p>Traditionally engineers spent 80% of their time on features, 20% on the system. Harnessed companies flip that on its head: 80% goes to the harness — the machine that builds the machine. 20% guiding where it goes.</p>
 				<p>The harness has two parts:</p>
 				<ul>
@@ -65,7 +65,7 @@
 			<hr />
 
 			<section class="reading">
-				<h2>Key reading</h2>
+				<h2 id="reading"><a class="heading-hash" href="#reading">##</a>Key reading</h2>
 				<ul>
 					<li><a href="https://mitchellh.com/writing/my-ai-adoption-journey">My AI Adoption Journey</a> — Mitchell Hashimoto <span class="tag">The origin of harness engineering</span></li>
 					<li><a href="https://openai.com/index/harness-engineering/">Harness Engineering</a> — Ryan Lopopolo / OpenAI <span class="tag">1M lines of code, zero written by humans</span></li>
@@ -80,6 +80,12 @@
 			<p class="credits"><a href="https://github.com/fredrivett/harnessed.md">harnessed.md</a> by <a href="https://x.com/fredrivett">fredrivett</a></p>
 		</footer>
 
+		<script>
+			if (window.location.hash) {
+				const el = document.querySelector(window.location.hash);
+				if (el) el.scrollIntoView();
+			}
+		</script>
 		<style>
 			:root {
 				--text: #1a1a1a;
@@ -107,6 +113,7 @@
 			}
 
 			html {
+				scroll-behavior: smooth;
 				font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 				font-size: 15px;
 				line-height: 1.7;
@@ -147,20 +154,23 @@
 				margin-bottom: 0.75rem;
 			}
 
+			.heading-hash {
+				display: none;
+				text-decoration: none;
+				color: var(--text);
+				opacity: 0.5;
+			}
+
+			.heading-hash:hover {
+				opacity: 1;
+			}
+
 			@media (min-width: 768px) {
-				h1::before, h2::before {
+				.heading-hash {
+					display: inline;
 					position: absolute;
 					right: 100%;
 					padding-right: 0.5rem;
-					opacity: 0.5;
-				}
-
-				h1::before {
-					content: '#';
-				}
-
-				h2::before {
-					content: '##';
 				}
 			}
 
