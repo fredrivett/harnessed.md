@@ -2,11 +2,11 @@
 
 **Building the machines that build the machines.**
 
-A directory of companies who have gone all-in on harness engineering — building the environment, constraints, and feedback loops that let AI build the product.
+What harness engineering is, why it matters, and who's doing it.
 
-## Contributing
+## Get in touch
 
-PRs welcome — whether it's adding a company, sharing an article, or fixing a typo.
+If you're a company leaning into harness engineering, start a [discussion](https://github.com/fredrivett/harnessed.md/discussions) or reach out on [X](https://x.com/fredrivett).
 
 ## Development
 
