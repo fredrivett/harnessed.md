@@ -37,13 +37,28 @@
 					<li><strong>Guides</strong> (feedforward) — steer the agent <em>before</em> it acts: documentation, architectural rules, constraints, linters</li>
 					<li><strong>Sensors</strong> (feedback) — verify <em>after</em> it acts and self-correct: tests, CI, type checks, structural analysis</li>
 				</ul>
-				<div class="mermaid" set:html={`graph TD
-    G["Guides (feedforward)"] -->|constrain & direct| A[Agent builds]
-    A --> S["Sensors (feedback)"]
-    S --> P["Pass?"]
-    P -->|No| A
-    P -->|Yes| Ship
-    S -.->|failures become new guides| G`} />
+				<pre class="diagram">{`
+    ╭·····································╮
+    ·    failures become new guides       ·
+    ·                                     ·
+    ▼                                     ·
+  Guides (feedforward)                    ·
+    │                                     ·
+    │ constrain + direct                  ·
+    ▼                                     ·
+  Agent builds ◄───────┐                  ·
+    │                  │                  ·
+    ▼                  │ no               ·
+  Sensors (feedback) ··╁··················╯
+    │                  │
+    ▼                  │
+  Pass? ───────────────┘
+    │
+   yes
+    │
+    ▼
+  Ship
+`}</pre>
 				<p>The system gets better over time. Every sensor failure is a candidate for a new guide — you don't fix the code, you fix the harness so it never breaks that way again. That's what makes it engineering, not configuration.</p>
 			</section>
 
@@ -186,9 +201,12 @@
 				margin-bottom: 0.25rem;
 			}
 
-			.mermaid {
+			.diagram {
 				margin: 1.5rem 0;
-				text-align: center;
+				font-size: 0.85rem;
+				line-height: 1.4;
+				color: var(--text-secondary);
+				overflow-x: auto;
 			}
 
 			.reading {
@@ -240,16 +258,5 @@
 				color: var(--text-secondary);
 			}
 		</style>
-		<script>
-			import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-			mermaid.initialize({
-				startOnLoad: true,
-				theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
-				fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace',
-				flowchart: {
-					curve: 'monotoneX',
-				},
-			});
-		</script>
 	</body>
 </html>
