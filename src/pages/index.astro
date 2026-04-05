@@ -1,12 +1,19 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getEntry, getCollection, render } from 'astro:content';
+import { fetchJobs, type Job } from '../lib/jobs';
 
 const home = await getEntry('pages', 'home');
 const { quote, reading, description } = home.data;
 const { Content } = await render(home);
 
 const companies = await getCollection('companies');
+
+const jobResults = await Promise.all(
+	companies.map((c) => fetchJobs(c.data.name, c.data.ats))
+);
+const jobsByCompany = new Map<string, Job[]>();
+companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]));
 ---
 
 <Base title={`harnessed.md — ${description}`} description={description}>
@@ -45,6 +52,7 @@ const companies = await getCollection('companies');
 						<th>Source</th>
 						<th>Stage</th>
 						<th>Headcount</th>
+						<th>Jobs</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -54,6 +62,7 @@ const companies = await getCollection('companies');
 							<td><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></td>
 							<td>{company.data.stage}</td>
 							<td>{company.data.headcount}</td>
+							<td>{(jobsByCompany.get(company.data.name) || []).length || '—'}</td>
 						</tr>
 					))}
 				</tbody>
