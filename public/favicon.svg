@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <rect x="8" y="8" width="112" height="112" rx="16" ry="16" fill="#111"/>
-  <text x="64" y="89" text-anchor="middle" font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace" font-size="80" font-weight="700" fill="#fff">H</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#1a1a1a"/>
+  <rect x="60" y="60" width="64" height="392" fill="#fff"/>
+  <rect x="388" y="60" width="64" height="392" fill="#fff"/>
+  <rect x="60" y="192" width="392" height="64" fill="#fff"/>
 </svg>
