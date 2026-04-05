@@ -53,7 +53,7 @@ const companies = await getCollection('companies');
 							<td><a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a></td>
 							<td><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></td>
 							<td>{company.data.stage}</td>
-							<td>{company.data.headcount.toLocaleString()}</td>
+							<td>{company.data.headcount}</td>
 						</tr>
 					))}
 				</tbody>
