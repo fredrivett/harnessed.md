@@ -10,4 +10,4 @@ stage: seed
 ats:
   provider: careers-page
   boardId: https://every.to/careers
-  departmentFilter: ""
+  departmentFilter: engineer
