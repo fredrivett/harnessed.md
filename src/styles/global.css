@@ -270,11 +270,12 @@ pre code {
 	color: var(--text-secondary);
 	font-size: 0.85rem;
 	margin-top: 0.75rem;
+	margin-bottom: 0;
 }
 
 footer {
 	max-width: var(--max-width);
-	margin: 0 auto;
+	margin: 1rem auto 0;
 	padding: 3rem 1.5rem 3rem;
 	width: 100%;
 	border-top: 1px solid var(--border);
