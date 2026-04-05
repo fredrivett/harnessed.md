@@ -1,0 +1,100 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { fetchJobs } from '../../lib/jobs';
+
+export async function getStaticPaths() {
+	const companies = await getCollection('companies');
+	return companies.map((company) => ({
+		params: { slug: company.id.replace(/^\d+-/, '') },
+		props: { company },
+	}));
+}
+
+const { company } = Astro.props;
+const jobs = await fetchJobs(company.data.name, company.data.ats);
+---
+
+<Base title={`${company.data.name} — harnessed.md`} description={`${company.data.name}: ${company.data.description}`}>
+	<section class="company-header">
+		<h2><a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a></h2>
+		<p>{company.data.description}</p>
+		<p class="company-meta">
+			{company.data.stage} · {company.data.headcount} employees ·
+			<a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a>
+		</p>
+	</section>
+
+	<hr />
+
+	<section class="jobs">
+		<h2 id="jobs"><a class="heading-hash" href="#jobs">##</a>Engineering jobs ({jobs.length})</h2>
+		{jobs.length > 0 ? (
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr>
+							<th>Role</th>
+							<th>Department</th>
+							<th>Location</th>
+						</tr>
+					</thead>
+					<tbody>
+						{jobs.map((job) => (
+							<tr>
+								<td><a href={job.url} target="_blank" rel="noopener">{job.title}</a></td>
+								<td>{job.department}</td>
+								<td>{job.location}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		) : (
+			<p>No jobs available via API. Check <a href={company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
+		)}
+	</section>
+</Base>
+
+<style is:global>
+	.company-header {
+		margin-bottom: 1rem;
+	}
+
+	.company-meta {
+		font-size: 0.85rem;
+		color: var(--text-secondary);
+	}
+
+	.company-meta a {
+		color: var(--text-secondary);
+	}
+
+	.jobs {
+		margin-bottom: 2rem;
+	}
+
+	.jobs table {
+		min-width: 100%;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+		margin-left: -0.5rem;
+		margin-right: -0.5rem;
+	}
+
+	.jobs th {
+		text-align: left;
+		font-weight: 700;
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.jobs td {
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.jobs tr:last-child td {
+		border-bottom: none;
+	}
+</style>

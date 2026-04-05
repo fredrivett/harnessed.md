@@ -58,11 +58,13 @@ companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]));
 				<tbody>
 					{companies.map((company) => (
 						<tr>
-							<td><a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a></td>
+							<td><a href={`/companies/${company.id.replace(/^\d+-/, '')}`}>{company.data.name}</a></td>
 							<td><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></td>
 							<td>{company.data.stage}</td>
 							<td>{company.data.headcount}</td>
-							<td>{(jobsByCompany.get(company.data.name) || []).length || '—'}</td>
+							<td>{(jobsByCompany.get(company.data.name) || []).length
+								? <a href={`/companies/${company.id.replace(/^\d+-/, '')}#jobs`}>{(jobsByCompany.get(company.data.name) || []).length}</a>
+								: '—'}</td>
 						</tr>
 					))}
 				</tbody>
