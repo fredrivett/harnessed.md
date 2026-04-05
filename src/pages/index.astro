@@ -54,30 +54,28 @@
 					<li><strong>Observe</strong> (post-ship) — watch it in production: error monitoring, usage patterns, performance</li>
 				</ul>
 				<pre class="diagram">{`
-  Intent
-    │
-    ▼
-  Guides ◄·····························╮
-    │                                  ·
-    │ constrain + direct          evolve
-    ▼                                  ·
-  Agent builds ◄───────┐              ·
-    │                  │              ·
-    ▼                  │ no           ·
-  Verify ··············╁··············╯
-    │                  │
-    ▼                  │
-  Pass? ───────────────┘
-    │
-   yes
-    │
-    ▼
-  Ship
-    │
-    ▼
-  Observe ·····→ Intent
-    ·
-    ······························╯
+  Intent ◄·········································╮
+    │                                              ·
+    ▼                                              ·
+  Guides ◄·····································╮   ·
+    │                                          ·   ·
+    │ constrain + direct                 evolve ·   ·
+    ▼                                          ·   ·
+  Agent builds ◄───────┐                      ·   ·
+    │                  │                      ·   ·
+    ▼                  │ no                   ·   ·
+  Verify ··············╁······················╯   ·
+    │                  │                          ·
+    ▼                  │                          ·
+  Pass? ───────────────┘                          ·
+    │                                              ·
+   yes                                             ·
+    │                                              ·
+    ▼                                              ·
+  Ship                                             ·
+    │                                              ·
+    ▼                                              ·
+  Observe ·········································╯
 `}</pre>
 				<p>The system gets better over time. Signals from verification and observation feed back into the guides — you don't just fix the code, you evolve the harness so it never breaks that way again. That's what makes it engineering, not configuration.</p>
 			</section>
