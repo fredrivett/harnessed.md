@@ -173,7 +173,7 @@ const { Content } = await render(home);
 				flex: 1;
 			}
 
-			h1, h2 {
+			h1, h2, :global(h2) {
 				position: relative;
 				scroll-margin-top: 2rem;
 			}
@@ -225,19 +225,19 @@ const { Content } = await render(home);
 				margin-bottom: 0.75rem;
 			}
 
-			.heading-hash {
+			:global(.heading-hash) {
 				display: none;
 				text-decoration: none;
 				color: var(--text);
 				opacity: 0.5;
 			}
 
-			.heading-hash:hover {
+			:global(.heading-hash):hover {
 				opacity: 1;
 			}
 
 			@media (min-width: 768px) {
-				.heading-hash {
+				:global(.heading-hash) {
 					display: inline;
 					position: absolute;
 					right: 100%;
