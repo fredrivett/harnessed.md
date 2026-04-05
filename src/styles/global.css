@@ -223,6 +223,23 @@ pre code {
 	color: var(--text-secondary);
 }
 
+.companies {
+	margin-bottom: 2rem;
+}
+
+.companies ul {
+	list-style: none;
+	margin: 0;
+}
+
+.companies li {
+	margin-bottom: 0.75rem;
+}
+
+.companies .tag a {
+	color: var(--text-secondary);
+}
+
 .newsletter {
 }
 

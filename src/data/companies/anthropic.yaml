@@ -1,0 +1,8 @@
+name: Anthropic
+url: https://www.anthropic.com
+reference:
+  title: Harness design for long-running application development
+  url: https://www.anthropic.com/engineering/harness-design-long-running-apps
+description: Multi-agent harness for long-running coding sessions
+headcount: 1500
+stage: private

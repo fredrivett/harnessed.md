@@ -1,10 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getEntry, render } from 'astro:content';
+import { getEntry, getCollection, render } from 'astro:content';
 
 const home = await getEntry('pages', 'home');
 const { quote, reading, description } = home.data;
 const { Content } = await render(home);
+
+const companies = await getCollection('companies');
 ---
 
 <Base title={`harnessed.md — ${description}`} description={description}>
@@ -26,6 +28,20 @@ const { Content } = await render(home);
 		<ul>
 			{reading.map((item) => (
 				<li><a href={item.url} target="_blank" rel="noopener">{item.title}</a> — {item.author} <span class="tag">{item.tag}</span></li>
+			))}
+		</ul>
+	</section>
+
+	<hr />
+
+	<section class="companies">
+		<h2 id="companies"><a class="heading-hash" href="#companies">##</a>Companies</h2>
+		<ul>
+			{companies.map((company) => (
+				<li>
+					<a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a> — {company.data.description}
+					<span class="tag"><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></span>
+				</li>
 			))}
 		</ul>
 	</section>

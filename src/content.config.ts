@@ -20,4 +20,19 @@ const pages = defineCollection({
 	}),
 });
 
-export const collections = { pages };
+const companies = defineCollection({
+	loader: glob({ pattern: '*.yaml', base: './src/data/companies' }),
+	schema: z.object({
+		name: z.string(),
+		url: z.string(),
+		reference: z.object({
+			title: z.string(),
+			url: z.string(),
+		}),
+		description: z.string(),
+		headcount: z.number(),
+		stage: z.enum(['bootstrapped', 'seed', 'series-a', 'series-b', 'series-c', 'growth', 'public', 'private']),
+	}),
+});
+
+export const collections = { pages, companies };

@@ -1,9 +1,10 @@
 import type { APIRoute } from 'astro';
-import { getEntry } from 'astro:content';
+import { getEntry, getCollection } from 'astro:content';
 
 export const GET: APIRoute = async () => {
 	const home = await getEntry('pages', 'home');
 	const { title, description, quote, reading } = home.data;
+	const companies = await getCollection('companies');
 
 	const lines = [
 		`# ${title}`,
@@ -13,6 +14,12 @@ export const GET: APIRoute = async () => {
 		`> "${quote.text}" — [${quote.source}](${quote.url})`,
 		'',
 		home.body,
+		'',
+		'## Companies',
+		'',
+		...companies.map((c) =>
+			`- [${c.data.name}](${c.data.url}) — ${c.data.description} — [${c.data.reference.title}](${c.data.reference.url})`
+		),
 		'',
 		'## Key reading',
 		'',
