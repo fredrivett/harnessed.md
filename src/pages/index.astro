@@ -37,14 +37,28 @@ const companies = await getCollection('companies');
 	<section class="companies">
 		<h2 id="companies"><a class="heading-hash" href="#companies">##</a>Companies</h2>
 		<p>Who's doing this? Companies that have gone all-in on harness engineering.</p>
-		<ul>
-			{companies.map((company) => (
-				<li>
-					<a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a> — {company.data.description}
-					<span class="tag"><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></span>
-				</li>
-			))}
-		</ul>
+		<div class="table-wrap">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Source</th>
+						<th>Stage</th>
+						<th>Headcount</th>
+					</tr>
+				</thead>
+				<tbody>
+					{companies.map((company) => (
+						<tr>
+							<td><a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a></td>
+							<td><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></td>
+							<td>{company.data.stage}</td>
+							<td>{company.data.headcount.toLocaleString()}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
 	</section>
 
 	<hr />

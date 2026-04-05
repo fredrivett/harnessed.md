@@ -236,7 +236,29 @@ pre code {
 	margin-bottom: 0.75rem;
 }
 
-.companies .tag a {
+.companies .table-wrap {
+	overflow-x: auto;
+}
+
+.companies table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.85rem;
+}
+
+.companies th {
+	text-align: left;
+	font-weight: 700;
+	padding: 0.5rem 0.75rem;
+	border-bottom: 1px solid var(--border);
+}
+
+.companies td {
+	padding: 0.5rem 0.75rem;
+	border-bottom: 1px solid var(--border);
+}
+
+.companies td a {
 	color: var(--text-secondary);
 }
 
