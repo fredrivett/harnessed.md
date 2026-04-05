@@ -48,25 +48,29 @@ companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]));
 			<table>
 				<thead>
 					<tr>
-						<th>Name</th>
-						<th>Source</th>
-						<th>Stage</th>
-						<th>Headcount</th>
-						<th>Jobs</th>
+						<th data-sort="string">Name</th>
+						<th data-sort="string">Source</th>
+						<th data-sort="string">Stage</th>
+						<th data-sort="number">Headcount</th>
+						<th data-sort="number">Jobs</th>
 					</tr>
 				</thead>
 				<tbody>
-					{companies.map((company) => (
+					{companies.map((company) => {
+						const jobCount = (jobsByCompany.get(company.data.name) || []).length;
+						const headcountNum = parseInt(company.data.headcount.replace(/[^0-9]/g, ''));
+						return (
 						<tr>
-							<td><a href={`/companies/${company.id.replace(/^\d+-/, '')}`}>{company.data.name}</a></td>
-							<td><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></td>
-							<td>{company.data.stage}</td>
-							<td>{company.data.headcount}</td>
-							<td>{(jobsByCompany.get(company.data.name) || []).length
-								? <a href={`/companies/${company.id.replace(/^\d+-/, '')}#jobs`}>{(jobsByCompany.get(company.data.name) || []).length}</a>
+							<td data-value={company.data.name}><a href={`/companies/${company.id.replace(/^\d+-/, '')}`}>{company.data.name}</a></td>
+							<td data-value={company.data.reference.title}><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></td>
+							<td data-value={company.data.stage}>{company.data.stage}</td>
+							<td data-value={headcountNum}>{company.data.headcount}</td>
+							<td data-value={jobCount}>{jobCount
+								? <a href={`/companies/${company.id.replace(/^\d+-/, '')}#jobs`}>{jobCount}</a>
 								: '—'}</td>
 						</tr>
-					))}
+						);
+					})}
 				</tbody>
 			</table>
 		</div>
@@ -90,6 +94,34 @@ companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]));
 	</section>
 
 	<script>
+		document.querySelectorAll('th[data-sort]').forEach((th) => {
+			th.style.cursor = 'pointer';
+			th.addEventListener('click', () => {
+				const table = th.closest('table')!;
+				const tbody = table.querySelector('tbody')!;
+				const idx = Array.from(th.parentElement!.children).indexOf(th);
+				const type = th.getAttribute('data-sort');
+				const rows = Array.from(tbody.querySelectorAll('tr'));
+
+				const currentDir = th.getAttribute('aria-sort');
+				const asc = currentDir !== 'ascending';
+
+				table.querySelectorAll('th[data-sort]').forEach((h) => h.removeAttribute('aria-sort'));
+				th.setAttribute('aria-sort', asc ? 'ascending' : 'descending');
+
+				rows.sort((a, b) => {
+					const aVal = a.children[idx].getAttribute('data-value') || '';
+					const bVal = b.children[idx].getAttribute('data-value') || '';
+					if (type === 'number') {
+						return asc ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
+					}
+					return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+				});
+
+				rows.forEach((row) => tbody.appendChild(row));
+			});
+		});
+
 		const form = document.querySelector('.newsletter form');
 		form?.addEventListener('submit', () => {
 			setTimeout(() => {

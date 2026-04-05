@@ -255,6 +255,27 @@ p:last-child {
 	border-bottom: 1px solid var(--border);
 }
 
+.companies th[data-sort] {
+	cursor: pointer;
+	user-select: none;
+}
+
+.companies th[data-sort]::after {
+	content: ' ↕';
+	font-size: 0.7em;
+	opacity: 0.4;
+}
+
+.companies th[aria-sort="ascending"]::after {
+	content: ' ↑';
+	opacity: 0.8;
+}
+
+.companies th[aria-sort="descending"]::after {
+	content: ' ↓';
+	opacity: 0.8;
+}
+
 .companies td {
 	padding: 0.5rem 0.75rem;
 	border-bottom: 1px solid var(--border);
