@@ -7,7 +7,7 @@ const { quote, reading, description } = home.data;
 const { Content } = await render(home);
 ---
 
-<Base title="harnessed.md" description={description}>
+<Base title={`harnessed.md — ${description}`} description={description}>
 	<blockquote class="hero-quote">
 		<p>"{quote.text}"</p>
 		<cite>— <a href={quote.url} target="_blank" rel="noopener">{quote.source}</a></cite>
