@@ -12,6 +12,8 @@ export const GET: APIRoute = async () => {
 		'',
 		`> "${quote.text}" — [${quote.source}](${quote.url})`,
 		'',
+		'## What is a harnessed company?',
+		'',
 		home.body,
 		'',
 		'## Key reading',

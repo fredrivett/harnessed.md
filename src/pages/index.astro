@@ -45,6 +45,7 @@ const { Content } = await render(home);
 			<hr />
 
 			<section class="what">
+				<h2 id="what"><a class="heading-hash" href="#what">##</a>What is a harnessed company?</h2>
 				<Content />
 			</section>
 
@@ -104,15 +105,6 @@ const { Content } = await render(home);
 				apply(next);
 			});
 
-			document.querySelectorAll('.what h2').forEach((h2) => {
-				const id = h2.id || h2.textContent?.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '') || '';
-				h2.id = id;
-				const link = document.createElement('a');
-				link.className = 'heading-hash';
-				link.href = `#${id}`;
-				link.textContent = '##';
-				h2.prepend(link);
-			});
 		</script>
 		<style>
 			:root {

@@ -24,8 +24,6 @@ reading:
     tag: How Every codes with agents
 ---
 
-## What is a harnessed company?
-
 Engineering has fundamentally changed.
 
 Traditionally engineers spent 80% of their time on features, 20% on the system. Harnessed companies flip that on its head: 80% goes to the harness — the machine that builds the machine. 20% guiding where it goes.
