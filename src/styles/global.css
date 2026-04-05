@@ -165,6 +165,64 @@ pre code {
 	font-size: inherit;
 }
 
+.hero-quote {
+	border-left: 2px solid var(--border);
+	padding-left: 1rem;
+	margin-bottom: 2rem;
+}
+
+.hero-quote p {
+	font-style: italic;
+}
+
+.hero-quote cite {
+	font-size: 0.85rem;
+	color: var(--text-secondary);
+	font-style: normal;
+}
+
+.hero-quote cite a {
+	color: var(--text-secondary);
+}
+
+.what {
+	margin-bottom: 2rem;
+}
+
+.what p {
+	margin-bottom: 1rem;
+}
+
+.what p:last-child {
+	margin-bottom: 0;
+}
+
+.what ul {
+	margin: 0 0 1rem 1.5rem;
+}
+
+.what li {
+	margin-bottom: 0.25rem;
+}
+
+.reading {
+	margin-bottom: 2rem;
+}
+
+.reading ul {
+	list-style: none;
+	margin: 0;
+}
+
+.reading li {
+	margin-bottom: 0.75rem;
+}
+
+.tag {
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+}
+
 footer {
 	max-width: var(--max-width);
 	margin: 0 auto;
