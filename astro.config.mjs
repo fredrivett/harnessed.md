@@ -8,7 +8,7 @@ import { h } from 'hastscript';
 export default defineConfig({
 	markdown: {
 		shikiConfig: {
-			theme: 'none',
+			theme: 'css-variables',
 		},
 		rehypePlugins: [
 			rehypeSlug,

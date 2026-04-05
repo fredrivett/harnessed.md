@@ -164,8 +164,8 @@ pre {
 
 pre.astro-code {
 	display: inline-block;
-	background-color: var(--code-bg) !important;
-	color: var(--text-secondary) !important;
+	--astro-code-color-background: var(--code-bg);
+	--astro-code-color-text: var(--text-secondary);
 }
 
 pre code {
