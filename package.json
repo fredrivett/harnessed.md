@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "astro dev",
     "check": "astro check",
-    "build": "astro check && astro build",
+    "check:links": "npx tsx scripts/check-links.ts",
+    "build": "astro check && astro build && npx tsx scripts/check-links.ts",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -19,6 +20,7 @@
     "rehype-slug": "^6.0.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.8"
+    "@astrojs/check": "^0.9.8",
+    "@types/node": "^25.5.2"
   }
 }

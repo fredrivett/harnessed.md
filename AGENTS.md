@@ -14,4 +14,8 @@ Supported ATS providers: check `src/lib/jobs.ts` for the current list.
 
 ## Verify
 
-Run `npm run build` to check for errors before pushing.
+Run `npm run build` to check for errors before pushing. This runs:
+
+1. `astro check` — TypeScript type checking
+2. `astro build` — static site generation
+3. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
