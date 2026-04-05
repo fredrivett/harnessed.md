@@ -1,5 +1,9 @@
 ---
+import { getEntry, render } from 'astro:content';
 
+const home = await getEntry('pages', 'home');
+const { quote, reading, description } = home.data;
+const { Content } = await render(home);
 ---
 
 <html lang="en" data-theme="auto">
@@ -20,7 +24,7 @@
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>harnessed.md</title>
-		<meta name="description" content="A directory of companies who have gone all-in on harness engineering." />
+		<meta name="description" content={description} />
 	</head>
 	<body>
 		<main>
@@ -34,46 +38,14 @@
 			</header>
 
 			<blockquote class="hero-quote">
-				<p>"The primary job is no longer to write code, but to design environments, specify intent, and build feedback loops that allow agents to do reliable work."</p>
-				<cite>— <a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">OpenAI, Harness Engineering</a></cite>
+				<p>"{quote.text}"</p>
+				<cite>— <a href={quote.url} target="_blank" rel="noopener">{quote.source}</a></cite>
 			</blockquote>
 
 			<hr />
 
 			<section class="what">
-				<h2 id="what"><a class="heading-hash" href="#what">##</a>What is a harnessed company?</h2>
-				<p>Engineering has fundamentally changed.</p>
-				<p>Traditionally engineers spent 80% of their time on features, 20% on the system. Harnessed companies flip that on its head: 80% goes to the harness — the machine that builds the machine. 20% guiding where it goes.</p>
-				<p>The harness has three parts:</p>
-				<ul>
-					<li><strong>Guides</strong> — steer the agent <em>before</em> it acts: AGENTS.md, design docs, architecture maps, rules, learnings</li>
-					<li><strong>Verify</strong> — check the work before it ships: types, linters, tests, agentic review</li>
-					<li><strong>Observe</strong> — monitor: error tracking, usage patterns, performance</li>
-				</ul>
-				<pre class="diagram">{`
-  Intent ◄··········································╮
-    │              improvements + fixes             ·
-    ▼                                               ·
-  Guides ◄·····································╮    ·
-    │                                          ·    ·
-    │ constrain + direct                evolve ·    ·
-    ▼                                          ·    ·
-  Agent builds ◄───────┐                       ·    ·
-    │                  │                       ·    ·
-    ▼                  │ no: fix               ·    ·
-  Verify ··············╁·······················┤    ·
-    │                  │                       ·    ·
-    ▼                  │                       ·    ·
-  Pass? ───────────────┘                       ·    ·
-    │                                          ·    ·
-    │ yes                                      ·    ·
-    ▼                                          ·    ·
-  Ship                                         ·    ·
-    │                                          ·    ·
-    ▼                                          ·    ·
-  Observe ·····································┴····╯
-`}</pre>
-				<p>The system gets better over time. Signals from verification and observation feed back into the guides — you don't just fix the code, you refine the harness so it never breaks that way again. That's what makes it engineering, not configuration.</p>
+				<Content />
 			</section>
 
 			<hr />
@@ -81,10 +53,9 @@
 			<section class="reading">
 				<h2 id="reading"><a class="heading-hash" href="#reading">##</a>Key reading</h2>
 				<ul>
-					<li><a href="https://mitchellh.com/writing/my-ai-adoption-journey" target="_blank" rel="noopener">My AI Adoption Journey</a> — Mitchell Hashimoto <span class="tag">The origin of harness engineering</span></li>
-					<li><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness Engineering</a> — Ryan Lopopolo / OpenAI <span class="tag">1M lines of code, zero written by humans</span></li>
-					<li><a href="https://martinfowler.com/articles/exploring-gen-ai/harness-engineering.html" target="_blank" rel="noopener">Harness Engineering for Coding Agent Users</a> — Birgitta Böckeler / ThoughtWorks <span class="tag">The guides and sensors framework</span></li>
-					<li><a href="https://every.to/chain-of-thought/compound-engineering-how-every-codes-with-agents" target="_blank" rel="noopener">Compound Engineering</a> — Dan Shipper, Kieran Klaassen / Every <span class="tag">How Every codes with agents</span></li>
+					{reading.map((item) => (
+						<li><a href={item.url} target="_blank" rel="noopener">{item.title}</a> — {item.author} <span class="tag">{item.tag}</span></li>
+					))}
 				</ul>
 			</section>
 		</main>
@@ -131,6 +102,16 @@
 				const next = themes[(themes.indexOf(getStored()) + 1) % themes.length];
 				localStorage.setItem('theme', next);
 				apply(next);
+			});
+
+			document.querySelectorAll('.what h2').forEach((h2) => {
+				const id = h2.id || h2.textContent?.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '') || '';
+				h2.id = id;
+				const link = document.createElement('a');
+				link.className = 'heading-hash';
+				link.href = `#${id}`;
+				link.textContent = '##';
+				h2.prepend(link);
 			});
 		</script>
 		<style>
@@ -328,7 +309,7 @@
 				margin-bottom: 0.25rem;
 			}
 
-			.diagram {
+			.what pre {
 				margin: 1.5rem 0;
 				padding: 2rem 1.25rem;
 				font-size: 0.85rem;
@@ -337,6 +318,12 @@
 				background: var(--code-bg);
 				border-radius: 4px;
 				overflow-x: auto;
+			}
+
+			.what pre code {
+				background: none;
+				padding: 0;
+				font-size: inherit;
 			}
 
 			.reading {
