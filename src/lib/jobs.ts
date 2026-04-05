@@ -18,7 +18,9 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	try {
 		return await fetch(url, {
 			signal: controller.signal,
-			headers: { 'User-Agent': 'Mozilla/5.0 (compatible; HarnessedBot/1.0)' },
+			headers: {
+				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+			},
 		});
 	} finally {
 		clearTimeout(timeout);
@@ -45,8 +47,11 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string): Promi
 }
 
 async function fetchCareersPage(url: string, departmentFilter: string): Promise<Job[]> {
-	const res = await fetchWithTimeout(url);
-	if (!res.ok) return [];
+	const res = await fetchWithTimeout(url, 15000);
+	if (!res.ok) {
+		console.warn(`[careers-page] ${url} returned ${res.status}`);
+		return [];
+	}
 	const html = await res.text();
 	const baseUrl = new URL(url).origin;
 
