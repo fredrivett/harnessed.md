@@ -7,3 +7,7 @@ reference:
 description: 5 products, single-person engineering teams
 headcount: "11-50"
 stage: seed
+ats:
+  provider: careers-page
+  boardId: https://every.to/careers
+  departmentFilter: ""
