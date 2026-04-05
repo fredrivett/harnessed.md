@@ -22,14 +22,16 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 		<p class="company-meta">
 			{company.data.stage} · {company.data.headcount} employees ·
 			<a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a>
-			{company.data.careers && (<Fragment> · <a href={company.data.careers} target="_blank" rel="noopener">Careers</a></Fragment>)}
 		</p>
 	</section>
 
 	<hr />
 
 	<section class="jobs">
-		<h2 id="jobs"><a class="heading-hash" href="#jobs">##</a>Engineering jobs ({jobs.length})</h2>
+		<div class="jobs-header">
+			<h2 id="jobs"><a class="heading-hash" href="#jobs">##</a>Engineering jobs ({jobs.length})</h2>
+			{company.data.careers && <a href={company.data.careers} target="_blank" rel="noopener" class="careers-link">Careers page ↗</a>}
+		</div>
 		{jobs.length > 0 ? (
 			<div class="table-wrap">
 				<table>
@@ -101,6 +103,17 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 
 	.jobs {
 		margin-bottom: 2rem;
+	}
+
+	.jobs-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+	}
+
+	.careers-link {
+		font-size: 0.85rem;
+		color: var(--text-secondary);
 	}
 
 	.jobs table {
