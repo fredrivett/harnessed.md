@@ -65,7 +65,7 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 		jobs.push({
 			title,
 			url: applyUrl,
-			location: '',
+			location: 'N/A',
 			department: dept,
 			company: '',
 		});
