@@ -262,6 +262,10 @@ pre code {
 	color: var(--text-secondary);
 }
 
+.companies tr:last-child td {
+	border-bottom: none;
+}
+
 .newsletter {
 }
 
