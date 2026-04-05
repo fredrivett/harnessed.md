@@ -16,7 +16,10 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	const controller = new AbortController();
 	const timeout = setTimeout(() => controller.abort(), ms);
 	try {
-		return await fetch(url, { signal: controller.signal });
+		return await fetch(url, {
+			signal: controller.signal,
+			headers: { 'User-Agent': 'Mozilla/5.0 (compatible; HarnessedBot/1.0)' },
+		});
 	} finally {
 		clearTimeout(timeout);
 	}
@@ -45,12 +48,12 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	const res = await fetchWithTimeout(url);
 	if (!res.ok) return [];
 	const html = await res.text();
-
-	// Extract the open-roles section
-	const rolesSection = html.split('id="open-roles"')[1] || html;
+	const baseUrl = new URL(url).origin;
 
 	const jobs: Job[] = [];
-	// Match each h3 (role title) and look backwards for department span + forwards for apply link
+
+	// Pattern 1: Every-style (span department → h3 title → Apply link)
+	const rolesSection = html.split('id="open-roles"')[1] || html;
 	const cardRegex = /<span[^>]*>([^<]+)<\/span>[\s\S]*?<h3[^>]*>([^<]+)<\/h3>[\s\S]*?<a\s+href="([^"]+)"[^>]*>[^<]*Apply/g;
 	let match;
 
@@ -58,17 +61,23 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 		const dept = match[1].trim();
 		const title = match[2].trim();
 		const applyUrl = match[3];
-
-		// Skip the generic "Don't see your role?" card
 		if (title.includes("Don't see your role")) continue;
+		jobs.push({ title, url: applyUrl, location: '—', department: dept, company: '' });
+	}
 
-		jobs.push({
-			title,
-			url: applyUrl,
-			location: '—',
-			department: dept,
-			company: '',
-		});
+	// Pattern 2: Shopify-style (<a href="/careers/slug_uuid"><h4>Title</h4><span>Location</span></a>)
+	if (jobs.length === 0) {
+		const linkRegex = /<a\s[^>]*href="(\/careers\/[^"]*_[^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
+		while ((match = linkRegex.exec(html)) !== null) {
+			const href = match[1];
+			const inner = match[2];
+			const h4Match = inner.match(/<h4[^>]*>([^<]+)<\/h4>/);
+			if (!h4Match) continue;
+			const title = h4Match[1].trim();
+			const spanMatch = inner.match(/<span[^>]*>([^<]+)<\/span>/);
+			const location = spanMatch ? spanMatch[1].trim() : '—';
+			jobs.push({ title, url: `${baseUrl}${href}`, location, department: '', company: '' });
+		}
 	}
 
 	if (!departmentFilter) return jobs;

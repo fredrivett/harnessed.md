@@ -1,8 +1,13 @@
 name: Shopify
 url: https://www.shopify.com
+careers: https://www.shopify.com/careers
 reference:
   title: "Inside Shopify's AI-first engineering playbook"
   url: https://www.bvp.com/atlas/inside-shopifys-ai-first-engineering-playbook
 description: '"2026 belongs to those who master agentic harnesses"'
 headcount: "5000+"
 stage: public
+ats:
+  provider: careers-page
+  boardId: https://www.shopify.com/careers/disciplines/engineering-data
+  departmentFilter: ""
