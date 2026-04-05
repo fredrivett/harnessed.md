@@ -37,27 +37,27 @@ The harness has three parts:
 - **Observe** — monitor: error tracking, usage patterns, performance
 
 ```
-  Intent ◄··········································╮
-    │              improvements + fixes             ·
-    ▼                                               ·
-  Guides ◄·····································╮    ·
-    │                                          ·    ·
-    │ constrain + direct                evolve ·    ·
-    ▼                                          ·    ·
-  Agent builds ◄───────┐                       ·    ·
-    │                  │                       ·    ·
-    ▼                  │ no: fix               ·    ·
-  Verify ··············╁·······················┤    ·
-    │                  │                       ·    ·
-    ▼                  │                       ·    ·
-  Pass? ───────────────┘                       ·    ·
-    │                                          ·    ·
-    │ yes                                      ·    ·
-    ▼                                          ·    ·
-  Ship                                         ·    ·
-    │                                          ·    ·
-    ▼                                          ·    ·
-  Observe ·····································┴····╯
+  Intent ◄····································╮
+    │            improvements + fixes         ·
+    ▼                                         ·
+  Guides ◄································╮   ·
+    │                                     ·   ·
+    │ constrain + direct           evolve ·   ·
+    ▼                                     ·   ·
+  Agent builds ◄───────┐                  ·   ·
+    │                  │                  ·   ·
+    ▼                  │ no: fix          ·   ·
+  Verify ··············╁··················┤   ·
+    │                  │                  ·   ·
+    ▼                  │                  ·   ·
+  Pass? ───────────────┘                  ·   ·
+    │                                     ·   ·
+    │ yes                                 ·   ·
+    ▼                                     ·   ·
+  Ship                                    ·   ·
+    │                                     ·   ·
+    ▼                                     ·   ·
+  Observe ································┴···╯
 ```
 
 The system improves itself. Signals from verification and observation loop back into the guides — you don't just fix the code, you refine the harness to stop it breaking that way again.
