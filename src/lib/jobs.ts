@@ -46,26 +46,29 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	if (!res.ok) return [];
 	const html = await res.text();
 
+	// Extract the open-roles section
+	const rolesSection = html.split('id="open-roles"')[1] || html;
+
 	const jobs: Job[] = [];
-	const roleRegex = /<div[^>]*class="[^"]*border[^"]*rounded-lg[^"]*p-7[^"]*"[^>]*>[\s\S]*?<\/div>\s*<\/div>/g;
+	// Match each h3 (role title) and look backwards for department span + forwards for apply link
+	const cardRegex = /<span[^>]*>([^<]+)<\/span>[\s\S]*?<h3[^>]*>([^<]+)<\/h3>[\s\S]*?<a\s+href="([^"]+)"[^>]*>[^<]*Apply/g;
 	let match;
 
-	while ((match = roleRegex.exec(html)) !== null) {
-		const block = match[0];
-		const deptMatch = block.match(/<span[^>]*>([^<]+)<\/span>/);
-		const titleMatch = block.match(/<h3[^>]*>([^<]+)<\/h3>/);
-		const linkMatch = block.match(/<a\s+href="([^"]+)"[^>]*>Apply/);
+	while ((match = cardRegex.exec(rolesSection)) !== null) {
+		const dept = match[1].trim();
+		const title = match[2].trim();
+		const applyUrl = match[3];
 
-		if (titleMatch) {
-			const dept = deptMatch?.[1]?.trim() || '';
-			jobs.push({
-				title: titleMatch[1].trim(),
-				url: linkMatch?.[1] || url,
-				location: 'Remote',
-				department: dept,
-				company: '',
-			});
-		}
+		// Skip the generic "Don't see your role?" card
+		if (title.includes("Don't see your role")) continue;
+
+		jobs.push({
+			title,
+			url: applyUrl,
+			location: 'Remote',
+			department: dept,
+			company: '',
+		});
 	}
 
 	if (!departmentFilter) return jobs;
