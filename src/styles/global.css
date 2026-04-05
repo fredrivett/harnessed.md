@@ -189,11 +189,11 @@ pre code {
 	margin-bottom: 2rem;
 }
 
-.what p {
+p {
 	margin-bottom: 1rem;
 }
 
-.what p:last-child {
+p:last-child {
 	margin-bottom: 0;
 }
 
