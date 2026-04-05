@@ -29,4 +29,18 @@ const { Content } = await render(home);
 			))}
 		</ul>
 	</section>
+
+	<hr />
+
+	<section class="newsletter">
+		<h2 id="subscribe"><a class="heading-hash" href="#subscribe">##</a>Stay in the loop</h2>
+		<p>Get updates on harness engineering — new articles, companies, and tools.</p>
+		<form
+			action="https://buttondown.com/api/emails/embed-subscribe/harnessed-md"
+			method="post"
+		>
+			<input type="email" name="email" placeholder="you@example.com" required />
+			<button type="submit">Subscribe</button>
+		</form>
+	</section>
 </Base>

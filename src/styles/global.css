@@ -223,6 +223,50 @@ pre code {
 	color: var(--text-secondary);
 }
 
+.newsletter {
+	margin-bottom: 2rem;
+}
+
+.newsletter p {
+	margin-bottom: 1rem;
+	color: var(--text-secondary);
+}
+
+.newsletter form {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.newsletter input[type="email"] {
+	flex: 1;
+	padding: 0.5rem 0.75rem;
+	font-family: inherit;
+	font-size: 0.85rem;
+	color: var(--text);
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 4px;
+}
+
+.newsletter input[type="email"]::placeholder {
+	color: var(--text-secondary);
+}
+
+.newsletter button {
+	padding: 0.5rem 1rem;
+	font-family: inherit;
+	font-size: 0.85rem;
+	color: var(--bg);
+	background: var(--text);
+	border: 1px solid var(--text);
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.newsletter button:hover {
+	opacity: 0.8;
+}
+
 footer {
 	max-width: var(--max-width);
 	margin: 0 auto;
