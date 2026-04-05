@@ -1,4 +1,4 @@
-# [harnessed.md](https://github.com/fredrivett/harnessed.md)
+# [harnessed.md](https://www.harnessed.md)
 
 **Building the machines that build the machines.**
 
