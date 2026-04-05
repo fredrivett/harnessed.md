@@ -1,4 +1,5 @@
 ---
+import Base from '../layouts/Base.astro';
 import { getEntry, render } from 'astro:content';
 
 const home = await getEntry('pages', 'home');
@@ -6,370 +7,86 @@ const { quote, reading, description } = home.data;
 const { Content } = await render(home);
 ---
 
-<html lang="en" data-theme="auto">
-	<head>
-		<meta charset="utf-8" />
-		<script is:inline>
-			(function() {
-				var t = localStorage.getItem('theme');
-				if (t === 'light' || t === 'dark') {
-					document.documentElement.setAttribute('data-theme', t);
-					document.documentElement.setAttribute('data-force-theme', t);
-					document.documentElement.style.colorScheme = t;
-				}
-			})();
-		</script>
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>harnessed.md</title>
-		<meta name="description" content={description} />
-	</head>
-	<body>
-		<main>
-			<header>
-				<h1 id="harnessed"><a class="heading-hash" href="#harnessed">#</a>harnessed<span class="ext">.md</span></h1>
-				<button id="theme-toggle" type="button" aria-label="Toggle theme" title="system">
-					<svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-					<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-					<svg class="icon-auto" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8a2.83 2.83 0 0 0 4 4 4 4 0 1 1-4-4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-				</button>
-			</header>
+<Base title="harnessed.md" description={description}>
+	<blockquote class="hero-quote">
+		<p>"{quote.text}"</p>
+		<cite>— <a href={quote.url} target="_blank" rel="noopener">{quote.source}</a></cite>
+	</blockquote>
 
-			<blockquote class="hero-quote">
-				<p>"{quote.text}"</p>
-				<cite>— <a href={quote.url} target="_blank" rel="noopener">{quote.source}</a></cite>
-			</blockquote>
+	<hr />
 
-			<hr />
+	<section class="what">
+		<Content />
+	</section>
 
-			<section class="what">
-				<Content />
-			</section>
+	<hr />
 
-			<hr />
+	<section class="reading">
+		<h2 id="reading"><a class="heading-hash" href="#reading">##</a>Key reading</h2>
+		<ul>
+			{reading.map((item) => (
+				<li><a href={item.url} target="_blank" rel="noopener">{item.title}</a> — {item.author} <span class="tag">{item.tag}</span></li>
+			))}
+		</ul>
+	</section>
+</Base>
 
-			<section class="reading">
-				<h2 id="reading"><a class="heading-hash" href="#reading">##</a>Key reading</h2>
-				<ul>
-					{reading.map((item) => (
-						<li><a href={item.url} target="_blank" rel="noopener">{item.title}</a> — {item.author} <span class="tag">{item.tag}</span></li>
-					))}
-				</ul>
-			</section>
-		</main>
+<style>
+	.hero-quote {
+		border-left: 2px solid var(--border);
+		padding-left: 1rem;
+		margin-bottom: 2rem;
+	}
 
-		<footer>
-			<p class="gibson">"The future is already here — it's just not evenly distributed." — <a href="https://en.wikiquote.org/wiki/William_Gibson" target="_blank" rel="noopener">William Gibson</a></p>
-			<p class="credits"><a href="https://github.com/fredrivett/harnessed.md" target="_blank" rel="noopener">harnessed.md</a> by <a href="https://x.com/fredrivett" target="_blank" rel="noopener">fredrivett</a></p>
-		</footer>
+	.hero-quote p {
+		font-style: italic;
+	}
 
-		<script>
-			if (window.location.hash) {
-				const el = document.querySelector(window.location.hash);
-				if (el) el.scrollIntoView();
-			}
+	.hero-quote cite {
+		font-size: 0.85rem;
+		color: var(--text-secondary);
+		font-style: normal;
+	}
 
-			const themes = ['auto', 'light', 'dark'] as const;
-			type Theme = typeof themes[number];
+	.hero-quote cite a {
+		color: var(--text-secondary);
+	}
 
-			function getStored(): Theme {
-				const stored = localStorage.getItem('theme');
-				return themes.includes(stored as Theme) ? (stored as Theme) : 'auto';
-			}
+	.what {
+		margin-bottom: 2rem;
+	}
 
-			function apply(theme: Theme) {
-				const root = document.documentElement;
-				root.setAttribute('data-theme', theme);
+	.what p {
+		margin-bottom: 1rem;
+	}
 
-				if (theme === 'auto') {
-					root.style.colorScheme = '';
-					root.removeAttribute('data-force-theme');
-				} else {
-					root.style.colorScheme = theme;
-					root.setAttribute('data-force-theme', theme);
-				}
+	.what p:last-child {
+		margin-bottom: 0;
+	}
 
-				const btn = document.getElementById('theme-toggle');
-				if (btn) btn.title = theme === 'auto' ? 'system' : theme;
-			}
+	.what ul {
+		margin: 0 0 1rem 1.5rem;
+	}
 
-			const current = getStored();
-			apply(current);
+	.what li {
+		margin-bottom: 0.25rem;
+	}
 
-			document.getElementById('theme-toggle')?.addEventListener('click', () => {
-				const next = themes[(themes.indexOf(getStored()) + 1) % themes.length];
-				localStorage.setItem('theme', next);
-				apply(next);
-			});
+	.reading {
+		margin-bottom: 2rem;
+	}
 
-		</script>
-		<style is:global>
-			:root {
-				--text: #1a1a1a;
-				--text-secondary: #666;
-				--bg: #fdfdfd;
-				--link: #1a1a1a;
-				--border: #e0e0e0;
-				--code-bg: #f5f5f5;
-				--max-width: 65ch;
-			}
+	.reading ul {
+		list-style: none;
+		margin: 0;
+	}
 
-			@media (prefers-color-scheme: dark) {
-				:root:not([data-force-theme='light']) {
-					--text: #e0e0e0;
-					--text-secondary: #999;
-					--bg: #111;
-					--link: #e0e0e0;
-					--border: #333;
-					--code-bg: #1a1a1a;
-				}
-			}
+	.reading li {
+		margin-bottom: 0.75rem;
+	}
 
-			:root[data-force-theme='dark'] {
-				--text: #e0e0e0;
-				--text-secondary: #999;
-				--bg: #111;
-				--link: #e0e0e0;
-				--border: #333;
-				--code-bg: #1a1a1a;
-			}
-
-			:root[data-force-theme='light'] {
-				--text: #1a1a1a;
-				--text-secondary: #666;
-				--bg: #fdfdfd;
-				--link: #1a1a1a;
-				--border: #e0e0e0;
-				--code-bg: #f5f5f5;
-			}
-
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
-
-			html {
-				scroll-behavior: smooth;
-				font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
-				font-size: 16px;
-				line-height: 1.7;
-				color: var(--text);
-				background: var(--bg);
-			}
-
-			body {
-				min-height: 100vh;
-				display: flex;
-				flex-direction: column;
-			}
-
-			main {
-				max-width: var(--max-width);
-				margin: 0 auto;
-				padding: 4rem 1.5rem 2rem;
-				flex: 1;
-			}
-
-			h1, h2 {
-				position: relative;
-				scroll-margin-top: 2rem;
-			}
-
-			header {
-				display: flex;
-				align-items: baseline;
-				justify-content: space-between;
-			}
-
-			h1 {
-				font-size: 1.4rem;
-				font-weight: 700;
-				margin-bottom: 2rem;
-			}
-
-			.ext {
-				color: var(--text-secondary);
-			}
-
-			#theme-toggle {
-				background: none;
-				border: none;
-				cursor: pointer;
-				color: var(--text-secondary);
-				padding: 0.25rem;
-				border-radius: 4px;
-				display: flex;
-				align-items: center;
-			}
-
-			#theme-toggle:hover {
-				color: var(--text);
-			}
-
-			#theme-toggle svg {
-				display: none;
-			}
-
-			:root[data-theme='light'] #theme-toggle .icon-sun,
-			:root[data-theme='dark'] #theme-toggle .icon-moon,
-			:root[data-theme='auto'] #theme-toggle .icon-auto {
-				display: block;
-			}
-
-			h2 {
-				font-size: 1rem;
-				font-weight: 700;
-				margin-bottom: 0.75rem;
-			}
-
-			.heading-hash {
-				display: none;
-				text-decoration: none;
-				color: var(--text);
-				opacity: 0.5;
-			}
-
-			.heading-hash:hover {
-				opacity: 1;
-			}
-
-			@media (min-width: 768px) {
-				.heading-hash {
-					display: inline;
-					position: absolute;
-					right: 100%;
-					padding-right: 0.5rem;
-				}
-			}
-
-			a {
-				color: var(--link);
-				text-underline-offset: 3px;
-			}
-
-			.hero-quote {
-				border-left: 2px solid var(--border);
-				padding-left: 1rem;
-				margin-bottom: 2rem;
-			}
-
-			.hero-quote p {
-				font-style: italic;
-			}
-
-			.hero-quote cite {
-				font-size: 0.85rem;
-				color: var(--text-secondary);
-				font-style: normal;
-			}
-
-			.hero-quote cite a {
-				color: var(--text-secondary);
-			}
-
-			.intro {
-				margin-bottom: 2rem;
-			}
-
-			hr {
-				border: none;
-				border-top: 1px solid var(--border);
-				margin: 2rem 0;
-			}
-
-			.what {
-				margin-bottom: 2rem;
-			}
-
-			.what p {
-				margin-bottom: 1rem;
-			}
-
-			.what p:last-child {
-				margin-bottom: 0;
-			}
-
-			.what ul {
-				margin: 0 0 1rem 1.5rem;
-			}
-
-			.what li {
-				margin-bottom: 0.25rem;
-			}
-
-			.what pre {
-				margin: 1.5rem 0;
-				padding: 2rem 1.25rem;
-				font-size: 0.85rem;
-				line-height: 1.4;
-				color: var(--text-secondary);
-				background: var(--code-bg);
-				border-radius: 4px;
-				overflow-x: auto;
-			}
-
-			.what pre code {
-				background: none;
-				padding: 0;
-				font-size: inherit;
-			}
-
-			.reading {
-				margin-bottom: 2rem;
-			}
-
-			.reading ul {
-				list-style: none;
-				margin: 0;
-			}
-
-			.reading li {
-				margin-bottom: 0.75rem;
-			}
-
-			.tag {
-				font-size: 0.75rem;
-				color: var(--text-secondary);
-			}
-
-			.companies {
-				margin-bottom: 2rem;
-			}
-
-			.placeholder {
-				color: var(--text-secondary);
-			}
-
-			footer {
-				max-width: var(--max-width);
-				margin: 0 auto;
-				padding: 3rem 1.5rem 3rem;
-				width: 100%;
-				border-top: 1px solid var(--border);
-			}
-
-			footer .gibson {
-				font-style: italic;
-				color: var(--text-secondary);
-				font-size: 0.85rem;
-				margin-bottom: 0.5rem;
-			}
-
-			footer .gibson a {
-				color: var(--text-secondary);
-			}
-
-			footer .credits {
-				font-size: 0.85rem;
-				color: var(--text-secondary);
-			}
-
-			footer .credits a {
-				color: var(--text-secondary);
-			}
-		</style>
-	</body>
-</html>
+	.tag {
+		font-size: 0.75rem;
+		color: var(--text-secondary);
+	}
+</style>
