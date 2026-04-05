@@ -22,6 +22,7 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 		<p class="company-meta">
 			{company.data.stage} · {company.data.headcount} employees ·
 			<a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a>
+			{company.data.careers && (<Fragment> · <a href={company.data.careers} target="_blank" rel="noopener">Careers</a></Fragment>)}
 		</p>
 	</section>
 
