@@ -264,6 +264,10 @@ p:last-child {
 	color: var(--text-secondary);
 }
 
+.companies td:first-child a {
+	color: var(--text);
+}
+
 .companies tr:last-child td {
 	border-bottom: none;
 }
