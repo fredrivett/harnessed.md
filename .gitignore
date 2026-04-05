@@ -1,0 +1,14 @@
+# build
+dist/
+
+# dependencies
+node_modules/
+
+# astro
+.astro/
+
+# editor
+.vscode/
+
+# sandbox
+.codesandbox/
