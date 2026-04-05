@@ -7,6 +7,9 @@ import { h } from 'hastscript';
 // https://astro.build/config
 export default defineConfig({
 	markdown: {
+		shikiConfig: {
+			theme: 'none',
+		},
 		rehypePlugins: [
 			rehypeSlug,
 			[rehypeAutolinkHeadings, {
