@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "astro dev",
     "check": "astro check --minimumFailingSeverity warning",
-    "check:links": "npx tsx scripts/check-links.ts",
-    "build": "astro check --minimumFailingSeverity warning && astro build && npx tsx scripts/check-links.ts",
+    "check:links": "tsx scripts/check-links.ts",
+    "build": "astro check --minimumFailingSeverity warning && astro build && tsx scripts/check-links.ts",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
-    "@types/node": "^25.5.2"
+    "@types/node": "^25.5.2",
+    "tsx": "^4.21.0"
   }
 }
