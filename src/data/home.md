@@ -19,8 +19,8 @@ reading:
     author: Birgitta Böckeler / ThoughtWorks
     tag: The guides and sensors framework
   - title: Compound Engineering
-    url: https://every.to/chain-of-thought/compound-engineering-how-every-codes-with-agents
-    author: Dan Shipper, Kieran Klaassen / Every
+    url: https://every.to/guides/compound-engineering
+    author: Kieran Klaassen, Dan Shipper / Every
     tag: How Every codes with agents
 ---
 
