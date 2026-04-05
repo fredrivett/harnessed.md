@@ -32,7 +32,7 @@ Traditionally engineers spent 80% of their time on features, 20% on the system. 
 
 The harness has three parts:
 
-- **Guides** — steer the agent *before* it acts: AGENTS.md, design docs, architecture maps, rules, learnings
+- **Guides** — steer the agent _before_ it acts: AGENTS.md, design docs, architecture maps, rules, learnings
 - **Verify** — check the work before it ships: types, linters, tests, agentic review
 - **Observe** — monitor: error tracking, usage patterns, performance
 
@@ -60,4 +60,4 @@ The harness has three parts:
   Observe ·····································┴····╯
 ```
 
-The system gets better over time. Signals from verification and observation feed back into the guides — you don't just fix the code, you refine the harness so it never breaks that way again. That's what makes it engineering, not configuration.
+The system improveves itself. Signals from verification and observation loop back into the guides — you don't just fix the code, you refine the harness to stop it breaking that way again.
