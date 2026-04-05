@@ -59,10 +59,13 @@ body {
 }
 
 main {
-	max-width: var(--max-width);
 	margin: 0 auto;
 	padding: 4rem 1.5rem 2rem;
 	flex: 1;
+}
+
+main.narrow {
+	max-width: var(--max-width);
 }
 
 h1, h2 {

@@ -16,7 +16,7 @@ const jobsByCompany = new Map<string, Job[]>();
 companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]));
 ---
 
-<Base title={`harnessed.md — ${description}`} description={description}>
+<Base title={`harnessed.md — ${description}`} description={description} class="narrow">
 	<blockquote class="hero-quote">
 		<p>"{quote.text}"</p>
 		<cite>— <a href={quote.url} target="_blank" rel="noopener">{quote.source}</a></cite>
