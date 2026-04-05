@@ -48,14 +48,17 @@ async function fetchAshby(boardId: string, departmentFilter: string): Promise<Jo
 
 	return (data.jobs || [])
 		.filter((job: any) => {
-			const dept = (job.departmentName || '').toLowerCase();
-			return dept.includes(departmentFilter);
+			const dept = (job.departmentName || job.department || '').toLowerCase();
+			const team = (job.teamName || job.team || '').toLowerCase();
+			const title = (job.title || '').toLowerCase();
+			const filter = departmentFilter.toLowerCase();
+			return dept.includes(filter) || team.includes(filter) || title.includes(filter);
 		})
 		.map((job: any) => ({
 			title: job.title,
-			url: `https://jobs.ashbyhq.com/${boardId}/${job.id}`,
-			location: job.locationName || 'Remote',
-			department: job.departmentName || '',
+			url: job.jobUrl || `https://jobs.ashbyhq.com/${boardId}/${job.id}`,
+			location: job.locationName || job.location || 'Remote',
+			department: job.departmentName || job.department || '',
 			company: '',
 		}));
 }

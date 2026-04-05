@@ -6,7 +6,3 @@ reference:
 description: '"2026 belongs to those who master agentic harnesses"'
 headcount: "5000+"
 stage: public
-ats:
-  provider: greenhouse
-  boardId: shopify
-  departmentFilter: engineering

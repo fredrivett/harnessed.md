@@ -9,4 +9,4 @@ stage: private
 ats:
   provider: ashby
   boardId: openai
-  departmentFilter: engineering
+  departmentFilter: engineer
