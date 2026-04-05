@@ -267,6 +267,11 @@ pre code {
 	opacity: 0.8;
 }
 
+.newsletter-thanks {
+	color: var(--text-secondary);
+	font-size: 0.85rem;
+}
+
 footer {
 	max-width: var(--max-width);
 	margin: 0 auto;

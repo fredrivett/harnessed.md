@@ -38,10 +38,22 @@ const { Content } = await render(home);
 		<form
 			action="https://buttondown.com/api/emails/embed-subscribe/harnessed-md"
 			method="post"
+			target="bd-iframe"
 		>
 			<input type="email" name="email" placeholder="you@example.com" required />
-			<input type="hidden" name="redirect_url" value="https://www.harnessed.md" />
 			<button type="submit">Subscribe</button>
 		</form>
+		<p class="newsletter-thanks" hidden>Thanks! Check your inbox to confirm.</p>
+		<iframe name="bd-iframe" hidden></iframe>
 	</section>
+
+	<script>
+		const form = document.querySelector('.newsletter form');
+		form?.addEventListener('submit', () => {
+			setTimeout(() => {
+				form.hidden = true;
+				document.querySelector('.newsletter-thanks')?.removeAttribute('hidden');
+			}, 500);
+		});
+	</script>
 </Base>
