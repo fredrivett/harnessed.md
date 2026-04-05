@@ -34,17 +34,17 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 				<table>
 					<thead>
 						<tr>
-							<th>Role</th>
-							<th>Department</th>
-							<th>Location</th>
+							<th data-sort="string">Role</th>
+							<th data-sort="string">Department</th>
+							<th data-sort="string">Location</th>
 						</tr>
 					</thead>
 					<tbody>
 						{jobs.map((job) => (
 							<tr>
-								<td><a href={job.url} target="_blank" rel="noopener">{job.title}</a></td>
-								<td>{job.department}</td>
-								<td>{job.location}</td>
+								<td data-value={job.title}><a href={job.url} target="_blank" rel="noopener">{job.title}</a></td>
+								<td data-value={job.department}>{job.department}</td>
+								<td data-value={job.location}>{job.location}</td>
 							</tr>
 						))}
 					</tbody>
@@ -54,6 +54,34 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 			<p>No jobs available via API. Check <a href={company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
 		)}
 	</section>
+	<script>
+		document.querySelectorAll('th[data-sort]').forEach((th) => {
+			th.addEventListener('click', () => {
+				const table = th.closest('table')!;
+				const tbody = table.querySelector('tbody')!;
+				const idx = Array.from(th.parentElement!.children).indexOf(th);
+				const type = th.getAttribute('data-sort');
+				const rows = Array.from(tbody.querySelectorAll('tr'));
+
+				const currentDir = th.getAttribute('aria-sort');
+				const asc = currentDir !== 'ascending';
+
+				table.querySelectorAll('th[data-sort]').forEach((h) => h.removeAttribute('aria-sort'));
+				th.setAttribute('aria-sort', asc ? 'ascending' : 'descending');
+
+				rows.sort((a, b) => {
+					const aVal = a.children[idx].getAttribute('data-value') || '';
+					const bVal = b.children[idx].getAttribute('data-value') || '';
+					if (type === 'number') {
+						return asc ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
+					}
+					return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+				});
+
+				rows.forEach((row) => tbody.appendChild(row));
+			});
+		});
+	</script>
 </Base>
 
 <style is:global>
@@ -87,6 +115,27 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 		font-weight: 700;
 		padding: 0.5rem 0.75rem;
 		border-bottom: 1px solid var(--border);
+	}
+
+	.jobs th[data-sort] {
+		cursor: pointer;
+		user-select: none;
+	}
+
+	.jobs th[data-sort]::after {
+		content: ' ↕';
+		font-size: 0.7em;
+		opacity: 0.4;
+	}
+
+	.jobs th[aria-sort="ascending"]::after {
+		content: ' ↑';
+		opacity: 0.8;
+	}
+
+	.jobs th[aria-sort="descending"]::after {
+		content: ' ↓';
+		opacity: 0.8;
 	}
 
 	.jobs td {
