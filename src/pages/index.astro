@@ -9,9 +9,161 @@
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>harnessed.md</title>
+		<meta name="description" content="A directory of companies who have gone all-in on harness engineering." />
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<main>
+			<header>
+				<h1>harnessed.md</h1>
+			</header>
+
+			<blockquote class="hero-quote">
+				<p>"The primary job is no longer to write code, but to design environments, specify intent, and build feedback loops that allow agents to do reliable work."</p>
+				<cite>— <a href="https://openai.com/index/harness-engineering/">OpenAI, Harness Engineering</a></cite>
+			</blockquote>
+
+			<section class="intro">
+				<p>A directory of companies who have gone all-in on harness engineering — building the environment, constraints, and feedback loops that let AI build the product.</p>
+			</section>
+
+			<hr />
+
+			<section class="companies">
+				<h2>Companies</h2>
+				<p class="placeholder">Coming soon. <a href="https://github.com/fredrivett/harnessed.md">Open a PR</a> to add yours.</p>
+			</section>
+		</main>
+
+		<footer>
+			<p class="gibson">"The future is already here — it's just not evenly distributed."</p>
+			<p class="credits"><a href="https://github.com/fredrivett/harnessed.md">harnessed.md</a> by <a href="https://x.com/fredrivett">fredrivett</a></p>
+		</footer>
+
+		<style>
+			:root {
+				--text: #1a1a1a;
+				--text-secondary: #666;
+				--bg: #fdfdfd;
+				--link: #1a1a1a;
+				--border: #e0e0e0;
+				--max-width: 640px;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--text: #e0e0e0;
+					--text-secondary: #999;
+					--bg: #111;
+					--link: #e0e0e0;
+					--border: #333;
+				}
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			html {
+				font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+				font-size: 15px;
+				line-height: 1.7;
+				color: var(--text);
+				background: var(--bg);
+			}
+
+			body {
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+			}
+
+			main {
+				max-width: var(--max-width);
+				margin: 0 auto;
+				padding: 4rem 1.5rem 2rem;
+				flex: 1;
+			}
+
+			h1 {
+				font-size: 1.4rem;
+				font-weight: 700;
+				margin-bottom: 2rem;
+			}
+
+			h2 {
+				font-size: 1rem;
+				font-weight: 700;
+				margin-bottom: 0.75rem;
+			}
+
+			a {
+				color: var(--link);
+				text-underline-offset: 3px;
+			}
+
+			.hero-quote {
+				border-left: 2px solid var(--border);
+				padding-left: 1rem;
+				margin-bottom: 2rem;
+			}
+
+			.hero-quote p {
+				font-style: italic;
+			}
+
+			.hero-quote cite {
+				font-size: 0.85rem;
+				color: var(--text-secondary);
+				font-style: normal;
+			}
+
+			.hero-quote cite a {
+				color: var(--text-secondary);
+			}
+
+			.intro {
+				margin-bottom: 2rem;
+			}
+
+			hr {
+				border: none;
+				border-top: 1px solid var(--border);
+				margin: 2rem 0;
+			}
+
+			.companies {
+				margin-bottom: 2rem;
+			}
+
+			.placeholder {
+				color: var(--text-secondary);
+			}
+
+			footer {
+				max-width: var(--max-width);
+				margin: 0 auto;
+				padding: 2rem 1.5rem 3rem;
+				width: 100%;
+			}
+
+			footer .gibson {
+				font-style: italic;
+				color: var(--text-secondary);
+				font-size: 0.85rem;
+				margin-bottom: 0.5rem;
+			}
+
+			footer .credits {
+				font-size: 0.85rem;
+				color: var(--text-secondary);
+			}
+
+			footer .credits a {
+				color: var(--text-secondary);
+			}
+		</style>
 	</body>
 </html>
