@@ -8,9 +8,9 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "check": "astro check",
+    "check": "astro check --minimumFailingSeverity warning",
     "check:links": "npx tsx scripts/check-links.ts",
-    "build": "astro check && astro build && npx tsx scripts/check-links.ts",
+    "build": "astro check --minimumFailingSeverity warning && astro build && npx tsx scripts/check-links.ts",
     "preview": "astro preview",
     "astro": "astro"
   },
