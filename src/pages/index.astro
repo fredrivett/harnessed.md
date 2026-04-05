@@ -40,6 +40,7 @@ const { Content } = await render(home);
 			method="post"
 		>
 			<input type="email" name="email" placeholder="you@example.com" required />
+			<input type="hidden" name="redirect_url" value="https://www.harnessed.md" />
 			<button type="submit">Subscribe</button>
 		</form>
 	</section>
