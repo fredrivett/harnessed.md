@@ -1,4 +1,4 @@
-# harnessed.md
+# [harnessed.md](https://github.com/fredrivett/harnessed.md)
 
 **Building the machines that build the machines.**
 
@@ -8,24 +8,13 @@ A directory of companies who have gone all-in on harness engineering — buildin
 
 Harness engineering is the discipline of designing the system around an AI model so it can do reliable work. Instead of writing code directly, you engineer the tools, guardrails, verification loops, and context that make AI agents productive and trustworthy.
 
-The term was coined by Mitchell Hashimoto in February 2026 and quickly adopted by OpenAI, Anthropic, and the broader AI engineering community.
+The term was coined by [Mitchell Hashimoto](https://mitchellh.com/writing/my-ai-adoption-journey) in February 2026 and quickly adopted by OpenAI, Anthropic, and the broader AI engineering community.
 
 The core principle: when the agent makes a mistake, don't hope it does better next time. Engineer the environment so it can't make that mistake again.
 
-## What's on harnessed.md
-
-- **Company directory** — Teams and companies who have restructured around AI-first development
-- **Jobs** — Roles at companies building this way
-- **Articles** — Key writing on harness engineering from across the web
-- **Resources** — Tools, frameworks, and patterns for building effective harnesses
-
 ## Contributing
 
-Know a company that should be listed? Found a great article we're missing? PRs welcome.
-
-- To add a company, open a PR
-- To suggest an article or resource, open an issue
-- To fix something, just send it
+PRs welcome — whether it's adding a company, sharing an article, or fixing a typo.
 
 ## Key reading
 
