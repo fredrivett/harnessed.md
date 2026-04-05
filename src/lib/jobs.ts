@@ -75,12 +75,14 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 		const linkRegex = /<a\s[^>]*href="(\/careers\/[^"]*_[^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
 		while ((match = linkRegex.exec(html)) !== null) {
 			const href = match[1];
+			if (href.includes('?')) continue;
 			const inner = match[2];
 			const h4Match = inner.match(/<h4[^>]*>([^<]+)<\/h4>/);
 			if (!h4Match) continue;
 			const title = h4Match[1].trim();
 			const spanMatch = inner.match(/<span[^>]*>([^<]+)<\/span>/);
-			const location = spanMatch ? spanMatch[1].trim() : '—';
+			const loc = spanMatch ? spanMatch[1].trim() : '';
+			const location = loc && loc !== 'Apply' ? loc : '—';
 			jobs.push({ title, url: `${baseUrl}${href}`, location, department: '', company: '' });
 		}
 	}
