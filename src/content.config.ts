@@ -25,6 +25,7 @@ const companies = defineCollection({
 	schema: z.object({
 		name: z.string(),
 		url: z.string(),
+		careers: z.string().optional(),
 		reference: z.object({
 			title: z.string(),
 			url: z.string(),

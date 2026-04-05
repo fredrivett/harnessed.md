@@ -51,7 +51,7 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 				</table>
 			</div>
 		) : (
-			<p>No jobs available via API. Check <a href={company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
+			<p>No jobs available via API. Check <a href={company.data.careers || company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
 		)}
 	</section>
 	<script>
