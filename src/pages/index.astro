@@ -31,16 +31,20 @@
 
 			<section class="what">
 				<h2>What is a harnessed company?</h2>
-				<p>A harnessed company is one where engineers don't write the product — they build the system that lets AI write it. The workflow looks like this:</p>
-				<div class="mermaid" set:html={`graph LR
-    A[Plan] --> B[Light review]
-    B --> C[Push]
-    C --> D[Agent verifies]
-    D --> E{Issues?}
-    E -->|Yes| F[Agent fixes]
-    F --> D
-    E -->|No| G[Ship]`} />
-				<p>The human sets direction, designs constraints, and reviews output. The agent writes the code, runs the tests, and iterates until it's right. When something breaks, you don't fix the code — you fix the harness so it never breaks that way again.</p>
+				<p>A harnessed company is one where engineers don't write the product — they build the system that lets AI write it. The agent does the work. Humans contribute where they choose to.</p>
+				<p>The harness has two parts:</p>
+				<ul>
+					<li><strong>Guides</strong> (feedforward) — steer the agent <em>before</em> it acts: documentation, architectural rules, constraints, linters</li>
+					<li><strong>Sensors</strong> (feedback) — verify <em>after</em> it acts and self-correct: tests, CI, type checks, structural analysis</li>
+				</ul>
+				<div class="mermaid" set:html={`graph TD
+    G["Guides (feedforward)"] -->|constrain & direct| A[Agent builds]
+    A --> S["Sensors (feedback)"]
+    S --> P["Pass?"]
+    P -->|No| A
+    P -->|Yes| Ship
+    S -.->|failures become new guides| G`} />
+				<p>The system gets better over time. Every sensor failure is a candidate for a new guide — you don't fix the code, you fix the harness so it never breaks that way again. That's what makes it engineering, not configuration.</p>
 			</section>
 
 			<hr />
@@ -160,6 +164,14 @@
 
 			.what p:last-child {
 				margin-bottom: 0;
+			}
+
+			.what ul {
+				margin: 0 0 1rem 1.5rem;
+			}
+
+			.what li {
+				margin-bottom: 0.25rem;
 			}
 
 			.mermaid {
