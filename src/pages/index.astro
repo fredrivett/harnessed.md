@@ -62,7 +62,7 @@ companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]));
 						<tr>
 							<td><a href={`/companies/${company.id.replace(/^\d+-/, '')}`}>{company.data.name}</a></td>
 							<td><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></td>
-							<td>{company.data.stage}</td>
+							<td style="white-space:nowrap">{company.data.stage}</td>
 							<td>{company.data.headcount}</td>
 							<td>{jobCount
 								? <a href={`/companies/${company.id.replace(/^\d+-/, '')}#jobs`}>{jobCount}</a>
