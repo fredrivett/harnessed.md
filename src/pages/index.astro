@@ -2,9 +2,19 @@
 
 ---
 
-<html lang="en">
+<html lang="en" data-theme="auto">
 	<head>
 		<meta charset="utf-8" />
+		<script is:inline>
+			(function() {
+				var t = localStorage.getItem('theme');
+				if (t === 'light' || t === 'dark') {
+					document.documentElement.setAttribute('data-theme', t);
+					document.documentElement.setAttribute('data-force-theme', t);
+					document.documentElement.style.colorScheme = t;
+				}
+			})();
+		</script>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
