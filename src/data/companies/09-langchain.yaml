@@ -1,0 +1,13 @@
+name: LangChain
+url: https://www.langchain.com
+careers: https://www.langchain.com/careers
+reference:
+  title: The Anatomy of an Agent Harness
+  url: https://blog.langchain.com/the-anatomy-of-an-agent-harness/
+description: '"Agent = Model + Harness" — the framework, runtime, and harness stack'
+headcount: "51-200"
+stage: series-b
+ats:
+  provider: ashby
+  boardId: langchain
+  departmentFilter: engineer

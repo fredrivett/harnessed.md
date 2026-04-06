@@ -1,0 +1,13 @@
+name: Sierra
+url: https://sierra.ai
+careers: https://sierra.ai/careers
+reference:
+  title: Agents as a service
+  url: https://sierra.ai/blog/agents-as-a-service
+description: Enterprise AI agents for customer experience at scale
+headcount: "201-1000"
+stage: late-stage
+ats:
+  provider: ashby
+  boardId: sierra
+  departmentFilter: engineer

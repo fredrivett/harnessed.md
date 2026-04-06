@@ -1,0 +1,13 @@
+name: Vercel
+url: https://vercel.com
+careers: https://vercel.com/careers
+reference:
+  title: How we made v0 an effective coding agent
+  url: https://vercel.com/blog/how-we-made-v0-an-effective-coding-agent
+description: Removed 80% of v0's agent tools, got measurably better results
+headcount: "201-1000"
+stage: late-stage
+ats:
+  provider: greenhouse
+  boardId: vercel
+  departmentFilter: engineering

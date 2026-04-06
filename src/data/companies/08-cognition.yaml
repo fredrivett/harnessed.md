@@ -1,0 +1,13 @@
+name: Cognition
+url: https://cognition.ai
+careers: https://cognition.ai/careers
+reference:
+  title: How Cognition Uses Devin to Build Devin
+  url: https://cognition.ai/blog/how-cognition-uses-devin-to-build-devin
+description: Devin ships 67% merged PRs as an autonomous AI software engineer
+headcount: "201-1000"
+stage: late-stage
+ats:
+  provider: ashby
+  boardId: cognition
+  departmentFilter: engineer

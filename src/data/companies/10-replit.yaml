@@ -1,0 +1,13 @@
+name: Replit
+url: https://replit.com
+careers: https://replit.com/careers
+reference:
+  title: Keeping Replit Agent Reliable Through Decision-Time Guidance
+  url: https://blog.replit.com/securing-ai-generated-code
+description: 50M users building apps on the agentic creation platform
+headcount: "201-1000"
+stage: late-stage
+ats:
+  provider: ashby
+  boardId: replit
+  departmentFilter: engineer

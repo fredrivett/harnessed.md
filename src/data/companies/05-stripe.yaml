@@ -1,0 +1,13 @@
+name: Stripe
+url: https://stripe.com
+careers: https://stripe.com/jobs
+reference:
+  title: "Minions: Stripe's one-shot, end-to-end coding agents"
+  url: https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents
+description: 1,300+ AI-authored PRs merged weekly via autonomous Minions agents
+headcount: "5000+"
+stage: late-stage
+ats:
+  provider: greenhouse
+  boardId: stripe
+  departmentFilter: engineering

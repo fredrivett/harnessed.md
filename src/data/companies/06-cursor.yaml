@@ -1,0 +1,13 @@
+name: Cursor
+url: https://cursor.com
+careers: https://cursor.com/careers
+reference:
+  title: "Improving Cursor's agent for OpenAI Codex models"
+  url: https://cursor.com/blog/codex-model-harness
+description: Agent harness tuned per frontier model in the AI-native code editor
+headcount: "201-1000"
+stage: late-stage
+ats:
+  provider: careers-page
+  boardId: https://cursor.com/careers
+  departmentFilter: engineer
