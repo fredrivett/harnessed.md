@@ -345,6 +345,7 @@ footer {
 	padding: 3rem 1.5rem 3rem;
 	width: 100%;
 	border-top: 1px solid var(--border);
+	text-align: center;
 }
 
 footer .gibson {
