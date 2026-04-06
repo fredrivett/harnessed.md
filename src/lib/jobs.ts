@@ -47,6 +47,13 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string): Promi
 	if (!res.ok) return [];
 	const data = await res.json();
 
+	// Debug: log first job's keys and metadata
+	const firstJob = (data.jobs || [])[0];
+	if (firstJob) {
+		console.log(`[greenhouse:${boardId}] sample job keys: ${Object.keys(firstJob).join(', ')}`);
+		console.log(`[greenhouse:${boardId}] metadata: ${JSON.stringify(firstJob.metadata)}`);
+	}
+
 	return (data.jobs || [])
 		.filter((job: any) => {
 			const dept = (job.departments?.[0]?.name || '').toLowerCase();
@@ -114,6 +121,14 @@ async function fetchAshby(boardId: string, departmentFilter: string): Promise<Jo
 	const res = await fetchWithTimeout(`https://api.ashbyhq.com/posting-api/job-board/${boardId}`);
 	if (!res.ok) return [];
 	const data = await res.json();
+
+	// Debug: log first job's compensation fields
+	const firstJob = (data.jobs || [])[0];
+	if (firstJob) {
+		console.log(`[ashby:${boardId}] sample job keys: ${Object.keys(firstJob).join(', ')}`);
+		console.log(`[ashby:${boardId}] compensationTierSummary: ${JSON.stringify(firstJob.compensationTierSummary)}`);
+		console.log(`[ashby:${boardId}] compensation: ${JSON.stringify(firstJob.compensation)}`);
+	}
 
 	return (data.jobs || [])
 		.filter((job: any) => {
