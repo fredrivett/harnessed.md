@@ -15,6 +15,8 @@ const jobResults = await Promise.all(
 );
 const jobsByCompany = new Map<string, Job[]>();
 companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]!));
+const allJobs = jobResults.flat();
+const anySalary = allJobs.some((j) => j.salary);
 ---
 
 <Base title={`harnessed.md — ${description}`} description={description} class="narrow">
@@ -51,7 +53,7 @@ companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]!));
 					<tr>
 						<th>Name</th>
 						<th>Openings</th>
-						<th>Salary</th>
+						{anySalary && <th>Salary</th>}
 						<th>Stage</th>
 						<th>Headcount</th>
 					</tr>
@@ -67,7 +69,7 @@ companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]!));
 							<td>{jobCount
 								? <a href={`/companies/${company.id.replace(/^\d+-/, '')}#jobs`}>{jobCount}</a>
 								: '—'}</td>
-							<td style="white-space:nowrap">{range || '—'}</td>
+							{anySalary && <td style="white-space:nowrap">{range || '—'}</td>}
 							<td style="white-space:nowrap">{company.data.stage}</td>
 							<td>{company.data.headcount}</td>
 						</tr>
