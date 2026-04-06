@@ -1,0 +1,13 @@
+name: Scale AI
+url: https://scale.com
+careers: https://scale.com/careers
+reference:
+  title: "SWE Atlas: evaluating agents' full software engineering workflow"
+  url: https://scale.com/blog/swe-atlas
+description: AI data foundry and agent evaluation benchmark infrastructure
+headcount: "1001-5000"
+stage: late-stage
+ats:
+  provider: greenhouse
+  boardId: scaleai
+  departmentFilter: engineering

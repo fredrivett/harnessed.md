@@ -8,6 +8,6 @@ description: Agent harness tuned per frontier model in the AI-native code editor
 headcount: "201-1000"
 stage: late-stage
 ats:
-  provider: careers-page
-  boardId: https://cursor.com/careers
+  provider: ashby
+  boardId: cursor
   departmentFilter: engineer

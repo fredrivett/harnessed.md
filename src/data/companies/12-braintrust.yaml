@@ -1,0 +1,13 @@
+name: Braintrust
+url: https://www.braintrust.dev
+careers: https://www.braintrust.dev/careers
+reference:
+  title: Evals are the new PRD
+  url: https://www.braintrust.dev/blog/evals-are-the-new-prd
+description: AI eval and observability platform used by Stripe, Notion, and Vercel
+headcount: "51-200"
+stage: series-b
+ats:
+  provider: ashby
+  boardId: Braintrust
+  departmentFilter: engineer
