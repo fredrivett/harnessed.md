@@ -1,7 +1,7 @@
 ---
-import Base from '../../layouts/Base.astro';
+import Base from '../../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
-import { fetchJobs } from '../../lib/jobs';
+import { fetchJobs } from '../../../lib/jobs';
 
 export async function getStaticPaths() {
 	const companies = await getCollection('companies');
@@ -15,7 +15,7 @@ const { company } = Astro.props;
 const jobs = await fetchJobs(company.data.name, company.data.ats);
 ---
 
-<Base title={`${company.data.name} — harnessed.md`} description={`${company.data.name}: ${company.data.description}`}>
+<Base title={`${company.data.name} — harnessed.md`} description={`${company.data.name}: ${company.data.description}`} image={`/companies/${company.id.replace(/^\d+-/, '')}/og.png`}>
 	<section class="company-header">
 		<h2><a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a></h2>
 		<p>{company.data.description}</p>
