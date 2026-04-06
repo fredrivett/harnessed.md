@@ -246,7 +246,7 @@ p:last-child {
 }
 
 .companies .table-wrap {
-	--table-bleed: clamp(0rem, (100vw - var(--max-width)) / 2, 4rem);
+	--table-bleed: clamp(0rem, (100vw - var(--max-width)) / 2, 5rem);
 	margin-left: calc(-1 * var(--table-bleed));
 	margin-right: calc(-1 * var(--table-bleed));
 	overflow-x: auto;
@@ -254,8 +254,6 @@ p:last-child {
 
 .companies table {
 	min-width: 100%;
-	margin-left: -0.5rem;
-	margin-right: -0.5rem;
 	border-collapse: collapse;
 	font-size: 0.85rem;
 }
