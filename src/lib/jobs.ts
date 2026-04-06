@@ -4,6 +4,7 @@ export interface Job {
 	location: string;
 	department: string;
 	company: string;
+	salary?: string;
 }
 
 interface AtsConfig {
@@ -27,6 +28,20 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	}
 }
 
+function extractGreenhouseSalary(job: any): string | undefined {
+	// Check metadata for salary fields
+	const meta = job.metadata as any[] | undefined;
+	if (meta) {
+		for (const m of meta) {
+			const name = (m.name || '').toLowerCase();
+			if (name.includes('salary') || name.includes('compensation') || name.includes('pay')) {
+				if (m.value) return String(m.value);
+			}
+		}
+	}
+	return undefined;
+}
+
 async function fetchGreenhouse(boardId: string, departmentFilter: string): Promise<Job[]> {
 	const res = await fetchWithTimeout(`https://boards-api.greenhouse.io/v1/boards/${boardId}/jobs?content=true`);
 	if (!res.ok) return [];
@@ -43,6 +58,7 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string): Promi
 			location: job.location?.name || 'Remote',
 			department: job.departments?.[0]?.name || '',
 			company: '',
+			salary: extractGreenhouseSalary(job),
 		}));
 }
 
@@ -113,7 +129,30 @@ async function fetchAshby(boardId: string, departmentFilter: string): Promise<Jo
 			location: job.locationName || job.location || 'Remote',
 			department: job.departmentName || job.department || '',
 			company: '',
+			salary: job.compensationTierSummary || undefined,
 		}));
+}
+
+export function salaryRange(jobs: Job[]): string | undefined {
+	const withSalary = jobs.filter((j) => j.salary);
+	if (withSalary.length === 0) return undefined;
+
+	// Extract all dollar amounts from salary strings
+	const amounts: number[] = [];
+	for (const job of withSalary) {
+		const matches = job.salary!.matchAll(/\$?([\d,]+)k?/gi);
+		for (const m of matches) {
+			let val = Number(m[1]!.replace(/,/g, ''));
+			if (m[0]!.toLowerCase().endsWith('k')) val *= 1000;
+			if (val > 0) amounts.push(val);
+		}
+	}
+	if (amounts.length === 0) return undefined;
+
+	const min = Math.min(...amounts);
+	const max = Math.max(...amounts);
+	const fmt = (n: number) => `$${Math.round(n / 1000)}K`;
+	return min === max ? fmt(min) : `${fmt(min)} – ${fmt(max)}`;
 }
 
 export async function fetchJobs(companyName: string, ats?: AtsConfig): Promise<Job[]> {

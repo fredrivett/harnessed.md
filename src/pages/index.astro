@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getEntry, getCollection, render } from 'astro:content';
-import { fetchJobs, type Job } from '../lib/jobs';
+import { fetchJobs, salaryRange, type Job } from '../lib/jobs';
 
 const home = await getEntry('pages', 'home');
 if (!home) throw new Error('Missing pages/home entry');
@@ -51,29 +51,32 @@ companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]!));
 					<tr>
 						<th>Name</th>
 						<th>Openings</th>
+						<th>Salary</th>
 						<th>Stage</th>
 						<th>Headcount</th>
-						<th>Source</th>
 					</tr>
 				</thead>
 				<tbody>
 					{companies.map((company) => {
-						const jobCount = (jobsByCompany.get(company.data.name) || []).length;
+						const jobs = jobsByCompany.get(company.data.name) || [];
+						const jobCount = jobs.length;
+						const range = salaryRange(jobs);
 						return (
 						<tr>
 							<td><a href={`/companies/${company.id.replace(/^\d+-/, '')}`}>{company.data.name}</a></td>
 							<td>{jobCount
 								? <a href={`/companies/${company.id.replace(/^\d+-/, '')}#jobs`}>{jobCount}</a>
 								: '—'}</td>
+							<td style="white-space:nowrap">{range || '—'}</td>
 							<td style="white-space:nowrap">{company.data.stage}</td>
 							<td>{company.data.headcount}</td>
-							<td><a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a></td>
 						</tr>
 						);
 					})}
 				</tbody>
 			</table>
 		</div>
+		<p class="all-jobs-link"><a href="/jobs">Browse all openings →</a></p>
 	</section>
 
 	<hr />

@@ -31,6 +31,10 @@ const companies = defineCollection({
 			title: z.string(),
 			url: z.string(),
 		}),
+		sources: z.array(z.object({
+			title: z.string(),
+			url: z.string(),
+		})).optional(),
 		description: z.string(),
 		headcount: z.enum(['1-10', '11-50', '51-200', '201-1000', '1001-5000', '5000+']),
 		stage: z.enum(['bootstrapped', 'seed', 'series-a', 'series-b', 'series-c', 'late-stage', 'growth', 'public']),

@@ -4,6 +4,9 @@ careers: https://www.anthropic.com/careers
 reference:
   title: Harness design for long-running application development
   url: https://www.anthropic.com/engineering/harness-design-long-running-apps
+sources:
+  - title: Harness design for long-running application development
+    url: https://www.anthropic.com/engineering/harness-design-long-running-apps
 description: Multi-agent harness for long-running coding sessions
 headcount: "1001-5000"
 stage: late-stage

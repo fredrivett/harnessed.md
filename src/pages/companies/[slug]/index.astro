@@ -13,6 +13,10 @@ export async function getStaticPaths() {
 
 const { company } = Astro.props;
 const jobs = await fetchJobs(company.data.name, company.data.ats);
+const hasSalary = jobs.some((j) => j.salary);
+const departments = [...new Set(jobs.map((j) => j.department).filter(Boolean))].sort();
+const locations = [...new Set(jobs.map((j) => j.location).filter(Boolean))].sort();
+const sources = company.data.sources || [];
 ---
 
 <Base title={`${company.data.name} — harnessed.md`} description={`${company.data.name}: ${company.data.description}`} image={`/companies/${company.id.replace(/^\d+-/, '')}/og.png`}>
@@ -20,10 +24,21 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 		<h2><a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a></h2>
 		<p>{company.data.description}</p>
 		<p class="company-meta">
-			{company.data.stage} · {company.data.headcount} employees ·
-			<a href={company.data.reference.url} target="_blank" rel="noopener">{company.data.reference.title}</a>
+			{company.data.stage} · {company.data.headcount} employees
 		</p>
 	</section>
+
+	{sources.length > 0 && (
+		<hr />
+		<section class="sources">
+			<h2 id="sources"><a class="heading-hash" href="#sources">##</a>What they've said</h2>
+			<ul>
+				{sources.map((source) => (
+					<li><a href={source.url} target="_blank" rel="noopener">{source.title}</a></li>
+				))}
+			</ul>
+		</section>
+	)}
 
 	<hr />
 
@@ -33,6 +48,21 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 			{company.data.careers && <a href={company.data.careers} target="_blank" rel="noopener" class="careers-link">Careers page ↗</a>}
 		</div>
 		{jobs.length > 0 ? (
+			<div class="jobs-filters">
+				<input type="text" id="filter-role" placeholder="Search roles…" />
+				{departments.length > 1 && (
+					<select id="filter-department">
+						<option value="">All departments</option>
+						{departments.map((d) => <option value={d}>{d}</option>)}
+					</select>
+				)}
+				{locations.length > 1 && (
+					<select id="filter-location">
+						<option value="">All locations</option>
+						{locations.map((l) => <option value={l}>{l}</option>)}
+					</select>
+				)}
+			</div>
 			<div class="table-wrap">
 				<table>
 					<thead>
@@ -40,24 +70,28 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 							<th data-sort="string">Role</th>
 							<th data-sort="string">Department</th>
 							<th data-sort="string">Location</th>
+							{hasSalary && <th data-sort="string">Salary</th>}
 						</tr>
 					</thead>
 					<tbody>
 						{jobs.map((job) => (
-							<tr>
+							<tr data-role={job.title.toLowerCase()} data-department={job.department} data-location={job.location}>
 								<td data-value={job.title}><a href={job.url} target="_blank" rel="noopener">{job.title}</a></td>
 								<td data-value={job.department}>{job.department}</td>
 								<td data-value={job.location}>{job.location}</td>
+								{hasSalary && <td data-value={job.salary || ''}>{job.salary || '—'}</td>}
 							</tr>
 						))}
 					</tbody>
 				</table>
 			</div>
+			<p class="filter-count"></p>
 		) : (
 			<p>No jobs available via API. Check <a href={company.data.careers || company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
 		)}
 	</section>
 	<script>
+		// Sorting
 		document.querySelectorAll('th[data-sort]').forEach((th) => {
 			th.addEventListener('click', () => {
 				const table = th.closest('table')!;
@@ -84,6 +118,41 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 				rows.forEach((row) => tbody.appendChild(row));
 			});
 		});
+
+		// Filtering
+		const roleInput = document.getElementById('filter-role') as HTMLInputElement | null;
+		const deptSelect = document.getElementById('filter-department') as HTMLSelectElement | null;
+		const locSelect = document.getElementById('filter-location') as HTMLSelectElement | null;
+		const tbody = document.querySelector('.jobs tbody');
+		const filterCount = document.querySelector('.filter-count');
+
+		function applyFilters() {
+			if (!tbody) return;
+			const role = (roleInput?.value || '').toLowerCase();
+			const dept = deptSelect?.value || '';
+			const loc = locSelect?.value || '';
+			const rows = tbody.querySelectorAll('tr');
+			let visible = 0;
+
+			rows.forEach((row) => {
+				const tr = row as HTMLElement;
+				const matchRole = !role || (tr.dataset.role || '').includes(role);
+				const matchDept = !dept || tr.dataset.department === dept;
+				const matchLoc = !loc || tr.dataset.location === loc;
+				const show = matchRole && matchDept && matchLoc;
+				tr.style.display = show ? '' : 'none';
+				if (show) visible++;
+			});
+
+			if (filterCount) {
+				const total = rows.length;
+				filterCount.textContent = (role || dept || loc) ? `Showing ${visible} of ${total}` : '';
+			}
+		}
+
+		roleInput?.addEventListener('input', applyFilters);
+		deptSelect?.addEventListener('change', applyFilters);
+		locSelect?.addEventListener('change', applyFilters);
 	</script>
 </Base>
 
@@ -98,6 +167,23 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 	}
 
 	.company-meta a {
+		color: var(--text-secondary);
+	}
+
+	.sources {
+		margin-bottom: 1rem;
+	}
+
+	.sources ul {
+		list-style: none;
+		margin: 0;
+	}
+
+	.sources li {
+		margin-bottom: 0.5rem;
+	}
+
+	.sources a {
 		color: var(--text-secondary);
 	}
 
@@ -116,12 +202,39 @@ const jobs = await fetchJobs(company.data.name, company.data.ats);
 		color: var(--text-secondary);
 	}
 
+	.jobs-filters {
+		display: flex;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.jobs-filters input,
+	.jobs-filters select {
+		padding: 0.4rem 0.6rem;
+		font-family: inherit;
+		font-size: 0.85rem;
+		color: var(--text);
+		background: var(--bg);
+		border: 1px solid var(--border);
+		border-radius: 4px;
+	}
+
+	.jobs-filters input {
+		flex: 1;
+		min-width: 150px;
+	}
+
+	.filter-count {
+		font-size: 0.85rem;
+		color: var(--text-secondary);
+		margin-top: 0.5rem;
+	}
+
 	.jobs table {
 		min-width: 100%;
 		border-collapse: collapse;
 		font-size: 0.85rem;
-		margin-left: -0.5rem;
-		margin-right: -0.5rem;
 	}
 
 	.jobs th {

@@ -1,0 +1,234 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { fetchJobs, type Job } from '../lib/jobs';
+
+const companies = await getCollection('companies');
+
+const jobResults = await Promise.all(
+	companies.map((c) => fetchJobs(c.data.name, c.data.ats))
+);
+const allJobs: Job[] = jobResults.flat();
+const hasSalary = allJobs.some((j) => j.salary);
+
+const companyNames = [...new Set(allJobs.map((j) => j.company))].sort();
+const departments = [...new Set(allJobs.map((j) => j.department).filter(Boolean))].sort();
+const locations = [...new Set(allJobs.map((j) => j.location).filter(Boolean))].sort();
+
+const companySlugMap = new Map<string, string>();
+companies.forEach((c) => companySlugMap.set(c.data.name, c.id.replace(/^\d+-/, '')));
+---
+
+<Base title="All openings — harnessed.md" description="Engineering jobs at companies that have gone all-in on harness engineering.">
+	<section class="all-jobs">
+		<h2 id="jobs"><a class="heading-hash" href="#jobs">##</a>All openings ({allJobs.length})</h2>
+		<p>Engineering jobs at companies that have gone all-in on harness engineering.</p>
+
+		<div class="jobs-filters">
+			<input type="text" id="filter-role" placeholder="Search roles…" />
+			{companyNames.length > 1 && (
+				<select id="filter-company">
+					<option value="">All companies</option>
+					{companyNames.map((c) => <option value={c}>{c}</option>)}
+				</select>
+			)}
+			{departments.length > 1 && (
+				<select id="filter-department">
+					<option value="">All departments</option>
+					{departments.map((d) => <option value={d}>{d}</option>)}
+				</select>
+			)}
+			{locations.length > 1 && (
+				<select id="filter-location">
+					<option value="">All locations</option>
+					{locations.map((l) => <option value={l}>{l}</option>)}
+				</select>
+			)}
+		</div>
+
+		<div class="table-wrap">
+			<table>
+				<thead>
+					<tr>
+						<th data-sort="string">Role</th>
+						<th data-sort="string">Company</th>
+						<th data-sort="string">Department</th>
+						<th data-sort="string">Location</th>
+						{hasSalary && <th data-sort="string">Salary</th>}
+					</tr>
+				</thead>
+				<tbody>
+					{allJobs.map((job) => (
+						<tr data-role={job.title.toLowerCase()} data-company={job.company} data-department={job.department} data-location={job.location}>
+							<td data-value={job.title}><a href={job.url} target="_blank" rel="noopener">{job.title}</a></td>
+							<td data-value={job.company}><a href={`/companies/${companySlugMap.get(job.company)}`}>{job.company}</a></td>
+							<td data-value={job.department}>{job.department}</td>
+							<td data-value={job.location}>{job.location}</td>
+							{hasSalary && <td data-value={job.salary || ''}>{job.salary || '—'}</td>}
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+		<p class="filter-count"></p>
+	</section>
+
+	<script>
+		// Sorting
+		document.querySelectorAll('th[data-sort]').forEach((th) => {
+			th.addEventListener('click', () => {
+				const table = th.closest('table')!;
+				const tbody = table.querySelector('tbody')!;
+				const idx = Array.from(th.parentElement!.children).indexOf(th);
+				const type = th.getAttribute('data-sort');
+				const rows = Array.from(tbody.querySelectorAll('tr'));
+
+				const currentDir = th.getAttribute('aria-sort');
+				const asc = currentDir !== 'ascending';
+
+				table.querySelectorAll('th[data-sort]').forEach((h) => h.removeAttribute('aria-sort'));
+				th.setAttribute('aria-sort', asc ? 'ascending' : 'descending');
+
+				rows.sort((a, b) => {
+					const aVal = a.children[idx]?.getAttribute('data-value') || '';
+					const bVal = b.children[idx]?.getAttribute('data-value') || '';
+					if (type === 'number') {
+						return asc ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
+					}
+					return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+				});
+
+				rows.forEach((row) => tbody.appendChild(row));
+			});
+		});
+
+		// Filtering
+		const roleInput = document.getElementById('filter-role') as HTMLInputElement | null;
+		const companySelect = document.getElementById('filter-company') as HTMLSelectElement | null;
+		const deptSelect = document.getElementById('filter-department') as HTMLSelectElement | null;
+		const locSelect = document.getElementById('filter-location') as HTMLSelectElement | null;
+		const tbody = document.querySelector('.all-jobs tbody');
+		const filterCount = document.querySelector('.filter-count');
+
+		function applyFilters() {
+			if (!tbody) return;
+			const role = (roleInput?.value || '').toLowerCase();
+			const company = companySelect?.value || '';
+			const dept = deptSelect?.value || '';
+			const loc = locSelect?.value || '';
+			const rows = tbody.querySelectorAll('tr');
+			let visible = 0;
+
+			rows.forEach((row) => {
+				const tr = row as HTMLElement;
+				const matchRole = !role || (tr.dataset.role || '').includes(role);
+				const matchCompany = !company || tr.dataset.company === company;
+				const matchDept = !dept || tr.dataset.department === dept;
+				const matchLoc = !loc || tr.dataset.location === loc;
+				const show = matchRole && matchCompany && matchDept && matchLoc;
+				tr.style.display = show ? '' : 'none';
+				if (show) visible++;
+			});
+
+			if (filterCount) {
+				const total = rows.length;
+				filterCount.textContent = (role || company || dept || loc) ? `Showing ${visible} of ${total}` : '';
+			}
+		}
+
+		roleInput?.addEventListener('input', applyFilters);
+		companySelect?.addEventListener('change', applyFilters);
+		deptSelect?.addEventListener('change', applyFilters);
+		locSelect?.addEventListener('change', applyFilters);
+	</script>
+</Base>
+
+<style is:global>
+	.all-jobs {
+		margin-bottom: 2rem;
+	}
+
+	.all-jobs p {
+		color: var(--text-secondary);
+	}
+
+	.all-jobs .jobs-filters {
+		display: flex;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.all-jobs .jobs-filters input,
+	.all-jobs .jobs-filters select {
+		padding: 0.4rem 0.6rem;
+		font-family: inherit;
+		font-size: 0.85rem;
+		color: var(--text);
+		background: var(--bg);
+		border: 1px solid var(--border);
+		border-radius: 4px;
+	}
+
+	.all-jobs .jobs-filters input {
+		flex: 1;
+		min-width: 150px;
+	}
+
+	.all-jobs .filter-count {
+		font-size: 0.85rem;
+		color: var(--text-secondary);
+		margin-top: 0.5rem;
+	}
+
+	.all-jobs table {
+		min-width: 100%;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+	}
+
+	.all-jobs th {
+		text-align: left;
+		font-weight: 700;
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.all-jobs th[data-sort] {
+		cursor: pointer;
+		user-select: none;
+	}
+
+	.all-jobs th[data-sort]::after {
+		content: ' ↕';
+		font-size: 1em;
+		opacity: 0.4;
+	}
+
+	.all-jobs th[aria-sort="ascending"]::after {
+		content: ' ↑';
+		opacity: 0.8;
+	}
+
+	.all-jobs th[aria-sort="descending"]::after {
+		content: ' ↓';
+		opacity: 0.8;
+	}
+
+	.all-jobs td {
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.all-jobs td:first-child a {
+		color: var(--text);
+	}
+
+	.all-jobs td a {
+		color: var(--text-secondary);
+	}
+
+	.all-jobs tr:last-child td {
+		border-bottom: none;
+	}
+</style>
