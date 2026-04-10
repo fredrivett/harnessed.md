@@ -1,14 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getEntry, getCollection } from 'astro:content';
-
-function toPlainMarkdown(body: string): string {
-	return body
-		.replace(/<pre><code>([\s\S]*?)<\/code><\/pre>/g, (_match, content: string) => {
-			const plain = content.replace(/<a[^>]*>([^<]*)<\/a>/g, '$1');
-			return '```\n' + plain.trimEnd() + '\n```';
-		})
-		.replace(/<a[^>]*>([^<]*)<\/a>/g, '$1');
-}
+import { toPlainMarkdown } from '../lib/markdown';
 
 export const GET: APIRoute = async () => {
 	const home = await getEntry('pages', 'home');

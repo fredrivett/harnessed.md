@@ -19,3 +19,4 @@ Run `npm run build` to check for errors before pushing. This runs:
 1. `astro check` — TypeScript type checking
 2. `astro build` — static site generation
 3. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
+4. `check-llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
