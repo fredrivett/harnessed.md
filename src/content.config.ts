@@ -11,13 +11,13 @@ const pages = defineCollection({
 			text: z.string(),
 			source: z.string(),
 			url: z.string(),
-		}),
+		}).optional(),
 		reading: z.array(z.object({
 			title: z.string(),
 			url: z.string(),
 			author: z.string(),
 			tag: z.string(),
-		})),
+		})).optional(),
 	}),
 });
 

@@ -1,210 +1,73 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getEntry, render } from 'astro:content';
 
-const description = 'A practical guide to configuring your agent harness — AGENTS.md, skills, hooks, and context tiers.';
+const guides = await getEntry('pages', 'guides');
+if (!guides) throw new Error('Missing pages/guides entry');
+const { description } = guides.data;
+const { Content } = await render(guides);
 ---
 
 <Base title={`Guides — harnessed.md`} description={description} class="narrow">
-	<section class="guides-intro">
-		<p>The <a href="/">harness</a> has three parts: guides, verify, observe. This page covers <strong>guides</strong> — the instructions that steer an agent <em>before</em> it acts.</p>
-		<p>A well-configured guide layer is the highest-leverage investment you can make. It determines whether your agent produces useful work on the first attempt or burns cycles on wrong approaches.</p>
-	</section>
-
-	<hr />
-
-	<section class="guides-section">
-		<h2 id="agents-md"><a class="heading-hash" href="#agents-md">##</a>AGENTS.md</h2>
-		<p><a href="https://agents.md/" target="_blank" rel="noopener">AGENTS.md</a> is an open, tool-agnostic standard for guiding coding agents. It lives at your project root and is read by Codex, Cursor, Gemini CLI, GitHub Copilot, and others. It's backed by the <a href="https://agentic-ai.dev/" target="_blank" rel="noopener">Linux Foundation's Agentic AI Foundation</a> with support from OpenAI, Anthropic, Google, and AWS.</p>
-		<p>Claude Code reads <code>CLAUDE.md</code>, which is a superset — it supports everything AGENTS.md does plus Claude-specific features like <code>@imports</code> and path-scoped rules. If you use multiple tools, write an AGENTS.md as your cross-tool base and import it:</p>
-		<pre><code># CLAUDE.md
-@AGENTS.md
-
-# Claude-specific
-Use plan mode for changes under src/billing/.</code></pre>
-		<p>What to include — from <a href="https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/" target="_blank" rel="noopener">GitHub's analysis of 2,500+ repos</a>:</p>
-		<ul>
-			<li><strong>Commands</strong> — build, test, lint, deploy</li>
-			<li><strong>Testing</strong> — how to run tests, preferred frameworks</li>
-			<li><strong>Project structure</strong> — key directories and their purpose</li>
-			<li><strong>Code style</strong> — only rules that differ from defaults</li>
-			<li><strong>Git workflow</strong> — branch naming, PR conventions</li>
-			<li><strong>Boundaries</strong> — "always do", "ask first", "never do"</li>
-		</ul>
-		<p>Keep it short. For each line, ask: <em>"would removing this cause the agent to make mistakes?"</em> If not, cut it. A focused 50-line file outperforms a comprehensive 500-line file — important rules get lost in noise.</p>
-	</section>
-
-	<hr />
-
-	<section class="guides-section">
-		<h2 id="config-stack"><a class="heading-hash" href="#config-stack">##</a>The config stack</h2>
-		<p>AGENTS.md is just one layer. Modern agent tools support progressive disclosure — information loads only when relevant, keeping the agent's context clean.</p>
-		<div class="table-wrap">
-			<table>
-				<thead>
-					<tr>
-						<th>Layer</th>
-						<th>What</th>
-						<th>When it loads</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>AGENTS.md</td>
-						<td>Durable policy and conventions</td>
-						<td>Every session</td>
-					</tr>
-					<tr>
-						<td>Path-scoped rules</td>
-						<td>File-type or directory-specific instructions</td>
-						<td>When working in matching paths</td>
-					</tr>
-					<tr>
-						<td>Skills</td>
-						<td>On-demand knowledge and workflows</td>
-						<td>When relevant or directly invoked</td>
-					</tr>
-					<tr>
-						<td>Hooks</td>
-						<td>Mechanical enforcement</td>
-						<td>Every time, zero exceptions</td>
-					</tr>
-					<tr>
-						<td>Subagents</td>
-						<td>Isolated task delegation</td>
-						<td>When spawned for research, review, etc.</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<p>The key distinction: AGENTS.md is <em>advisory</em> — the agent reads it but may not follow it perfectly. Hooks are <em>deterministic</em> — they run scripts that enforce behaviour mechanically. If something must happen every time (formatting, linting, blocking commits to main), use a hook, not a rule.</p>
-	</section>
-
-	<hr />
-
-	<section class="guides-section">
-		<h2 id="skills"><a class="heading-hash" href="#skills">##</a>Skills</h2>
-		<p>Skills extend what an agent can do. A skill is a folder with a <code>SKILL.md</code> file containing instructions the agent loads on demand — domain knowledge, workflows, or repeatable tasks you invoke with <code>/skill-name</code>.</p>
-		<p>The <a href="https://agentskills.io/specification" target="_blank" rel="noopener">Agent Skills</a> open standard works across Claude Code, Codex, Cursor, VS Code Copilot, and others. Skills are how you teach an agent about <em>your</em> domain without bloating every session's context.</p>
-		<p>Examples of useful skills:</p>
-		<ul>
-			<li><strong>Workflows</strong> — <code>/deploy</code>, <code>/fix-issue 1234</code>, <code>/review-pr</code></li>
-			<li><strong>Domain knowledge</strong> — API conventions, database patterns, legacy system context</li>
-			<li><strong>Compound loops</strong> — <a href="https://every.to/guides/compound-engineering" target="_blank" rel="noopener">Every's compound engineering plugin</a> uses skills to implement plan/work/review/compound cycles</li>
-		</ul>
-	</section>
-
-	<hr />
-
-	<section class="guides-section">
-		<h2 id="hooks"><a class="heading-hash" href="#hooks">##</a>Hooks</h2>
-		<p>Hooks run scripts at specific points in the agent's lifecycle — before a tool runs, after a file edit, when a session starts. Unlike rules which are advisory, hooks guarantee the action happens.</p>
-		<p>Common hooks:</p>
-		<ul>
-			<li>Run a linter after every file edit</li>
-			<li>Block commits to <code>main</code> or <code>production</code></li>
-			<li>Auto-format code on save</li>
-			<li>Validate that migrations have a corresponding rollback</li>
-		</ul>
-		<p>The rule of thumb: if you've written a rule in AGENTS.md and the agent keeps ignoring it, convert it to a hook.</p>
-	</section>
-
-	<hr />
-
-	<section class="guides-section">
-		<h2 id="context-tiers"><a class="heading-hash" href="#context-tiers">##</a>Context tiers</h2>
-		<p>Most people put everything in AGENTS.md and wonder why the agent ignores half of it. The problem is context — agents perform best with the <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener">smallest possible set of high-signal tokens</a>.</p>
-		<p>Think about your guides in three tiers:</p>
-		<ul>
-			<li><strong>Hot memory</strong> (always loaded) — AGENTS.md, path-scoped rules. Keep this minimal: only what applies to <em>every</em> session.</li>
-			<li><strong>Domain specialists</strong> (invoked per task) — skills and subagents. Domain knowledge, workflows, and focused expertise that loads when relevant.</li>
-			<li><strong>Cold memory</strong> (retrieved on demand) — design docs, past learnings, architectural decisions. The agent searches for these when it needs them.</li>
-		</ul>
-		<p>When you notice your AGENTS.md growing past ~100 lines, move domain-specific knowledge to skills and project documentation to cold storage. The agent will find it when it needs it.</p>
-	</section>
-
-	<hr />
-
-	<section class="guides-section">
-		<h2 id="further-reading"><a class="heading-hash" href="#further-reading">##</a>Further reading</h2>
-		<ul class="further-reading-list">
-			<li><a href="https://code.claude.com/docs/en/best-practices" target="_blank" rel="noopener">Best Practices for Claude Code</a> — Anthropic's official playbook</li>
-			<li><a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">Extend Claude with Skills</a> — creating, configuring, and sharing skills</li>
-			<li><a href="https://code.claude.com/docs/en/hooks-guide" target="_blank" rel="noopener">Hooks Guide</a> — lifecycle events and mechanical enforcement</li>
-			<li><a href="https://agentskills.io/specification" target="_blank" rel="noopener">Agent Skills Specification</a> — the open standard for portable skills</li>
-			<li><a href="https://agents.md/" target="_blank" rel="noopener">AGENTS.md</a> — the cross-tool standard for agent instructions</li>
-			<li><a href="https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/" target="_blank" rel="noopener">How to Write a Great agents.md</a> — GitHub's analysis of 2,500+ repos</li>
-		</ul>
+	<section class="guides">
+		<Content />
 	</section>
 </Base>
 
 <style is:global>
-	.guides-intro {
-		margin-bottom: 1rem;
+	.guides {
+		margin-bottom: 2rem;
 	}
 
-	.guides-section {
-		margin-bottom: 1rem;
-	}
-
-	.guides-section ul {
+	.guides ul {
 		margin: 0 0 1rem 1.5rem;
 	}
 
-	.guides-section li {
+	.guides li {
 		margin-bottom: 0.25rem;
 	}
 
-	.guides-section code {
+	.guides code {
 		font-size: 0.85rem;
 		background: var(--code-bg);
 		padding: 0.1rem 0.3rem;
 		border-radius: 3px;
 	}
 
-	.guides-section pre code {
+	.guides pre code {
 		background: none;
 		padding: 0;
 	}
 
-	.guides-section .table-wrap {
-		--table-bleed: clamp(0rem, (100vw - var(--max-width)) / 2, 5rem);
-		margin-left: calc(-1 * var(--table-bleed));
-		margin-right: calc(-1 * var(--table-bleed));
-		overflow-x: auto;
-	}
-
-	.guides-section table {
+	.guides table {
 		min-width: 100%;
 		border-collapse: collapse;
 		font-size: 0.85rem;
+		margin-bottom: 1rem;
 	}
 
-	.guides-section th {
+	.guides th {
 		text-align: left;
 		font-weight: 700;
 		padding: 0.5rem 0.75rem;
 		border-bottom: 1px solid var(--border);
 	}
 
-	.guides-section td {
+	.guides td {
 		padding: 0.5rem 0.75rem;
 		border-bottom: 1px solid var(--border);
 	}
 
-	.guides-section tr:last-child td {
+	.guides tr:last-child td {
 		border-bottom: none;
 	}
 
-	.further-reading-list {
-		list-style: none !important;
-		margin-left: 0 !important;
+	.guides h2:last-of-type + ul {
+		list-style: none;
+		margin-left: 0;
 	}
 
-	.further-reading-list li {
+	.guides h2:last-of-type + ul li {
 		margin-bottom: 0.5rem;
-	}
-
-	.further-reading-list a {
-		color: var(--text);
 	}
 </style>
