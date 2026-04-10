@@ -1,10 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
+import ReadingList from '../components/ReadingList.astro';
 import { getEntry, render } from 'astro:content';
 
 const guides = await getEntry('pages', 'guides');
 if (!guides) throw new Error('Missing pages/guides entry');
-const { description } = guides.data;
+const { description, reading } = guides.data;
 const { Content } = await render(guides);
 ---
 
@@ -12,6 +13,11 @@ const { Content } = await render(guides);
 	<section class="guides">
 		<Content />
 	</section>
+
+	{reading && (
+		<hr />
+		<ReadingList title="Further reading" items={reading} />
+	)}
 </Base>
 
 <style is:global>
@@ -60,14 +66,5 @@ const { Content } = await render(guides);
 
 	.guides tr:last-child td {
 		border-bottom: none;
-	}
-
-	.guides h2:last-of-type + ul {
-		list-style: none;
-		margin-left: 0;
-	}
-
-	.guides h2:last-of-type + ul li {
-		margin-bottom: 0.5rem;
 	}
 </style>

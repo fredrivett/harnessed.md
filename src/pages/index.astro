@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import ReadingList from '../components/ReadingList.astro';
 import { getEntry, getCollection, render } from 'astro:content';
 import { fetchJobs, salaryRange, type Job } from '../lib/jobs';
 
@@ -34,14 +35,7 @@ const anySalary = allJobs.some((j) => j.salary);
 
 	<hr />
 
-	<section class="reading">
-		<h2 id="reading"><a class="heading-hash" href="#reading">##</a>Key reading</h2>
-		<ul>
-			{reading.map((item) => (
-				<li><a href={item.url} target="_blank" rel="noopener">{item.title}</a> — {item.author} <span class="tag">{item.tag}</span></li>
-			))}
-		</ul>
-	</section>
+	<ReadingList title="Key reading" items={reading} />
 
 	<hr />
 

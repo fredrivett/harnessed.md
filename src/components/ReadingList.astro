@@ -1,0 +1,23 @@
+---
+interface Props {
+	title: string;
+	items: Array<{
+		title: string;
+		url: string;
+		author: string;
+		tag: string;
+	}>;
+}
+
+const { title, items } = Astro.props;
+const id = title.toLowerCase().replace(/\s+/g, '-');
+---
+
+<section class="reading">
+	<h2 id={id}><a class="heading-hash" href={`#${id}`}>##</a>{title}</h2>
+	<ul>
+		{items.map((item) => (
+			<li><a href={item.url} target="_blank" rel="noopener">{item.title}</a> — {item.author} <span class="tag">{item.tag}</span></li>
+		))}
+	</ul>
+</section>

@@ -44,7 +44,7 @@ Traditionally engineers spent 80% of their time on features, 20% on the system. 
 
 The harness has three parts:
 
-- **Guides** — steer the agent _before_ it acts: AGENTS.md, design docs, architecture maps, rules, learnings
+- **[Guides](/guides)** — steer the agent _before_ it acts: AGENTS.md, design docs, architecture maps, rules, learnings
 - **Verify** — check the work before it ships: types, linters, tests, agentic review
 - **Observe** — monitor: error tracking, usage patterns, performance
 

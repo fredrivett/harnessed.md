@@ -1,6 +1,27 @@
 ---
 title: Guides
 description: A practical guide to configuring your agent harness — AGENTS.md, skills, hooks, and context tiers.
+reading:
+  - title: Best Practices for Claude Code
+    url: https://code.claude.com/docs/en/best-practices
+    author: Anthropic
+    tag: The official playbook
+  - title: Extend Claude with Skills
+    url: https://code.claude.com/docs/en/skills
+    author: Anthropic
+    tag: Creating, configuring, and sharing skills
+  - title: Hooks Guide
+    url: https://code.claude.com/docs/en/hooks-guide
+    author: Anthropic
+    tag: Lifecycle events and mechanical enforcement
+  - title: Agent Skills Specification
+    url: https://agentskills.io/specification
+    author: Anthropic
+    tag: The open standard for portable skills
+  - title: How to Write a Great agents.md
+    url: https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/
+    author: GitHub
+    tag: Lessons from 2,500+ repos
 ---
 
 The [harness](/) has three parts: guides, verify, observe. This page covers **guides** — the instructions that steer an agent _before_ it acts.
@@ -82,12 +103,3 @@ Think about your guides in three tiers:
 - **Cold memory** (retrieved on demand) — design docs, past learnings, architectural decisions. The agent searches for these when it needs them.
 
 When you notice your AGENTS.md growing past ~100 lines, move domain-specific knowledge to skills and project documentation to cold storage. The agent will find it when it needs it.
-
-## Further reading
-
-- [Best Practices for Claude Code](https://code.claude.com/docs/en/best-practices) — Anthropic's official playbook
-- [Extend Claude with Skills](https://code.claude.com/docs/en/skills) — creating, configuring, and sharing skills
-- [Hooks Guide](https://code.claude.com/docs/en/hooks-guide) — lifecycle events and mechanical enforcement
-- [Agent Skills Specification](https://agentskills.io/specification) — the open standard for portable skills
-- [AGENTS.md](https://agents.md/) — the cross-tool standard for agent instructions
-- [How to Write a Great agents.md](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/) — GitHub's analysis of 2,500+ repos

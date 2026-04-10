@@ -18,6 +18,14 @@ export const GET: APIRoute = async () => {
 		home.body,
 		'',
 		...(guides ? [guides.body, ''] : []),
+		...(guides?.data.reading ? [
+			'### Guides: further reading',
+			'',
+			...guides.data.reading.map((item) =>
+				`- [${item.title}](${item.url}) — ${item.author} — ${item.tag}`
+			),
+			'',
+		] : []),
 		'## Companies',
 		'',
 		...companies.map((c) =>
