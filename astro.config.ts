@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeExternalLinks from 'rehype-external-links';
 import { h } from 'hastscript';
 
 // https://astro.build/config
@@ -11,6 +12,7 @@ export default defineConfig({
 			theme: 'css-variables',
 		},
 		rehypePlugins: [
+			[rehypeExternalLinks, { target: '_blank', rel: ['noopener'] }],
 			rehypeSlug,
 			[rehypeAutolinkHeadings, {
 				behavior: 'prepend',

@@ -91,6 +91,25 @@ h1 {
 	color: var(--text-secondary);
 }
 
+.header-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+nav {
+	font-size: 0.85rem;
+}
+
+nav a {
+	color: var(--text-secondary);
+	text-decoration: none;
+}
+
+nav a:hover {
+	color: var(--text);
+}
+
 #theme-toggle {
 	background: none;
 	border: none;

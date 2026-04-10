@@ -22,6 +22,18 @@ reading:
     url: https://every.to/guides/compound-engineering
     author: Kieran Klaassen, Dan Shipper / Every
     tag: How Every codes with agents
+  - title: Context Engineering for Coding Agents
+    url: https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html
+    author: Birgitta Böckeler / ThoughtWorks
+    tag: Configuring what the agent sees
+  - title: Effective Harnesses for Long-Running Agents
+    url: https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+    author: Anthropic
+    tag: Making agents remember across sessions
+  - title: Effective Context Engineering for AI Agents
+    url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    author: Anthropic
+    tag: The smallest set of high-signal tokens
 ---
 
 ## What's harness engineering?
@@ -32,15 +44,14 @@ Traditionally engineers spent 80% of their time on features, 20% on the system. 
 
 The harness has three parts:
 
-- **Guides** — steer the agent _before_ it acts: AGENTS.md, design docs, architecture maps, rules, learnings
+- **[Guides](/guides)** — steer the agent _before_ it acts: AGENTS.md, design docs, architecture maps, rules, learnings
 - **Verify** — check the work before it ships: types, linters, tests, agentic review
 - **Observe** — monitor: error tracking, usage patterns, performance
 
-```
-Intent ◄····································╮
+<pre><code>Intent ◄····································╮
   │            improvements + fixes         ·
   ▼                                         ·
-Guides ◄································╮   ·
+<a href="/guides">Guides</a> ◄································╮   ·
   │                                     ·   ·
   │ constrain + direct           evolve ·   ·
   ▼                                     ·   ·
@@ -58,6 +69,6 @@ Ship                                    ·   ·
   │                                     ·   ·
   ▼                                     ·   ·
 Observe ································┴···╯
-```
+</code></pre>
 
 The system improves itself. Signals from verification and observation loop back into the guides — you don't just fix the code, you refine the harness to stop it breaking that way again.
