@@ -91,6 +91,18 @@ h1 {
 	color: var(--text-secondary);
 }
 
+nav {
+	font-size: 0.85rem;
+}
+
+nav a {
+	color: var(--text-secondary);
+}
+
+nav a:hover {
+	color: var(--text);
+}
+
 #theme-toggle {
 	background: none;
 	border: none;

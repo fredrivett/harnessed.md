@@ -22,6 +22,18 @@ reading:
     url: https://every.to/guides/compound-engineering
     author: Kieran Klaassen, Dan Shipper / Every
     tag: How Every codes with agents
+  - title: Context Engineering for Coding Agents
+    url: https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html
+    author: Birgitta Böckeler / ThoughtWorks
+    tag: Configuring what the agent sees
+  - title: Effective Harnesses for Long-Running Agents
+    url: https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+    author: Anthropic
+    tag: Making agents remember across sessions
+  - title: Effective Context Engineering for AI Agents
+    url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    author: Anthropic
+    tag: The smallest set of high-signal tokens
 ---
 
 ## What's harness engineering?
