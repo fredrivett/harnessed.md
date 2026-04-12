@@ -49,6 +49,7 @@ const rates = hasSalary ? await getExchangeRates() : null;
 			{company.data.careers && <a href={company.data.careers} target="_blank" rel="noopener" class="careers-link">Careers page ↗</a>}
 		</div>
 		{jobs.length > 0 ? (
+			<>
 			<div class="jobs-filters">
 				<input type="text" id="filter-role" placeholder="Search roles…" />
 				{departments.length > 1 && (
@@ -64,7 +65,7 @@ const rates = hasSalary ? await getExchangeRates() : null;
 					</select>
 				)}
 				{hasSalary && (
-					<select id="filter-currency">
+					<select id="currency-setting" class="currency-setting">
 						<option value="USD">$ USD</option>
 						<option value="EUR">€ EUR</option>
 						<option value="GBP">£ GBP</option>
@@ -94,7 +95,7 @@ const rates = hasSalary ? await getExchangeRates() : null;
 				</table>
 			</div>
 			<p class="filter-count"></p>
-		) : (
+		</>) : (
 			<p>No jobs available via API. Check <a href={company.data.careers || company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
 		)}
 	</section>
@@ -166,7 +167,7 @@ const rates = hasSalary ? await getExchangeRates() : null;
 		locSelect?.addEventListener('change', applyFilters);
 
 		// Currency conversion
-		const currencySelect = document.getElementById('filter-currency') as HTMLSelectElement | null;
+		const currencySelect = document.getElementById('currency-setting') as HTMLSelectElement | null;
 		const symbols: Record<string, string> = { USD: '$', EUR: '€', GBP: '£' };
 
 		function convertCurrency() {
@@ -259,6 +260,17 @@ const rates = hasSalary ? await getExchangeRates() : null;
 	.jobs-filters input {
 		flex: 1;
 		min-width: 150px;
+	}
+
+	.currency-setting {
+		padding: 0.4rem 0.6rem;
+		font-family: inherit;
+		font-size: 0.85rem;
+		color: var(--text);
+		background: var(--bg);
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		margin-bottom: 1rem;
 	}
 
 	.filter-count {
