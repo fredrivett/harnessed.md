@@ -6,6 +6,9 @@ import { h } from 'hastscript';
 
 // https://astro.build/config
 export default defineConfig({
+	server: {
+		port: Number(process.env.PORT || 4321),
+	},
 	site: 'https://www.harnessed.md',
 	markdown: {
 		shikiConfig: {
