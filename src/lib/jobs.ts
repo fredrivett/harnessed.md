@@ -53,7 +53,7 @@ function formatSalary(raw: string, symbol: string, rate: number): string {
 	return raw.replace(/\$([\d,]+)/g, (_, digits) => {
 		const val = Math.round(Number(digits.replace(/,/g, '')) * rate / 1000);
 		return `${symbol}${val}K`;
-	}).replace(/\s*USD$/, '');
+	}).replace(/\s*USD$/, '').replace(/\s*[–—-]\s*/g, ' – ');
 }
 
 function extractGreenhouseSalary(job: any, symbol: string, rate: number): string | undefined {
