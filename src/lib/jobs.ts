@@ -154,7 +154,7 @@ export function salaryRange(jobs: Job[]): string | undefined {
 	// Extract all dollar amounts from salary strings
 	const amounts: number[] = [];
 	for (const job of withSalary) {
-		const matches = job.salary!.matchAll(/\$?([\d,]+)k?/gi);
+		const matches = job.salary!.matchAll(/\$([\d,]+)k?/gi);
 		for (const m of matches) {
 			let val = Number(m[1]!.replace(/,/g, ''));
 			if (m[0]!.toLowerCase().endsWith('k')) val *= 1000;
