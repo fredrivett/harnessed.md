@@ -1,0 +1,60 @@
+---
+import { getExchangeRates } from '../lib/jobs';
+
+const rates = await getExchangeRates();
+---
+
+<select id="currency-setting" class="currency-setting">
+	<option value="USD">$ USD</option>
+	<option value="EUR">€ EUR</option>
+	<option value="GBP">£ GBP</option>
+</select>
+
+<script is:inline define:vars={{ rates }}>
+	window.__exchangeRates = rates;
+</script>
+
+<script>
+	const currencySelect = document.getElementById('currency-setting') as HTMLSelectElement | null;
+	const symbols: Record<string, string> = { USD: '$', EUR: '€', GBP: '£' };
+
+	const saved = localStorage.getItem('currency');
+	if (saved && currencySelect) {
+		currencySelect.value = saved;
+	}
+
+	function convertCurrency() {
+		const currency = currencySelect?.value || 'USD';
+		localStorage.setItem('currency', currency);
+		const rates = (window as any).__exchangeRates as Record<string, number> | undefined;
+		if (!rates) return;
+		const rate = rates[currency] ?? 1;
+		const symbol = symbols[currency] ?? '$';
+
+		document.querySelectorAll('td[data-salary-usd]').forEach((td) => {
+			const usd = (td as HTMLElement).dataset.salaryUsd || '';
+			if (!usd) { td.textContent = '—'; return; }
+			const converted = usd.replace(/\$(\d+)K/g, (_, n: string) => {
+				const val = Math.round(Number(n) * rate);
+				return `${symbol}${val}K`;
+			});
+			td.textContent = converted;
+			(td as HTMLElement).dataset.value = converted;
+		});
+	}
+
+	currencySelect?.addEventListener('change', convertCurrency);
+	if (saved && saved !== 'USD') convertCurrency();
+</script>
+
+<style is:global>
+	.currency-setting {
+		padding: 0.4rem 0.6rem;
+		font-family: inherit;
+		font-size: 0.85rem;
+		color: var(--text);
+		background: var(--bg);
+		border: 1px solid var(--border);
+		border-radius: 4px;
+	}
+</style>

@@ -1,7 +1,8 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
-import { fetchJobs, getExchangeRates } from '../../../lib/jobs';
+import CurrencySetting from '../../../components/CurrencySetting.astro';
+import { fetchJobs } from '../../../lib/jobs';
 
 export async function getStaticPaths() {
 	const companies = await getCollection('companies');
@@ -17,7 +18,6 @@ const hasSalary = jobs.some((j) => j.salary);
 const departments = [...new Set(jobs.map((j) => j.department).filter(Boolean))].sort();
 const locations = [...new Set(jobs.map((j) => j.location).filter(Boolean))].sort();
 const sources = company.data.sources || [];
-const rates = hasSalary ? await getExchangeRates() : null;
 ---
 
 <Base title={`${company.data.name} — harnessed.md`} description={`${company.data.name}: ${company.data.description}`} image={`/companies/${company.id.replace(/^\d+-/, '')}/og.png`}>
@@ -64,13 +64,7 @@ const rates = hasSalary ? await getExchangeRates() : null;
 						{locations.map((l) => <option value={l}>{l}</option>)}
 					</select>
 				)}
-				{hasSalary && (
-					<select id="currency-setting" class="currency-setting">
-						<option value="USD">$ USD</option>
-						<option value="EUR">€ EUR</option>
-						<option value="GBP">£ GBP</option>
-					</select>
-				)}
+				{hasSalary && <CurrencySetting />}
 			</div>
 			<div class="table-wrap">
 				<table>
@@ -99,9 +93,6 @@ const rates = hasSalary ? await getExchangeRates() : null;
 			<p>No jobs available via API. Check <a href={company.data.careers || company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
 		)}
 	</section>
-	{rates && <script is:inline define:vars={{ rates }}>
-		window.__exchangeRates = rates;
-	</script>}
 	<script>
 		// Sorting
 		document.querySelectorAll('th[data-sort]').forEach((th) => {
@@ -165,38 +156,6 @@ const rates = hasSalary ? await getExchangeRates() : null;
 		roleInput?.addEventListener('input', applyFilters);
 		deptSelect?.addEventListener('change', applyFilters);
 		locSelect?.addEventListener('change', applyFilters);
-
-		// Currency conversion
-		const currencySelect = document.getElementById('currency-setting') as HTMLSelectElement | null;
-		const symbols: Record<string, string> = { USD: '$', EUR: '€', GBP: '£' };
-
-		const saved = localStorage.getItem('currency');
-		if (saved && currencySelect) {
-			currencySelect.value = saved;
-		}
-
-		function convertCurrency() {
-			const currency = currencySelect?.value || 'USD';
-			localStorage.setItem('currency', currency);
-			const rates = (window as any).__exchangeRates as Record<string, number> | undefined;
-			if (!rates) return;
-			const rate = rates[currency] ?? 1;
-			const symbol = symbols[currency] ?? '$';
-
-			document.querySelectorAll('td[data-salary-usd]').forEach((td) => {
-				const usd = (td as HTMLElement).dataset.salaryUsd || '';
-				if (!usd) { td.textContent = '—'; return; }
-				const converted = usd.replace(/\$(\d+)K/g, (_, n) => {
-					const val = Math.round(Number(n) * rate);
-					return `${symbol}${val}K`;
-				});
-				td.textContent = converted;
-				(td as HTMLElement).dataset.value = converted;
-			});
-		}
-
-		currencySelect?.addEventListener('change', convertCurrency);
-		if (saved && saved !== 'USD') convertCurrency();
 	</script>
 </Base>
 

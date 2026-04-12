@@ -2,7 +2,8 @@
 import Base from '../layouts/Base.astro';
 import ReadingList from '../components/ReadingList.astro';
 import { getEntry, getCollection, render } from 'astro:content';
-import { fetchJobs, salaryRange, getExchangeRates, type Job } from '../lib/jobs';
+import CurrencySetting from '../components/CurrencySetting.astro';
+import { fetchJobs, salaryRange, type Job } from '../lib/jobs';
 
 const home = await getEntry('pages', 'home');
 if (!home) throw new Error('Missing pages/home entry');
@@ -19,7 +20,6 @@ const jobsByCompany = new Map<string, Job[]>();
 companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]!));
 const allJobs = jobResults.flat();
 const anySalary = allJobs.some((j) => j.salary);
-const rates = anySalary ? await getExchangeRates() : null;
 ---
 
 <Base title={`harnessed.md — ${description}`} description={description} class="narrow">
@@ -43,13 +43,7 @@ const rates = anySalary ? await getExchangeRates() : null;
 	<section class="companies">
 		<h2 id="companies"><a class="heading-hash" href="#companies">##</a>Companies</h2>
 		<p>Software engineering has radically changed. These companies have seen it early and gone all-in on harness engineering. They're hiring.</p>
-		{anySalary && (
-			<select id="currency-setting" class="currency-setting">
-				<option value="USD">$ USD</option>
-				<option value="EUR">€ EUR</option>
-				<option value="GBP">£ GBP</option>
-			</select>
-		)}
+		{anySalary && <CurrencySetting />}
 		<div class="table-wrap">
 			<table>
 				<thead>
@@ -101,41 +95,7 @@ const rates = anySalary ? await getExchangeRates() : null;
 		<iframe name="bd-iframe" hidden></iframe>
 	</section>
 
-	{rates && <script is:inline define:vars={{ rates }}>
-		window.__exchangeRates = rates;
-	</script>}
 	<script>
-		// Currency conversion
-		const currencySelect = document.getElementById('currency-setting') as HTMLSelectElement | null;
-		const symbols: Record<string, string> = { USD: '$', EUR: '€', GBP: '£' };
-
-		const saved = localStorage.getItem('currency');
-		if (saved && currencySelect) {
-			currencySelect.value = saved;
-		}
-
-		function convertCurrency() {
-			const currency = currencySelect?.value || 'USD';
-			localStorage.setItem('currency', currency);
-			const rates = (window as any).__exchangeRates as Record<string, number> | undefined;
-			if (!rates) return;
-			const rate = rates[currency] ?? 1;
-			const symbol = symbols[currency] ?? '$';
-
-			document.querySelectorAll('td[data-salary-usd]').forEach((td) => {
-				const usd = (td as HTMLElement).dataset.salaryUsd || '';
-				if (!usd) { td.textContent = '—'; return; }
-				const converted = usd.replace(/\$(\d+)K/g, (_, n: string) => {
-					const val = Math.round(Number(n) * rate);
-					return `${symbol}${val}K`;
-				});
-				td.textContent = converted;
-			});
-		}
-
-		currencySelect?.addEventListener('change', convertCurrency);
-		if (saved && saved !== 'USD') convertCurrency();
-
 		const form = document.querySelector('.newsletter form') as HTMLFormElement | null;
 		form?.addEventListener('submit', () => {
 			setTimeout(() => {
@@ -145,16 +105,3 @@ const rates = anySalary ? await getExchangeRates() : null;
 		});
 	</script>
 </Base>
-
-<style is:global>
-	.currency-setting {
-		padding: 0.4rem 0.6rem;
-		font-family: inherit;
-		font-size: 0.85rem;
-		color: var(--text);
-		background: var(--bg);
-		border: 1px solid var(--border);
-		border-radius: 4px;
-		margin-bottom: 0.5rem;
-	}
-</style>
