@@ -170,8 +170,14 @@ const rates = hasSalary ? await getExchangeRates() : null;
 		const currencySelect = document.getElementById('currency-setting') as HTMLSelectElement | null;
 		const symbols: Record<string, string> = { USD: '$', EUR: '€', GBP: '£' };
 
+		const saved = localStorage.getItem('currency');
+		if (saved && currencySelect) {
+			currencySelect.value = saved;
+		}
+
 		function convertCurrency() {
 			const currency = currencySelect?.value || 'USD';
+			localStorage.setItem('currency', currency);
 			const rates = (window as any).__exchangeRates as Record<string, number> | undefined;
 			if (!rates) return;
 			const rate = rates[currency] ?? 1;
@@ -190,6 +196,7 @@ const rates = hasSalary ? await getExchangeRates() : null;
 		}
 
 		currencySelect?.addEventListener('change', convertCurrency);
+		if (saved && saved !== 'USD') convertCurrency();
 	</script>
 </Base>
 
