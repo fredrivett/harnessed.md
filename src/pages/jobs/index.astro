@@ -211,9 +211,10 @@ const rates = hasSalary ? await getExchangeRates() : null;
 			flex-direction: row;
 		}
 
-		.all-jobs .jobs-filters input {
+		.all-jobs .jobs-filters input,
+		.all-jobs .jobs-filters select {
 			flex: 1;
-			min-width: 150px;
+			min-width: 0;
 		}
 	}
 
