@@ -39,6 +39,20 @@ function extractGreenhouseSalary(job: any): string | undefined {
 			}
 		}
 	}
+
+	// Check HTML content for pay-transparency section
+	// Greenhouse returns double-encoded HTML (e.g. &lt;div&gt;), so decode entities first
+	const content = (job.content as string | undefined)
+		?.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+	if (content) {
+		const payMatch = content.match(/class="pay-range">([\s\S]*?)<\/div>/);
+		if (payMatch) {
+			// Extract text, strip tags, normalise whitespace
+			const raw = payMatch[1]!.replace(/<[^>]+>/g, '').replace(/&mdash;/g, '–').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+			if (raw) return raw;
+		}
+	}
+
 	return undefined;
 }
 
@@ -46,13 +60,6 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string): Promi
 	const res = await fetchWithTimeout(`https://boards-api.greenhouse.io/v1/boards/${boardId}/jobs?content=true`);
 	if (!res.ok) return [];
 	const data = await res.json();
-
-	// Debug: log first job's keys and metadata
-	const firstJob = (data.jobs || [])[0];
-	if (firstJob) {
-		console.log(`[greenhouse:${boardId}] sample job keys: ${Object.keys(firstJob).join(', ')}`);
-		console.log(`[greenhouse:${boardId}] metadata: ${JSON.stringify(firstJob.metadata)}`);
-	}
 
 	return (data.jobs || [])
 		.filter((job: any) => {
@@ -121,14 +128,6 @@ async function fetchAshby(boardId: string, departmentFilter: string): Promise<Jo
 	const res = await fetchWithTimeout(`https://api.ashbyhq.com/posting-api/job-board/${boardId}`);
 	if (!res.ok) return [];
 	const data = await res.json();
-
-	// Debug: log first job's compensation fields
-	const firstJob = (data.jobs || [])[0];
-	if (firstJob) {
-		console.log(`[ashby:${boardId}] sample job keys: ${Object.keys(firstJob).join(', ')}`);
-		console.log(`[ashby:${boardId}] compensationTierSummary: ${JSON.stringify(firstJob.compensationTierSummary)}`);
-		console.log(`[ashby:${boardId}] compensation: ${JSON.stringify(firstJob.compensation)}`);
-	}
 
 	return (data.jobs || [])
 		.filter((job: any) => {
