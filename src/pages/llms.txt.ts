@@ -1,14 +1,11 @@
 import type { APIRoute } from 'astro';
 import { getEntry, getCollection } from 'astro:content';
-import { toPlainMarkdown } from '../lib/markdown';
 
 export const GET: APIRoute = async () => {
 	const home = await getEntry('pages', 'home');
 	if (!home) throw new Error('Missing pages/home entry');
-	const { title, description, quote, reading } = home.data;
+	const { title, description, quote } = home.data;
 	const companies = await getCollection('companies');
-
-	const guides = await getEntry('pages', 'guides');
 
 	const lines = [
 		`# ${title}`,
@@ -16,28 +13,22 @@ export const GET: APIRoute = async () => {
 		`> ${description}`,
 		'',
 		...(quote ? [`> "${quote.text}" — [${quote.source}](${quote.url})`, ''] : []),
-		toPlainMarkdown(home.body ?? ''),
+		'## Sections',
 		'',
-		...(guides ? [toPlainMarkdown(guides.body ?? ''), ''] : []),
-		...(guides?.data.reading ? [
-			'### Guides: further reading',
-			'',
-			...guides.data.reading.map((item) =>
-				`- [${item.title}](${item.url}) — ${item.author} — ${item.tag}`
-			),
-			'',
-		] : []),
+		'- [Guides](/guides/llms.txt) — configuring your agent harness',
+		'- [Jobs](/jobs/llms.txt) — engineering jobs at harnessed companies',
+		'- [Companies](/companies/llms.txt) — who is doing harness engineering',
+		'',
 		'## Companies',
 		'',
-		...companies.map((c) =>
-			`- [${c.data.name}](${c.data.url}) — ${c.data.description} — [${c.data.reference.title}](${c.data.reference.url})`
-		),
+		...companies.map((c) => {
+			const slug = c.id.replace(/^\d+-/, '');
+			return `- [${c.data.name}](/companies/${slug}/llms.txt) — ${c.data.description}`;
+		}),
 		'',
-		'## Key reading',
+		'---',
 		'',
-		...(reading ?? []).map((item) =>
-			`- [${item.title}](${item.url}) — ${item.author} — ${item.tag}`
-		),
+		'For the complete content in a single file, see [/llms-full.txt](/llms-full.txt)',
 		'',
 	];
 

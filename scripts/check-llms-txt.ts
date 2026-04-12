@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { toPlainMarkdown } from '../src/lib/markdown';
 
@@ -42,28 +42,66 @@ assert(
   'should handle multiple code blocks'
 );
 
-// --- Integration: check built llms.txt ---
+// --- Integration: check built llms.txt files ---
 
 const dist = join(import.meta.dirname, '..', 'dist');
-const llmsTxt = readFileSync(join(dist, 'llms.txt'), 'utf-8');
 
-// No raw HTML tags in output
 const htmlTagRegex = /<\/?(?:pre|code|a|div|span|p|section|ul|li|ol|table|tr|td|th|thead|tbody|img|br|hr)\b[^>]*>/i;
-const htmlMatch = llmsTxt.match(htmlTagRegex);
-assert(
-  !htmlMatch,
-  `llms.txt contains raw HTML: ${htmlMatch?.[0]}`
-);
 
-// Contains expected sections
-assert(llmsTxt.includes('# harnessed.md'), 'llms.txt should have title');
-assert(llmsTxt.includes('## Companies'), 'llms.txt should have Companies section');
-assert(llmsTxt.includes('## Key reading'), 'llms.txt should have Key reading section');
-assert(llmsTxt.includes('## AGENTS.md'), 'llms.txt should have guides content');
+function checkFile(path: string, label: string, checks: (content: string) => void) {
+  const fullPath = join(dist, path);
+  assert(existsSync(fullPath), `${label}: file should exist at ${path}`);
+  if (!existsSync(fullPath)) return;
+  const content = readFileSync(fullPath, 'utf-8');
+  const htmlMatch = content.match(htmlTagRegex);
+  assert(!htmlMatch, `${label}: contains raw HTML: ${htmlMatch?.[0]}`);
+  checks(content);
+}
 
-// ASCII diagram is in a fenced code block, not raw HTML
-assert(llmsTxt.includes('```\nIntent'), 'llms.txt should have ASCII diagram in fenced code block');
-assert(!llmsTxt.includes('<pre>'), 'llms.txt should not contain <pre> tags');
+// /llms.txt — slim index
+checkFile('llms.txt', 'llms.txt', (content) => {
+  assert(content.includes('# harnessed.md'), 'llms.txt should have title');
+  assert(content.includes('## Sections'), 'llms.txt should have Sections');
+  assert(content.includes('/guides/llms.txt'), 'llms.txt should link to guides/llms.txt');
+  assert(content.includes('/jobs/llms.txt'), 'llms.txt should link to jobs/llms.txt');
+  assert(content.includes('/companies/llms.txt'), 'llms.txt should link to companies/llms.txt');
+  assert(content.includes('## Companies'), 'llms.txt should have Companies section');
+});
+
+// /llms-full.txt — everything in one file
+checkFile('llms-full.txt', 'llms-full.txt', (content) => {
+  assert(content.includes('# harnessed.md'), 'llms-full.txt should have title');
+  assert(content.includes('## Companies'), 'llms-full.txt should have Companies section');
+  assert(content.includes('## Key reading'), 'llms-full.txt should have Key reading section');
+  assert(content.includes('## AGENTS.md'), 'llms-full.txt should have guides content');
+  assert(content.includes('```\nIntent'), 'llms-full.txt should have ASCII diagram in fenced code block');
+  assert(!content.includes('<pre>'), 'llms-full.txt should not contain <pre> tags');
+});
+
+// /guides/llms.txt
+checkFile('guides/llms.txt', 'guides/llms.txt', (content) => {
+  assert(content.includes('# Guides'), 'guides/llms.txt should have title');
+  assert(content.includes('## AGENTS.md'), 'guides/llms.txt should have AGENTS.md section');
+  assert(content.includes('## Further reading'), 'guides/llms.txt should have Further reading');
+});
+
+// /jobs/llms.txt
+checkFile('jobs/llms.txt', 'jobs/llms.txt', (content) => {
+  assert(content.includes('# Engineering jobs'), 'jobs/llms.txt should have title');
+  assert(content.includes('openings across'), 'jobs/llms.txt should have job count summary');
+});
+
+// /companies/llms.txt
+checkFile('companies/llms.txt', 'companies/llms.txt', (content) => {
+  assert(content.includes('# Companies'), 'companies/llms.txt should have title');
+  assert(content.includes('OpenAI'), 'companies/llms.txt should list OpenAI');
+});
+
+// /companies/openai/llms.txt (spot check one company)
+checkFile('companies/openai/llms.txt', 'companies/openai/llms.txt', (content) => {
+  assert(content.includes('# OpenAI'), 'companies/openai/llms.txt should have company name');
+  assert(content.includes('## Engineering jobs'), 'companies/openai/llms.txt should have jobs section');
+});
 
 // --- Results ---
 
