@@ -219,6 +219,10 @@ pre code {
 	margin-bottom: 2rem;
 }
 
+.what pre {
+	display: inline-block;
+}
+
 p {
 	margin-bottom: 1rem;
 }
