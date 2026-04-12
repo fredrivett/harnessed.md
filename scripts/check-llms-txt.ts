@@ -62,7 +62,6 @@ function checkFile(path: string, label: string, checks: (content: string) => voi
 checkFile('llms.txt', 'llms.txt', (content) => {
   assert(content.includes('# harnessed.md'), 'llms.txt should have title');
   assert(content.includes('## Sections'), 'llms.txt should have Sections');
-  assert(content.includes('/llms-full.txt'), 'llms.txt should link to llms-full.txt');
   assert(content.includes('/guides/llms.txt'), 'llms.txt should link to guides/llms.txt');
   assert(content.includes('/jobs/llms.txt'), 'llms.txt should link to jobs/llms.txt');
   assert(content.includes('/companies/llms.txt'), 'llms.txt should link to companies/llms.txt');

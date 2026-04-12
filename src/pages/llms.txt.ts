@@ -15,7 +15,6 @@ export const GET: APIRoute = async () => {
 		...(quote ? [`> "${quote.text}" — [${quote.source}](${quote.url})`, ''] : []),
 		'## Sections',
 		'',
-		'- [Full content](/llms-full.txt) — everything in one file',
 		'- [Guides](/guides/llms.txt) — configuring your agent harness',
 		'- [Jobs](/jobs/llms.txt) — engineering jobs at harnessed companies',
 		'- [Companies](/companies/llms.txt) — who is doing harness engineering',
@@ -29,7 +28,7 @@ export const GET: APIRoute = async () => {
 		'',
 		'---',
 		'',
-		'For the complete content in a single file, see /llms-full.txt',
+		'For the complete content in a single file, see [/llms-full.txt](/llms-full.txt)',
 		'',
 	];
 
