@@ -32,15 +32,13 @@ A well-configured guide layer is the highest-leverage investment you can make. I
 
 [AGENTS.md](https://agents.md/) is an open, tool-agnostic standard for guiding coding agents. It lives at your project root and is read by Codex, Cursor, Gemini CLI, GitHub Copilot, and others. It's backed by the [Linux Foundation's Agentic AI Foundation](https://agentic-ai.dev/) with support from OpenAI, Anthropic, Google, and AWS.
 
-Claude Code reads `CLAUDE.md`, which is a superset — it supports everything AGENTS.md does plus Claude-specific features like `@imports` and path-scoped rules. If you use multiple tools, write an AGENTS.md as your cross-tool base and import it:
+Claude Code reads `CLAUDE.md`. If you use multiple tools, write an AGENTS.md as your cross-tool base and symlink CLAUDE.md to it:
 
 ```
-# CLAUDE.md
-@AGENTS.md
-
-# Claude-specific
-Use plan mode for changes under src/billing/.
+ln -s AGENTS.md CLAUDE.md
 ```
+
+This keeps a single source of truth — Git tracks it natively, and both tools read the same file.
 
 What to include — from [GitHub's analysis of 2,500+ repos](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/):
 
