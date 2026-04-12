@@ -56,8 +56,9 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 
 function formatSalary(raw: string): string {
 	// Replace any currency amounts with $XXXK notation (USD base)
-	return raw.replace(/[$£€]([\d,]+)/g, (_, digits) => {
-		const val = Math.round(Number(digits.replace(/,/g, '')) / 1000);
+	// Handles both comma (US: $290,000) and dot (EU: €205.000) thousands separators
+	return raw.replace(/[$£€]([\d.,]+)/g, (_, digits) => {
+		const val = Math.round(Number(digits.replace(/[.,]/g, '')) / 1000);
 		return `$${val}K`;
 	}).replace(/\s*(USD|GBP|EUR)$/i, '').replace(/\s*[–—-]\s*/g, ' – ');
 }
