@@ -11,9 +11,7 @@ export default defineConfig({
 	},
 	site: 'https://www.harnessed.md',
 	markdown: {
-		shikiConfig: {
-			theme: 'css-variables',
-		},
+		syntaxHighlight: false,
 		rehypePlugins: [
 			[rehypeExternalLinks, { target: '_blank', rel: ['noopener'] }],
 			rehypeSlug,
