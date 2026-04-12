@@ -14,6 +14,15 @@ const { Content } = await render(guides);
 		<Content />
 	</section>
 
+	<script>
+		document.querySelectorAll('.guides table').forEach((table) => {
+			const wrap = document.createElement('div');
+			wrap.className = 'table-wrap';
+			table.parentNode!.insertBefore(wrap, table);
+			wrap.appendChild(table);
+		});
+	</script>
+
 	{reading && (
 		<hr />
 		<ReadingList title="Further reading" items={reading} />

@@ -264,7 +264,7 @@ p:last-child {
 	margin-bottom: 0.75rem;
 }
 
-.companies .table-wrap {
+.table-wrap {
 	--table-bleed: clamp(0rem, (100vw - var(--max-width)) / 2, 5rem);
 	margin-left: calc(-1 * var(--table-bleed));
 	margin-right: calc(-1 * var(--table-bleed));
