@@ -28,6 +28,14 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	}
 }
 
+function formatSalary(raw: string): string {
+	// Replace dollar amounts with $XXXK notation, e.g. $290,000 → $290K
+	return raw.replace(/\$([\d,]+)/g, (_, digits) => {
+		const val = Math.round(Number(digits.replace(/,/g, '')) / 1000);
+		return `$${val}K`;
+	}).replace(/\s*USD$/, '');
+}
+
 function extractGreenhouseSalary(job: any): string | undefined {
 	// Check metadata for salary fields
 	const meta = job.metadata as any[] | undefined;
@@ -35,7 +43,7 @@ function extractGreenhouseSalary(job: any): string | undefined {
 		for (const m of meta) {
 			const name = (m.name || '').toLowerCase();
 			if (name.includes('salary') || name.includes('compensation') || name.includes('pay')) {
-				if (m.value) return String(m.value);
+				if (m.value) return formatSalary(String(m.value));
 			}
 		}
 	}
@@ -49,7 +57,7 @@ function extractGreenhouseSalary(job: any): string | undefined {
 		if (payMatch) {
 			// Extract text, strip tags, normalise whitespace
 			const raw = payMatch[1]!.replace(/<[^>]+>/g, '').replace(/&mdash;/g, '–').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
-			if (raw) return raw;
+			if (raw) return formatSalary(raw);
 		}
 	}
 
@@ -143,7 +151,7 @@ async function fetchAshby(boardId: string, departmentFilter: string): Promise<Jo
 			location: job.locationName || job.location || 'Remote',
 			department: job.departmentName || job.department || '',
 			company: '',
-			salary: job.compensationTierSummary || undefined,
+			salary: job.compensationTierSummary ? formatSalary(job.compensationTierSummary) : undefined,
 		}));
 }
 
