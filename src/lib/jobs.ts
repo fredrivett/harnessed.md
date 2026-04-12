@@ -7,10 +7,30 @@ export interface Job {
 	salary?: string;
 }
 
+export type Currency = 'USD' | 'EUR' | 'GBP';
+
 interface AtsConfig {
 	provider: 'greenhouse' | 'ashby' | 'careers-page';
 	boardId: string;
 	departmentFilter: string;
+}
+
+const currencySymbols: Record<Currency, string> = { USD: '$', EUR: '\u20AC', GBP: '\u00A3' };
+
+let ratesCache: Record<string, number> | null = null;
+
+async function getRate(currency: Currency): Promise<number> {
+	if (currency === 'USD') return 1;
+	if (!ratesCache) {
+		try {
+			const res = await fetchWithTimeout('https://open.er-api.com/v6/latest/USD');
+			const data = await res.json();
+			ratesCache = data.rates;
+		} catch {
+			ratesCache = {};
+		}
+	}
+	return ratesCache![currency] ?? 1;
 }
 
 async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
@@ -28,22 +48,22 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	}
 }
 
-function formatSalary(raw: string): string {
-	// Replace dollar amounts with $XXXK notation, e.g. $290,000 → $290K
+function formatSalary(raw: string, symbol: string, rate: number): string {
+	// Replace dollar amounts with converted XXXK notation, e.g. $290,000 → €251K
 	return raw.replace(/\$([\d,]+)/g, (_, digits) => {
-		const val = Math.round(Number(digits.replace(/,/g, '')) / 1000);
-		return `$${val}K`;
+		const val = Math.round(Number(digits.replace(/,/g, '')) * rate / 1000);
+		return `${symbol}${val}K`;
 	}).replace(/\s*USD$/, '');
 }
 
-function extractGreenhouseSalary(job: any): string | undefined {
+function extractGreenhouseSalary(job: any, symbol: string, rate: number): string | undefined {
 	// Check metadata for salary fields
 	const meta = job.metadata as any[] | undefined;
 	if (meta) {
 		for (const m of meta) {
 			const name = (m.name || '').toLowerCase();
 			if (name.includes('salary') || name.includes('compensation') || name.includes('pay')) {
-				if (m.value) return formatSalary(String(m.value));
+				if (m.value) return formatSalary(String(m.value), symbol, rate);
 			}
 		}
 	}
@@ -57,14 +77,14 @@ function extractGreenhouseSalary(job: any): string | undefined {
 		if (payMatch) {
 			// Extract text, strip tags, normalise whitespace
 			const raw = payMatch[1]!.replace(/<[^>]+>/g, '').replace(/&mdash;/g, '–').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
-			if (raw) return formatSalary(raw);
+			if (raw) return formatSalary(raw, symbol, rate);
 		}
 	}
 
 	return undefined;
 }
 
-async function fetchGreenhouse(boardId: string, departmentFilter: string): Promise<Job[]> {
+async function fetchGreenhouse(boardId: string, departmentFilter: string, symbol: string, rate: number): Promise<Job[]> {
 	const res = await fetchWithTimeout(`https://boards-api.greenhouse.io/v1/boards/${boardId}/jobs?content=true`);
 	if (!res.ok) return [];
 	const data = await res.json();
@@ -80,7 +100,7 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string): Promi
 			location: job.location?.name || 'Remote',
 			department: job.departments?.[0]?.name || '',
 			company: '',
-			salary: extractGreenhouseSalary(job),
+			salary: extractGreenhouseSalary(job, symbol, rate),
 		}));
 }
 
@@ -132,7 +152,7 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	});
 }
 
-async function fetchAshby(boardId: string, departmentFilter: string): Promise<Job[]> {
+async function fetchAshby(boardId: string, departmentFilter: string, symbol: string, rate: number): Promise<Job[]> {
 	const res = await fetchWithTimeout(`https://api.ashbyhq.com/posting-api/job-board/${boardId}`);
 	if (!res.ok) return [];
 	const data = await res.json();
@@ -151,7 +171,7 @@ async function fetchAshby(boardId: string, departmentFilter: string): Promise<Jo
 			location: job.locationName || job.location || 'Remote',
 			department: job.departmentName || job.department || '',
 			company: '',
-			salary: job.compensationTierSummary ? formatSalary(job.compensationTierSummary) : undefined,
+			salary: job.compensationTierSummary ? formatSalary(job.compensationTierSummary, symbol, rate) : undefined,
 		}));
 }
 
@@ -159,13 +179,16 @@ export function salaryRange(jobs: Job[]): string | undefined {
 	const withSalary = jobs.filter((j) => j.salary);
 	if (withSalary.length === 0) return undefined;
 
-	// Extract all dollar amounts from salary strings
+	// Detect currency symbol from first salary string
+	const symbolMatch = withSalary[0]!.salary!.match(/^([^\d]+)/);
+	const symbol = symbolMatch?.[1] ?? '$';
+
+	// Extract all numeric amounts from salary strings (already formatted as XXXK)
 	const amounts: number[] = [];
 	for (const job of withSalary) {
-		const matches = job.salary!.matchAll(/\$([\d,]+)k?/gi);
+		const matches = job.salary!.matchAll(/(\d[\d,]*)K/gi);
 		for (const m of matches) {
-			let val = Number(m[1]!.replace(/,/g, ''));
-			if (m[0]!.toLowerCase().endsWith('k')) val *= 1000;
+			const val = Number(m[1]!.replace(/,/g, '')) * 1000;
 			if (val > 0) amounts.push(val);
 		}
 	}
@@ -173,19 +196,21 @@ export function salaryRange(jobs: Job[]): string | undefined {
 
 	const min = Math.min(...amounts);
 	const max = Math.max(...amounts);
-	const fmt = (n: number) => `$${Math.round(n / 1000)}K`;
+	const fmt = (n: number) => `${symbol}${Math.round(n / 1000)}K`;
 	return min === max ? fmt(min) : `${fmt(min)} – ${fmt(max)}`;
 }
 
-export async function fetchJobs(companyName: string, ats?: AtsConfig): Promise<Job[]> {
+export async function fetchJobs(companyName: string, ats?: AtsConfig, currency: Currency = 'USD'): Promise<Job[]> {
 	if (!ats) return [];
 
 	try {
+		const symbol = currencySymbols[currency];
+		const rate = await getRate(currency);
 		let jobs: Job[];
 		if (ats.provider === 'greenhouse') {
-			jobs = await fetchGreenhouse(ats.boardId, ats.departmentFilter);
+			jobs = await fetchGreenhouse(ats.boardId, ats.departmentFilter, symbol, rate);
 		} else if (ats.provider === 'ashby') {
-			jobs = await fetchAshby(ats.boardId, ats.departmentFilter);
+			jobs = await fetchAshby(ats.boardId, ats.departmentFilter, symbol, rate);
 		} else {
 			jobs = await fetchCareersPage(ats.boardId, ats.departmentFilter);
 		}

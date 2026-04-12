@@ -13,7 +13,7 @@ const { Content } = await render(home);
 const companies = await getCollection('companies');
 
 const jobResults = await Promise.all(
-	companies.map((c) => fetchJobs(c.data.name, c.data.ats))
+	companies.map((c) => fetchJobs(c.data.name, c.data.ats, c.data.currency))
 );
 const jobsByCompany = new Map<string, Job[]>();
 companies.forEach((c, i) => jobsByCompany.set(c.data.name, jobResults[i]!));

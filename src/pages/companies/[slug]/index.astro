@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { company } = Astro.props;
-const jobs = await fetchJobs(company.data.name, company.data.ats);
+const jobs = await fetchJobs(company.data.name, company.data.ats, company.data.currency);
 const hasSalary = jobs.some((j) => j.salary);
 const departments = [...new Set(jobs.map((j) => j.department).filter(Boolean))].sort();
 const locations = [...new Set(jobs.map((j) => j.location).filter(Boolean))].sort();
