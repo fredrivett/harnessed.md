@@ -24,7 +24,7 @@ reading:
     tag: Lessons from 2,500+ repos
 ---
 
-The [harness](/) has three parts: guides, verify, observe. This page covers **guides** — the instructions that steer an agent _before_ it acts.
+The [harness](/) has three parts: guides, verification, observation. This page covers **guides** — the instructions that steer an agent _before_ it acts.
 
 A well-configured guide layer is the highest-leverage investment you can make. It determines whether your agent produces useful work on the first attempt or burns cycles on wrong approaches.
 

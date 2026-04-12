@@ -12,7 +12,7 @@ Required YAML fields: `name`, `url`, `reference` (`title`, `url`), `description`
 
 Supported ATS providers: check `src/lib/jobs.ts` for the current list.
 
-## Verify
+## Verification
 
 Run `npm run build` to check for errors before pushing. This runs:
 
