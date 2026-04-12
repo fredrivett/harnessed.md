@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
-import { fetchJobs } from '../../../lib/jobs';
+import { fetchJobs, getExchangeRates } from '../../../lib/jobs';
 
 export async function getStaticPaths() {
 	const companies = await getCollection('companies');
@@ -12,11 +12,12 @@ export async function getStaticPaths() {
 }
 
 const { company } = Astro.props;
-const jobs = await fetchJobs(company.data.name, company.data.ats, company.data.currency);
+const jobs = await fetchJobs(company.data.name, company.data.ats);
 const hasSalary = jobs.some((j) => j.salary);
 const departments = [...new Set(jobs.map((j) => j.department).filter(Boolean))].sort();
 const locations = [...new Set(jobs.map((j) => j.location).filter(Boolean))].sort();
 const sources = company.data.sources || [];
+const rates = hasSalary ? await getExchangeRates() : null;
 ---
 
 <Base title={`${company.data.name} — harnessed.md`} description={`${company.data.name}: ${company.data.description}`} image={`/companies/${company.id.replace(/^\d+-/, '')}/og.png`}>
@@ -62,6 +63,13 @@ const sources = company.data.sources || [];
 						{locations.map((l) => <option value={l}>{l}</option>)}
 					</select>
 				)}
+				{hasSalary && (
+					<select id="filter-currency">
+						<option value="USD">$ USD</option>
+						<option value="EUR">€ EUR</option>
+						<option value="GBP">£ GBP</option>
+					</select>
+				)}
 			</div>
 			<div class="table-wrap">
 				<table>
@@ -79,7 +87,7 @@ const sources = company.data.sources || [];
 								<td data-value={job.title}><a href={job.url} target="_blank" rel="noopener">{job.title}</a></td>
 								<td data-value={job.department}>{job.department}</td>
 								<td data-value={job.location}>{job.location}</td>
-								{hasSalary && <td data-value={job.salary || ''}>{job.salary || '—'}</td>}
+								{hasSalary && <td data-value={job.salary || ''} data-salary-usd={job.salary || ''}>{job.salary || '—'}</td>}
 							</tr>
 						))}
 					</tbody>
@@ -90,6 +98,9 @@ const sources = company.data.sources || [];
 			<p>No jobs available via API. Check <a href={company.data.careers || company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
 		)}
 	</section>
+	{rates && <script is:inline define:vars={{ rates }}>
+		window.__exchangeRates = rates;
+	</script>}
 	<script>
 		// Sorting
 		document.querySelectorAll('th[data-sort]').forEach((th) => {
@@ -153,6 +164,31 @@ const sources = company.data.sources || [];
 		roleInput?.addEventListener('input', applyFilters);
 		deptSelect?.addEventListener('change', applyFilters);
 		locSelect?.addEventListener('change', applyFilters);
+
+		// Currency conversion
+		const currencySelect = document.getElementById('filter-currency') as HTMLSelectElement | null;
+		const symbols: Record<string, string> = { USD: '$', EUR: '€', GBP: '£' };
+
+		function convertCurrency() {
+			const currency = currencySelect?.value || 'USD';
+			const rates = (window as any).__exchangeRates as Record<string, number> | undefined;
+			if (!rates) return;
+			const rate = rates[currency] ?? 1;
+			const symbol = symbols[currency] ?? '$';
+
+			document.querySelectorAll('td[data-salary-usd]').forEach((td) => {
+				const usd = (td as HTMLElement).dataset.salaryUsd || '';
+				if (!usd) { td.textContent = '—'; return; }
+				const converted = usd.replace(/\$(\d+)K/g, (_, n) => {
+					const val = Math.round(Number(n) * rate);
+					return `${symbol}${val}K`;
+				});
+				td.textContent = converted;
+				(td as HTMLElement).dataset.value = converted;
+			});
+		}
+
+		currencySelect?.addEventListener('change', convertCurrency);
 	</script>
 </Base>
 

@@ -14,7 +14,7 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 export const GET: APIRoute = async ({ props }) => {
 	const { company } = props as Props;
-	const jobs = await fetchJobs(company.data.name, company.data.ats, company.data.currency);
+	const jobs = await fetchJobs(company.data.name, company.data.ats);
 	const sources = company.data.sources || [];
 
 	const lines = [

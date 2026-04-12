@@ -15,12 +15,9 @@ interface AtsConfig {
 	departmentFilter: string;
 }
 
-const currencySymbols: Record<Currency, string> = { USD: '$', EUR: '\u20AC', GBP: '\u00A3' };
-
 let ratesCache: Record<string, number> | null = null;
 
-async function getRate(currency: Currency): Promise<number> {
-	if (currency === 'USD') return 1;
+async function fetchRates(): Promise<Record<string, number>> {
 	if (!ratesCache) {
 		try {
 			const res = await fetchWithTimeout('https://open.er-api.com/v6/latest/USD');
@@ -30,7 +27,16 @@ async function getRate(currency: Currency): Promise<number> {
 			ratesCache = {};
 		}
 	}
-	return ratesCache![currency] ?? 1;
+	return ratesCache!;
+}
+
+export async function getExchangeRates(): Promise<Record<Currency, number>> {
+	const rates = await fetchRates();
+	return {
+		USD: 1,
+		EUR: rates['EUR'] ?? 1,
+		GBP: rates['GBP'] ?? 1,
+	};
 }
 
 async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
@@ -48,22 +54,22 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	}
 }
 
-function formatSalary(raw: string, symbol: string, rate: number): string {
-	// Replace dollar amounts with converted XXXK notation, e.g. $290,000 → €251K
-	return raw.replace(/\$([\d,]+)/g, (_, digits) => {
-		const val = Math.round(Number(digits.replace(/,/g, '')) * rate / 1000);
-		return `${symbol}${val}K`;
-	}).replace(/\s*USD$/, '').replace(/\s*[–—-]\s*/g, ' – ');
+function formatSalary(raw: string): string {
+	// Replace any currency amounts with $XXXK notation (USD base)
+	return raw.replace(/[$£€]([\d,]+)/g, (_, digits) => {
+		const val = Math.round(Number(digits.replace(/,/g, '')) / 1000);
+		return `$${val}K`;
+	}).replace(/\s*(USD|GBP|EUR)$/i, '').replace(/\s*[–—-]\s*/g, ' – ');
 }
 
-function extractGreenhouseSalary(job: any, symbol: string, rate: number): string | undefined {
+function extractGreenhouseSalary(job: any): string | undefined {
 	// Check metadata for salary fields
 	const meta = job.metadata as any[] | undefined;
 	if (meta) {
 		for (const m of meta) {
 			const name = (m.name || '').toLowerCase();
 			if (name.includes('salary') || name.includes('compensation') || name.includes('pay')) {
-				if (m.value) return formatSalary(String(m.value), symbol, rate);
+				if (m.value) return formatSalary(String(m.value));
 			}
 		}
 	}
@@ -77,14 +83,14 @@ function extractGreenhouseSalary(job: any, symbol: string, rate: number): string
 		if (payMatch) {
 			// Extract text, strip tags, normalise whitespace
 			const raw = payMatch[1]!.replace(/<[^>]+>/g, '').replace(/&mdash;/g, '–').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
-			if (raw) return formatSalary(raw, symbol, rate);
+			if (raw) return formatSalary(raw);
 		}
 	}
 
 	return undefined;
 }
 
-async function fetchGreenhouse(boardId: string, departmentFilter: string, symbol: string, rate: number): Promise<Job[]> {
+async function fetchGreenhouse(boardId: string, departmentFilter: string): Promise<Job[]> {
 	const res = await fetchWithTimeout(`https://boards-api.greenhouse.io/v1/boards/${boardId}/jobs?content=true`);
 	if (!res.ok) return [];
 	const data = await res.json();
@@ -100,7 +106,7 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string, symbol
 			location: job.location?.name || 'Remote',
 			department: job.departments?.[0]?.name || '',
 			company: '',
-			salary: extractGreenhouseSalary(job, symbol, rate),
+			salary: extractGreenhouseSalary(job),
 		}));
 }
 
@@ -152,7 +158,7 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	});
 }
 
-async function fetchAshby(boardId: string, departmentFilter: string, symbol: string, rate: number): Promise<Job[]> {
+async function fetchAshby(boardId: string, departmentFilter: string): Promise<Job[]> {
 	const res = await fetchWithTimeout(`https://api.ashbyhq.com/posting-api/job-board/${boardId}`);
 	if (!res.ok) return [];
 	const data = await res.json();
@@ -171,7 +177,7 @@ async function fetchAshby(boardId: string, departmentFilter: string, symbol: str
 			location: job.locationName || job.location || 'Remote',
 			department: job.departmentName || job.department || '',
 			company: '',
-			salary: job.compensationTierSummary ? formatSalary(job.compensationTierSummary, symbol, rate) : undefined,
+			salary: job.compensationTierSummary ? formatSalary(job.compensationTierSummary) : undefined,
 		}));
 }
 
@@ -200,17 +206,15 @@ export function salaryRange(jobs: Job[]): string | undefined {
 	return min === max ? fmt(min) : `${fmt(min)} – ${fmt(max)}`;
 }
 
-export async function fetchJobs(companyName: string, ats?: AtsConfig, currency: Currency = 'USD'): Promise<Job[]> {
+export async function fetchJobs(companyName: string, ats?: AtsConfig): Promise<Job[]> {
 	if (!ats) return [];
 
 	try {
-		const symbol = currencySymbols[currency];
-		const rate = await getRate(currency);
 		let jobs: Job[];
 		if (ats.provider === 'greenhouse') {
-			jobs = await fetchGreenhouse(ats.boardId, ats.departmentFilter, symbol, rate);
+			jobs = await fetchGreenhouse(ats.boardId, ats.departmentFilter);
 		} else if (ats.provider === 'ashby') {
-			jobs = await fetchAshby(ats.boardId, ats.departmentFilter, symbol, rate);
+			jobs = await fetchAshby(ats.boardId, ats.departmentFilter);
 		} else {
 			jobs = await fetchCareersPage(ats.boardId, ats.departmentFilter);
 		}

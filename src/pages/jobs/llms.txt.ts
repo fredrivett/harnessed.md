@@ -6,7 +6,7 @@ export const GET: APIRoute = async () => {
 	const companies = await getCollection('companies');
 
 	const jobResults = await Promise.all(
-		companies.map((c) => fetchJobs(c.data.name, c.data.ats, c.data.currency))
+		companies.map((c) => fetchJobs(c.data.name, c.data.ats))
 	);
 	const allJobs = jobResults.flat();
 

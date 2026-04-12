@@ -7,7 +7,7 @@ export const GET: APIRoute = async () => {
 
 	const companiesWithJobs = await Promise.all(
 		companies.map(async (c) => {
-			const jobs = await fetchJobs(c.data.name, c.data.ats, c.data.currency);
+			const jobs = await fetchJobs(c.data.name, c.data.ats);
 			return { company: c, jobCount: jobs.length };
 		})
 	);
