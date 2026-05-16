@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getEntry, getCollection } from 'astro:content';
+import { toPlainMarkdown } from '../lib/markdown';
 
 export const GET: APIRoute = async () => {
 	const home = await getEntry('pages', 'home');
@@ -13,6 +14,8 @@ export const GET: APIRoute = async () => {
 		`> ${description}`,
 		'',
 		...(quote ? [`> "${quote.text}" — [${quote.source}](${quote.url})`, ''] : []),
+		toPlainMarkdown(home.body ?? ''),
+		'',
 		'## Sections',
 		'',
 		'- [Guides](/guides/llms.txt) — configuring your agent harness',
