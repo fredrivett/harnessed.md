@@ -46,7 +46,6 @@ A few anti-patterns agents reach for that are worth a custom lint rule:
 
 - **`any` and untyped escape hatches** — when an agent can't figure out the type, it reaches for `any` and moves on. Block it with `@typescript-eslint/no-explicit-any` or Pyright strict mode.
 - **Stub implementations** — `TODO`, `pass`, `throw new Error('not implemented')`. A grep-level rule catches these before review.
-- **Mocks of the system under test** — tests that mock the very thing they claim to verify pass without proving anything.
 - **Security smells** — Snyk found 36–40% of AI-generated code contains a vulnerability. Run [Semgrep's free `p/owasp-top-ten` ruleset](https://semgrep.dev/p/owasp-top-ten) (or equivalent) in CI.
 
 ## Hooks beat rules
@@ -68,6 +67,18 @@ Rules in AGENTS.md are advisory — the agent reads them and may or may not foll
 ```
 
 Six lines of config. The agent now sees the failure in its next turn and fixes it before you read the diff. The same pattern applies to formatters, type checks, migration validators, and anything else that should never be skipped.
+
+## Tests
+
+The standard pyramid still applies — unit, integration, end-to-end — but agents make the failure modes more interesting. Three patterns worth catching:
+
+- **Mocks of the system under test.** When an agent can't get a real fixture working, it mocks the very thing the test claims to verify. The assertion then checks that the mock returned what the mock was told to return, and proves nothing. Enforce real dependencies for the system under test in integration suites.
+- **Tautological assertions.** Re-encoding the implementation as the assertion rather than the contract. The question to ask in review: _"what would this test catch if the implementation regressed?"_ If the answer is "nothing," the test is decoration.
+- **Tests written after the fact.** An agent that writes the implementation first and the test second tends to mirror its own code. Make it write the failing test first, then the fix — the test-first ordering is the difference between proving behaviour and re-describing it.
+
+Coverage is the wrong target. Hitting 90% line coverage means lines ran — it says nothing about whether the assertions are meaningful. The honest answer is **mutation testing**: tools like [Stryker](https://stryker-mutator.io/) (JS/TS/.NET), [PIT](https://pitest.org/) (Java), [mutmut](https://mutmut.readthedocs.io/) (Python), and [cargo-mutants](https://github.com/sourcefrog/cargo-mutants) (Rust) introduce tiny changes — flipping `>` to `>=`, dropping a `!`, changing `+` to `-` — and re-run your tests. If the tests still pass, the mutant survived: the test wasn't watching that behaviour. Feed the survivors back to the agent as the next round's target.
+
+Mutation testing is still niche — [ThoughtWorks Radar Vol. 34 (April 2026)](https://www.thoughtworks.com/radar/techniques/mutation-testing) placed it in Trial, calling it _"the most honest signal for evaluating the real fault-detection capability of a test suite."_ Which is exactly what you need when an agent will happily ship 100% coverage that proves nothing.
 
 ## Agentic review
 
@@ -112,10 +123,6 @@ Implement → Review (n parallel subagents) → Resolve → Re-review
 Rules of thumb: rounds 1–2 capture roughly 75% of the improvement; hard-cap at 5–6 to avoid the model oscillating on imaginary issues. Width over depth — three concurrent reviewers in 30 seconds beats one monolithic prompt in two minutes.
 
 If you'd rather start from a tested setup: Anthropic ships [`/security-review`](https://www.anthropic.com/news/automate-security-reviews-with-claude-code) out of the box for terminal-side audits, and [Every's compound-engineering plugin](https://github.com/EveryInc/compound-engineering-plugin) packages a plan → work → review → compound loop with 37 skills and 51 agents. For a worked walkthrough, [HAMY's 9-parallel-agent review setup](https://hamy.xyz/blog/2026-02_code-reviews-claude-subagents) is the clearest end-to-end example.
-
-## Mutation testing
-
-For high-stakes code, advance beyond line coverage. [Mutation testing](https://stryker-mutator.io/) introduces tiny changes — flipping `>` to `>=`, dropping a `!`, changing `+` to `-` — then re-runs your tests. If the tests still pass, the mutant survived: the test was watching the wrong thing. Feeding the mutation report back to the agent gives it a target signal far more useful than a coverage percentage.
 
 ## Closing the loop
 
