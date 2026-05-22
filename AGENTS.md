@@ -4,6 +4,18 @@
 
 - All external links must open in a new tab using `target="_blank" rel="noopener"`.
 
+## Writing pages
+
+Content pages (`src/data/*.md` rendered through `.prose`) follow a few conventions:
+
+- **Browsable, not a manual.** Every paragraph earns its space. Cut sentences that restate the previous one or the table above. Bullets are 1–2 sentences; longer means it should probably be prose.
+- **Concrete over vague.** Use specific stats tied to a named source (e.g. "Snyk found 36–40%…") instead of "studies show" or "many teams." If you can't attribute it, don't claim it.
+- **Primary sources.** Link to the vendor's or author's own page (`claude.com/blog/...`) before a secondary writeup (InfoQ, TechCrunch).
+- **Real headings.** Use `###` under `##` for sub-sections — don't fake hierarchy with `**Title.**` inline.
+- **Tool/option lists** are bullets with a bold linked name, em-dash, and a one-line differentiator.
+- **Reading lives in the frontmatter.** Add to the `reading:` list; don't write "for further reading."
+- **External links open in a new tab automatically** via `rehype-external-links` — don't add the attributes by hand.
+
 ## Adding a company
 
 Company files live in `src/data/companies/`. The numeric prefix (e.g. `01-`) controls sort order on the homepage; the slug is the filename minus the prefix (e.g. `01-openai.yaml` → `/companies/openai`).
