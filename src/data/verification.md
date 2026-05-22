@@ -44,25 +44,7 @@ The floor. Types, linters, and formatters fire on every edit and convert whole c
 - **Stub implementations.** `TODO`, `pass`, `throw new Error('not implemented')`. A grep-level rule catches these before review.
 - **Security smells.** Snyk found 36–40% of AI-generated code contains a vulnerability. Run [Semgrep's free `p/owasp-top-ten` ruleset](https://semgrep.dev/p/owasp-top-ten) (or equivalent) in CI.
 
-## Hooks beat rules
-
-Rules in AGENTS.md are advisory; hooks are deterministic. If a rule like "always run tests after a change" keeps getting skipped, convert it to a hook:
-
-```jsonc
-// .claude/settings.json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [{ "type": "command", "command": "npm test && npm run lint" }]
-      }
-    ]
-  }
-}
-```
-
-Six lines of config and the agent sees the failure in its next turn — fixing it before you read the diff.
+Wire these into a [PostToolUse hook](/guides#hooks) so failures land in the agent's next turn, not in CI.
 
 ## Tests
 
