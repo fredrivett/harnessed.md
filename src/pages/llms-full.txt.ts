@@ -9,6 +9,7 @@ export const GET: APIRoute = async () => {
 	const companies = await getCollection('companies');
 
 	const guides = await getEntry('pages', 'guides');
+	const verification = await getEntry('pages', 'verification');
 
 	const lines = [
 		`# ${title}`,
@@ -23,6 +24,15 @@ export const GET: APIRoute = async () => {
 			'### Guides: further reading',
 			'',
 			...guides.data.reading.map((item) =>
+				`- [${item.title}](${item.url}) — ${item.author} — ${item.tag}`
+			),
+			'',
+		] : []),
+		...(verification ? [toPlainMarkdown(verification.body ?? ''), ''] : []),
+		...(verification?.data.reading ? [
+			'### Verification: further reading',
+			'',
+			...verification.data.reading.map((item) =>
 				`- [${item.title}](${item.url}) — ${item.author} — ${item.tag}`
 			),
 			'',

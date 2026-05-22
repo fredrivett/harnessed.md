@@ -70,7 +70,7 @@ main.narrow {
 	max-width: var(--max-width);
 }
 
-h1, h2 {
+h1, h2, h3, h4, h5, h6 {
 	position: relative;
 	scroll-margin-top: 2rem;
 }
@@ -122,7 +122,7 @@ h1 {
 	display: block;
 }
 
-h2 {
+h2, h3 {
 	font-size: 1rem;
 	font-weight: 700;
 	margin-bottom: 0.75rem;
@@ -263,22 +263,28 @@ p:last-child {
 }
 
 .prose h1,
-.prose h2,
+.prose h2 {
+	margin-top: 2rem;
+}
+
 .prose h3,
 .prose h4,
 .prose h5,
 .prose h6 {
-	margin-top: 2rem;
+	margin-top: 1.5rem;
 }
 
 @media (min-width: 768px) {
 	.prose h1,
-	.prose h2,
+	.prose h2 {
+		margin-top: 3rem;
+	}
+
 	.prose h3,
 	.prose h4,
 	.prose h5,
 	.prose h6 {
-		margin-top: 3rem;
+		margin-top: 2rem;
 	}
 }
 
