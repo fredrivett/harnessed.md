@@ -66,13 +66,13 @@ Anthropic's [Code Review for Claude Code](https://claude.com/blog/code-review) (
 
 ### The hosted reviewer landscape
 
-Beyond Anthropic's own offering, the field has consolidated around a handful of players:
+Beyond Anthropic's own offering, a handful of options have emerged:
 
-- **[CodeRabbit](https://coderabbit.ai/)** — broadest platform coverage (GitHub, GitLab, Bitbucket, Azure)
-- **[Greptile](https://www.greptile.com/)** — best bug-catch rate in head-to-head benchmarks via full-repo context
-- **[cubic](https://www.cubic.dev/)** — high-signal reviews, used by Granola, n8n, Cal.com
-- **[Graphite Diamond](https://graphite.com/)** — best fit for teams on a stacked-PR workflow
-- **[Vercel Agent](https://vercel.com/agent)** — tight integration if you deploy on Vercel
+- **[CodeRabbit](https://coderabbit.ai/)** — cross-platform support across GitHub, GitLab, Bitbucket, and Azure DevOps
+- **[Greptile](https://www.greptile.com/)** — full-repo context, pitched at large/legacy codebases
+- **[cubic](https://www.cubic.dev/)** — emphasis on high-signal output; used by Granola, n8n, Cal.com
+- **[Graphite Diamond](https://graphite.com/)** — built around Graphite's stacked-PR workflow
+- **[Vercel Agent](https://vercel.com/agent)** — tight integration with Vercel deployments
 
 They all do roughly the same job — pick by where your code already lives.
 
