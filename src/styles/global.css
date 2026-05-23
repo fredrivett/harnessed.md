@@ -351,6 +351,10 @@ footer {
 	text-align: center;
 }
 
+footer [data-herenow] {
+	margin-top: 1.5rem;
+}
+
 footer .gibson {
 	font-style: italic;
 	color: var(--text-secondary);
