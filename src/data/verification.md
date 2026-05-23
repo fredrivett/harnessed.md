@@ -6,22 +6,18 @@ reading:
     url: https://claude.com/blog/code-review
     author: Anthropic
     tag: Multi-agent PR review with a verification pass
-  - title: LLM Verification Loops — Best Practices and Patterns
-    url: https://timjwilliams.medium.com/llm-verification-loops-best-practices-and-patterns-07541c854fd8
-    author: Tim Williams
-    tag: Reflect → implement → review → resolve
-  - title: Lint Against the Machine
-    url: https://medium.com/@montes.makes/lint-against-the-machine-a-field-guide-to-catching-ai-coding-agent-anti-patterns-3c4ef7baeb9e
-    author: Christopher Montes
-    tag: A field guide to AI coding anti-patterns
-  - title: Hooks Reference
-    url: https://code.claude.com/docs/en/hooks
-    author: Anthropic
-    tag: PostToolUse and mechanical enforcement
-  - title: 2026 Agentic Coding Trends Report
-    url: https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf
-    author: Anthropic
-    tag: How coding agents are reshaping development
+  - title: "Honk Part 3: Feedback Loops for Background Coding Agents"
+    url: https://engineering.atspotify.com/2025/12/feedback-loops-background-coding-agents-part-3
+    author: Spotify Engineering
+    tag: Deterministic verifiers and an LLM judge in production
+  - title: Mutation testing for the agentic era
+    url: https://blog.trailofbits.com/2026/04/01/mutation-testing-for-the-agentic-era/
+    author: Trail of Bits
+    tag: Why mutation testing matters when agents write the tests
+  - title: AI Is Writing Our Code Faster Than We Can Verify It
+    url: https://oreillyradar.substack.com/p/ai-is-writing-our-code-faster-than
+    author: Andrew Stellman
+    tag: The growing gap between generation speed and verification
 ---
 
 Verification is the highest-leverage layer of the [harness](/) — Anthropic calls it _["the single highest-leverage thing you can do."](https://code.claude.com/docs/en/best-practices)_ Without it, the bottleneck just moves from writing code to reviewing it.
