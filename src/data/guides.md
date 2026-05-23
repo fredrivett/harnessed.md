@@ -86,7 +86,23 @@ Common hooks:
 - Auto-format code on save
 - Validate that migrations have a corresponding rollback
 
-The rule of thumb: if you've written a rule in AGENTS.md and the agent keeps ignoring it, convert it to a hook.
+The rule of thumb: if you've written a rule in AGENTS.md and the agent keeps ignoring it, convert it to a hook. A `PostToolUse` hook that runs your verification suite on every edit is six lines of config:
+
+```jsonc
+// .claude/settings.json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "npm test && npm run lint" }]
+      }
+    ]
+  }
+}
+```
+
+The agent sees the failure in its next turn and fixes it before you read the diff.
 
 ## Context tiers
 

@@ -4,8 +4,21 @@
 	--bg: #fdfdfd;
 	--link: #374151;
 	--border: #e0e0e0;
-	--code-bg: #f5f5f5;
+	--code-bg: #f3f4f6;
 	--max-width: 65ch;
+
+	--syntax-text: #374151;
+	--syntax-comment: #9ca3af;
+	--syntax-punctuation: #9ca3af;
+	--syntax-keyword: #506883;
+	--syntax-function: #4c6079;
+	--syntax-string: #5b6b80;
+	--syntax-property: #455467;
+	--syntax-number: #5d7d8a;
+	--syntax-type: #587886;
+	--syntax-inserted: #4d8161;
+	--syntax-changed: #a16207;
+	--syntax-invalid: #9f1239;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,7 +28,20 @@
 		--bg: #111;
 		--link: #d1d5db;
 		--border: #333;
-		--code-bg: #1a1a1a;
+		--code-bg: #1c1c1c;
+
+		--syntax-text: #d1d5db;
+		--syntax-comment: #6b7280;
+		--syntax-punctuation: #6b7280;
+		--syntax-keyword: #a4b6cf;
+		--syntax-function: #b0bfd4;
+		--syntax-string: #9aa3b3;
+		--syntax-property: #c0c8d3;
+		--syntax-number: #8fb3bf;
+		--syntax-type: #8eb2bf;
+		--syntax-inserted: #86c19a;
+		--syntax-changed: #d6a263;
+		--syntax-invalid: #d98a96;
 	}
 }
 
@@ -25,7 +51,20 @@
 	--bg: #111;
 	--link: #d1d5db;
 	--border: #333;
-	--code-bg: #1a1a1a;
+	--code-bg: #1c1c1c;
+
+	--syntax-text: #d1d5db;
+	--syntax-comment: #6b7280;
+	--syntax-punctuation: #6b7280;
+	--syntax-keyword: #a4b6cf;
+	--syntax-function: #b0bfd4;
+	--syntax-string: #9aa3b3;
+	--syntax-property: #c0c8d3;
+	--syntax-number: #8fb3bf;
+	--syntax-type: #8eb2bf;
+	--syntax-inserted: #86c19a;
+	--syntax-changed: #d6a263;
+	--syntax-invalid: #d98a96;
 }
 
 :root[data-force-theme='light'] {
@@ -34,7 +73,20 @@
 	--bg: #fdfdfd;
 	--link: #374151;
 	--border: #e0e0e0;
-	--code-bg: #f5f5f5;
+	--code-bg: #f3f4f6;
+
+	--syntax-text: #374151;
+	--syntax-comment: #9ca3af;
+	--syntax-punctuation: #9ca3af;
+	--syntax-keyword: #506883;
+	--syntax-function: #4c6079;
+	--syntax-string: #5b6b80;
+	--syntax-property: #455467;
+	--syntax-number: #5d7d8a;
+	--syntax-type: #587886;
+	--syntax-inserted: #4d8161;
+	--syntax-changed: #a16207;
+	--syntax-invalid: #9f1239;
 }
 
 * {
@@ -70,7 +122,7 @@ main.narrow {
 	max-width: var(--max-width);
 }
 
-h1, h2 {
+h1, h2, h3, h4, h5, h6 {
 	position: relative;
 	scroll-margin-top: 2rem;
 }
@@ -122,7 +174,7 @@ h1 {
 	display: block;
 }
 
-h2 {
+h2, h3 {
 	font-size: 1rem;
 	font-weight: 700;
 	margin-bottom: 0.75rem;
@@ -175,6 +227,36 @@ pre code {
 	padding: 0;
 	font-size: inherit;
 }
+
+/* Shiki: tokens get .tok-* classes via the harnessed:token-classes transformer.
+   Colours come from --syntax-* variables so they follow the theme. */
+/* Astro injects inline CSS vars (--shiki-light-bg etc.) on the wrapper
+   after our transformer runs; override with !important. */
+pre.astro-code {
+	background: var(--code-bg) !important;
+	color: var(--syntax-text) !important;
+}
+
+.astro-code .tok-text        { color: var(--syntax-text); }
+.astro-code .tok-comment     { color: var(--syntax-comment); font-style: italic; }
+.astro-code .tok-punctuation { color: var(--syntax-punctuation); }
+.astro-code .tok-keyword     { color: var(--syntax-keyword); }
+.astro-code .tok-builtin     { color: var(--syntax-keyword); }
+.astro-code .tok-function    { color: var(--syntax-function); }
+.astro-code .tok-string      { color: var(--syntax-string); }
+.astro-code .tok-property    { color: var(--syntax-property); }
+.astro-code .tok-attribute   { color: var(--syntax-property); }
+.astro-code .tok-number      { color: var(--syntax-number); }
+.astro-code .tok-constant    { color: var(--syntax-number); }
+.astro-code .tok-type        { color: var(--syntax-type); }
+.astro-code .tok-namespace   { color: var(--syntax-type); }
+.astro-code .tok-regexp      { color: var(--syntax-string); }
+.astro-code .tok-heading     { color: var(--syntax-keyword); font-weight: 700; }
+.astro-code .tok-quote       { color: var(--syntax-comment); }
+.astro-code .tok-inserted    { color: var(--syntax-inserted); }
+.astro-code .tok-changed     { color: var(--syntax-changed); }
+.astro-code .tok-invalid     { color: var(--syntax-invalid); }
+.astro-code .tok-link        { color: var(--syntax-property); text-decoration: underline; }
 
 .hero-quote {
 	border-left: 2px solid var(--border);
@@ -256,6 +338,86 @@ p:last-child {
 	margin-left: calc(-1 * var(--table-bleed));
 	margin-right: calc(-1 * var(--table-bleed));
 	overflow-x: auto;
+}
+
+.prose {
+	margin-bottom: 2rem;
+}
+
+.prose h1,
+.prose h2 {
+	margin-top: 2rem;
+}
+
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+	margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+	.prose h1,
+	.prose h2 {
+		margin-top: 3rem;
+	}
+
+	.prose h3,
+	.prose h4,
+	.prose h5,
+	.prose h6 {
+		margin-top: 2rem;
+	}
+}
+
+.prose ul {
+	margin: 0 0 1rem 1.5rem;
+}
+
+.prose li {
+	margin-bottom: 0.25rem;
+}
+
+.prose code {
+	font-size: 0.85rem;
+	background: var(--code-bg);
+	padding: 0.1rem 0.3rem;
+	border-radius: 3px;
+}
+
+.prose pre code {
+	background: none;
+	padding: 0;
+}
+
+.prose table {
+	min-width: 100%;
+	border-collapse: collapse;
+	font-size: 0.85rem;
+	margin-bottom: 1rem;
+}
+
+.prose th {
+	text-align: left;
+	font-weight: 700;
+	padding: 0.6rem 1.25rem 0.6rem 0;
+	border-bottom: 1px solid var(--border);
+	vertical-align: top;
+}
+
+.prose th:last-child,
+.prose td:last-child {
+	padding-right: 0;
+}
+
+.prose td {
+	padding: 0.6rem 1.25rem 0.6rem 0;
+	border-bottom: 1px solid var(--border);
+	vertical-align: top;
+}
+
+.prose tr:last-child td {
+	border-bottom: none;
 }
 
 .companies table {

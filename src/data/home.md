@@ -45,7 +45,7 @@ Traditionally engineers spent 80% of their time on features, 20% on the system. 
 The harness has three parts:
 
 - **[Guides](/guides)** — steer the agent _before_ it acts: AGENTS.md, design docs, architecture maps, rules, learnings
-- **Verification** — checks the work before it ships: types, linters, tests, agentic review
+- **[Verification](/verification)** — checks the work before it ships: types, linters, tests, agentic review
 - **Observation** — monitors: error tracking, usage patterns, performance
 
 <pre><code>Intent ◄····································╮
@@ -58,7 +58,7 @@ The harness has three parts:
 Agent builds ◄───────┐                  ·   ·
   │                  │                  ·   ·
   ▼                  │                  ·   ·
-Verification ········╁··················┤   ·
+<a href="/verification">Verification</a> ········╁··················┤   ·
   │                  │                  ·   ·
   ▼          no: fix │                  ·   ·
 Pass? ───────────────┘                  ·   ·
