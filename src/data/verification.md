@@ -24,7 +24,7 @@ reading:
     tag: How coding agents are reshaping development
 ---
 
-Verification is the highest-leverage layer of the [harness](/) — Anthropic calls giving an agent a way to verify its work _["the single highest-leverage thing you can do."](https://code.claude.com/docs/en/best-practices)_ Without it, the bottleneck just moves from writing code to reviewing it.
+Verification is the highest-leverage layer of the [harness](/) — Anthropic calls it _["the single highest-leverage thing you can do."](https://code.claude.com/docs/en/best-practices)_ Without it, the bottleneck just moves from writing code to reviewing it.
 
 ## The verification stack
 
@@ -38,11 +38,13 @@ Three tiers, ordered by cost. Fail fast, fail cheap — each tier exists to keep
 
 ## Deterministic checks
 
-The floor. Types, linters, and formatters fire on every edit and convert whole classes of error into compile-time failures. Agent-specific anti-patterns worth a custom lint rule:
+The floor. Types, linters, and formatters fire on every edit and convert whole classes of error into compile-time failures.
+
+[Snyk's research](https://snyk.io/reports/secure-adoption-in-the-genai-era/) puts around 40% of AI-generated code as containing a vulnerability, so this layer carries more weight in the agent era than it did before. Agent-specific anti-patterns worth a custom lint rule:
 
 - **`any` and untyped escape hatches.** Agents reach for `any` whenever the type is hard. Block with `@typescript-eslint/no-explicit-any` or Pyright strict mode.
 - **Stub implementations.** `TODO`, `pass`, `throw new Error('not implemented')`. A grep-level rule catches these before review.
-- **Security smells.** Snyk found 36–40% of AI-generated code contains a vulnerability. Run [Semgrep's free `p/owasp-top-ten` ruleset](https://semgrep.dev/p/owasp-top-ten) (or equivalent) in CI.
+- **Security smells.** Run [Semgrep's free `p/owasp-top-ten` ruleset](https://semgrep.dev/p/owasp-top-ten) (or equivalent) in CI.
 
 Wire these into a [PostToolUse hook](/guides#hooks) so failures land in the agent's next turn, not in CI.
 
@@ -52,9 +54,15 @@ The pyramid still applies — unit, integration, end-to-end — but agents intro
 
 - **Mocks of the system under test.** The test mocks the thing it's meant to verify, then asserts the mock returned what the mock was told to. Enforce real dependencies in integration suites.
 - **Tautological assertions.** The assertion re-encodes the implementation, not the contract. Ask: _"what would this catch if the implementation regressed?"_ If nothing, it's decoration.
-- **Tests written after the fact.** Tests written second mirror the code, not the spec. Make the agent write the failing test first.
+- **Tests written after the fact.** Tests written second mirror the code, not the spec. Make the agent follow [red-green](https://martinfowler.com/bliki/TestDrivenDevelopment.html): failing test first, then the code that makes it pass.
 
-Coverage is the wrong target — line coverage means lines _ran_, not that assertions are _meaningful_. The honest signal is **mutation testing**: [Stryker](https://stryker-mutator.io/) (JS/TS/.NET), [PIT](https://pitest.org/) (Java), [mutmut](https://mutmut.readthedocs.io/) (Python), and [cargo-mutants](https://github.com/sourcefrog/cargo-mutants) (Rust) introduce small changes — `>` → `>=`, drop a `!` — and re-run your tests. Surviving mutants are tests that weren't actually watching that behaviour; feed them back as the next round's target. Still niche, but [ThoughtWorks Vol. 34](https://www.thoughtworks.com/radar/techniques/mutation-testing) put it in Trial as _"the most honest signal for evaluating the real fault-detection capability of a test suite."_
+Coverage is the wrong target — line coverage means lines _ran_, not that assertions are _meaningful_.
+
+The honest signal is **mutation testing**: [Stryker](https://stryker-mutator.io/) (JS/TS/.NET), [PIT](https://pitest.org/) (Java), [mutmut](https://mutmut.readthedocs.io/) (Python), and [cargo-mutants](https://github.com/sourcefrog/cargo-mutants) (Rust) introduce small changes — `>` → `>=`, drop a `!` — then re-run your tests.
+
+Surviving mutants are tests that weren't actually watching that behaviour; feed them back as the next round's target.
+
+Still niche, but [ThoughtWorks Vol. 34](https://www.thoughtworks.com/radar/techniques/mutation-testing) put it in Trial as _"the most honest signal for evaluating the real fault-detection capability of a test suite."_
 
 ## Agentic review
 
@@ -92,11 +100,9 @@ with file:line and a one-sentence fix. No speculation.
 
 Add `style-reviewer.md` and `performance-reviewer.md`, dispatch concurrently, then loop:
 
-```
-Implement → Review (n parallel subagents) → Resolve → Re-review
-```
+<pre><code>Implement → Review (n parallel subagents) → Resolve → Re-review</code></pre>
 
-Rounds 1–2 capture ~75% of the improvement; cap at 5–6 to avoid oscillation. Width beats depth — three reviewers in 30 seconds beats one monolithic prompt in two minutes.
+Rounds 1–2 capture [~75% of the improvement](https://dev.to/yannick555/iterative-review-fix-loops-remove-llm-hallucinations-and-there-is-a-formula-for-it-4ee8) (round 1 catches half the errors, round 2 catches half of what's left); cap at 5–6 to avoid oscillation. Width beats depth — three reviewers in 30 seconds beats one monolithic prompt in two minutes.
 
 Starting points: Anthropic's built-in [`/security-review`](https://www.anthropic.com/news/automate-security-reviews-with-claude-code), or [Every's compound-engineering plugin](https://github.com/EveryInc/compound-engineering-plugin) for a full plan → work → review → compound loop.
 

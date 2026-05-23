@@ -8,7 +8,7 @@
 
 Content pages (`src/data/*.md` rendered through `.prose`) follow a few conventions:
 
-- **Browsable, not a manual.** Every paragraph earns its space. Cut sentences that restate the previous one or the table above. Bullets are 1–2 sentences; longer means it should probably be prose.
+- **Browsable, not a manual.** Paragraphs and bullets are 1–2 sentences max — if it runs longer, split it. Cut sentences that just restate the previous one or the table above.
 - **Concrete over vague.** Use specific stats tied to a named source (e.g. "Snyk found 36–40%…") instead of "studies show" or "many teams." If you can't attribute it, don't claim it.
 - **Primary sources.** Link to the vendor's or author's own page (`claude.com/blog/...`) before a secondary writeup (InfoQ, TechCrunch).
 - **Real headings.** Use `###` under `##` for sub-sections — don't fake hierarchy with `**Title.**` inline.
