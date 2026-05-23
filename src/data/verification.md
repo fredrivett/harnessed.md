@@ -32,9 +32,9 @@ Three tiers, ordered by cost. Fail fast, fail cheap — each tier exists to keep
 
 | Layer | Examples | When it runs | Cost |
 | --- | --- | --- | --- |
-| Deterministic | Types, linters, formatters, builds | Every file edit | Free, instant |
-| Tests | Unit, integration, end-to-end | Every change, every PR | Cheap |
-| Agentic review | Security, style, perf subagents; PR reviewers | Pre-merge | Tokens + minutes |
+| [Deterministic](#deterministic-checks) | Types, linters, formatters, builds | Every file edit | Free, instant |
+| [Tests](#tests) | Unit, integration, end-to-end | Every change, every PR | Cheap |
+| [Agentic review](#agentic-review) | Security, style, perf subagents; PR reviewers | Pre-merge | Tokens + minutes |
 
 ## Deterministic checks
 
