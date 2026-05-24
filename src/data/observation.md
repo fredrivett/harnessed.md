@@ -2,6 +2,10 @@
 title: Observation
 description: How to monitor what an agent shipped — error tracking, usage, and AI-led anomaly investigation.
 reading:
+  - title: Monitoring and Observability
+    url: https://copyconstruct.medium.com/monitoring-and-observability-8417d1952e1c
+    author: Cindy Sridharan
+    tag: The canonical essay distinguishing the two
   - title: Vercel Agent can now run AI investigations
     url: https://vercel.com/blog/vercel-agent-can-now-run-ai-investigations
     author: Vercel
