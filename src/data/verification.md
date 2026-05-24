@@ -76,7 +76,7 @@ Beyond Anthropic's own offering, a handful of options have emerged:
 - **[Greptile](https://www.greptile.com/)** — full-repo context, pitched at large/legacy codebases
 - **[cubic](https://www.cubic.dev/)** — emphasis on high-signal output; used by Granola, n8n, Cal.com
 - **[Graphite Diamond](https://graphite.com/)** — built around Graphite's stacked-PR workflow
-- **[Vercel Agent](https://vercel.com/agent)** — tight integration with Vercel deployments
+- **[Vercel Agent](https://vercel.com/agent)** — sandbox-validates suggested patches against your real build, tests, and linters before posting
 
 They all do roughly the same job — pick by where your code already lives.
 

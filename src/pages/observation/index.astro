@@ -1,0 +1,30 @@
+---
+import Base from '../../layouts/Base.astro';
+import ReadingList from '../../components/ReadingList.astro';
+import { getEntry, render } from 'astro:content';
+
+const observation = await getEntry('pages', 'observation');
+if (!observation) throw new Error('Missing pages/observation entry');
+const { description, reading } = observation.data;
+const { Content } = await render(observation);
+---
+
+<Base title={`Observation — harnessed.md`} description={description} class="narrow">
+	<section class="prose">
+		<Content />
+	</section>
+
+	<script>
+		document.querySelectorAll('.prose table').forEach((table) => {
+			const wrap = document.createElement('div');
+			wrap.className = 'table-wrap';
+			table.parentNode!.insertBefore(wrap, table);
+			wrap.appendChild(table);
+		});
+	</script>
+
+	{reading && (
+		<hr />
+		<ReadingList title="Further reading" items={reading} />
+	)}
+</Base>

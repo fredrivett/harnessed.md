@@ -10,6 +10,7 @@ export const GET: APIRoute = async () => {
 
 	const guides = await getEntry('pages', 'guides');
 	const verification = await getEntry('pages', 'verification');
+	const observation = await getEntry('pages', 'observation');
 	const audit = await getEntry('pages', 'audit');
 
 	const lines = [
@@ -34,6 +35,15 @@ export const GET: APIRoute = async () => {
 			'### Verification: further reading',
 			'',
 			...verification.data.reading.map((item) =>
+				`- [${item.title}](${item.url}) — ${item.author} — ${item.tag}`
+			),
+			'',
+		] : []),
+		...(observation ? [toPlainMarkdown(observation.body ?? ''), ''] : []),
+		...(observation?.data.reading ? [
+			'### Observation: further reading',
+			'',
+			...observation.data.reading.map((item) =>
 				`- [${item.title}](${item.url}) — ${item.author} — ${item.tag}`
 			),
 			'',

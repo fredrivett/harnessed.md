@@ -46,7 +46,7 @@ The harness has three parts:
 
 - **[Guides](/guides)** — steer the agent _before_ it acts: AGENTS.md, design docs, architecture maps, rules, learnings
 - **[Verification](/verification)** — checks the work before it ships: types, linters, tests, agentic review
-- **Observation** — monitors: error tracking, usage patterns, performance
+- **[Observation](/observation)** — monitors what shipped: errors, usage, agentic investigation
 
 <pre><code>Intent ◄····································╮
   │            improvements + fixes         ·
