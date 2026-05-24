@@ -54,12 +54,16 @@ The emerging pattern beyond alert-triggered: hand a coding agent a bug report �
 
 ## Closing the loop
 
-Observation only earns its keep if its signals flow back into the [guides](/guides). When error tracking surfaces the same defect class twice, the fix isn't another patch — it's a lint rule, a test fixture, or an entry in AGENTS.md. When usage analytics show a feature unused, the next agent task gets sharper acceptance criteria.
+Observation feeds two flows.
 
-The same questions from [Verification → Closing the loop](/verification#closing-the-loop) apply:
+Recurring patterns improve the [harness](/). When error tracking surfaces the same defect class twice, the fix isn't another patch — push it into the harness. If a deterministic check can catch the pattern — a lint rule, a hook, or a test — use that. Otherwise pick the advisory form that fits: a path-scoped rule for code-area specifics, a skill for workflows, AGENTS.md for what every session needs to know.
 
-1. Should this have been caught earlier? If observation caught what verification could have, tighten verification.
-2. Is this a class or an instance? Recurring signals become rules.
-3. Was the rule unwritten? If the agent followed AGENTS.md and still missed it, the guide is missing something.
+One-off signals feed the task list. A feature nobody uses gets investigated, then fixed or removed. A one-time error becomes a regular bug. These are tasks, not harness rules.
 
-Observation is the loop. Without it, the harness stops learning the moment something passes verification.
+Three questions to ask when a signal lands:
+
+1. **Should this have been caught earlier?** Push enforcement upstream — to whichever cheaper layer would catch it next time.
+2. **Pattern or one-off?** Patterns get hard-coded into the harness; one-offs just get fixed.
+3. **Did an advisory rule fail to stick?** Upgrade it to a deterministic check — a hook, lint, or test.
+
+Observation closes the loop. Without it, the harness stops learning the moment something passes verification.
