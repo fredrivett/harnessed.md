@@ -21,7 +21,7 @@ For each item, the agent assigns one number:
 - **2** — partial: inconsistent or incomplete coverage
 - **3** — solid baseline
 - **4** — thorough, well-maintained
-- **5** — exemplary
+- **5** — exemplary, no areas to improve
 
 ## Output
 
