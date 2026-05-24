@@ -20,6 +20,7 @@ export const GET: APIRoute = async () => {
 		'',
 		'- [Guides](/guides/llms.txt) — configuring your agent harness',
 		'- [Verification](/verification/llms.txt) — verifying what an agent ships',
+		'- [Audit](/audit/llms.txt) — score how harnessed your codebase is',
 		'- [Jobs](/jobs/llms.txt) — engineering jobs at harnessed companies',
 		'- [Companies](/companies/llms.txt) — who is doing harness engineering',
 		'',

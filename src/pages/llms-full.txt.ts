@@ -10,6 +10,7 @@ export const GET: APIRoute = async () => {
 
 	const guides = await getEntry('pages', 'guides');
 	const verification = await getEntry('pages', 'verification');
+	const audit = await getEntry('pages', 'audit');
 
 	const lines = [
 		`# ${title}`,
@@ -37,6 +38,7 @@ export const GET: APIRoute = async () => {
 			),
 			'',
 		] : []),
+		...(audit ? [toPlainMarkdown(audit.body ?? ''), ''] : []),
 		'## Companies',
 		'',
 		...companies.map((c) =>
