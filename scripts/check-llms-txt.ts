@@ -42,6 +42,20 @@ assert(
   'should handle multiple code blocks'
 );
 
+// Rewrites internal section links to their llms.txt variants
+assert(
+  toPlainMarkdown('See [AGENTS.md](/guides#agents-md) for more.') === 'See [AGENTS.md](/guides/llms.txt#agents-md) for more.',
+  'should rewrite section links with anchors to /llms.txt variant'
+);
+assert(
+  toPlainMarkdown('See [Guides](/guides) here.') === 'See [Guides](/guides/llms.txt) here.',
+  'should rewrite section links without anchors to /llms.txt variant'
+);
+assert(
+  toPlainMarkdown('External: [Anthropic](https://anthropic.com/guides).') === 'External: [Anthropic](https://anthropic.com/guides).',
+  'should not rewrite external URLs that happen to contain a section path'
+);
+
 // --- Integration: check built llms.txt files ---
 
 const dist = join(import.meta.dirname, '..', 'dist');
@@ -76,6 +90,13 @@ checkFile('audit/llms.txt', 'audit/llms.txt', (content) => {
   assert(content.includes('# Audit'), 'audit/llms.txt should have title');
   assert(content.includes('## The prompt'), 'audit/llms.txt should include the prompt section');
   assert(content.includes('## The rubric'), 'audit/llms.txt should include the rubric section');
+  assert(content.includes('### Guides'), 'audit/llms.txt should include the Guides pillar');
+  assert(content.includes('### Verification'), 'audit/llms.txt should include the Verification pillar');
+  assert(content.includes('### Observation'), 'audit/llms.txt should include the Observation pillar');
+  assert(content.includes('### Closing the loop'), 'audit/llms.txt should include the Closing the loop pillar');
+  assert(content.includes('/guides/llms.txt#'), 'audit/llms.txt should link to /guides/llms.txt#... variants');
+  assert(content.includes('/verification/llms.txt#'), 'audit/llms.txt should link to /verification/llms.txt#... variants');
+  assert(content.includes('/observation/llms.txt#'), 'audit/llms.txt should link to /observation/llms.txt#... variants');
 });
 
 // /observation/llms.txt

@@ -3,7 +3,7 @@ title: Audit
 description: A rubric your agent runs against your codebase to score how harnessed it is.
 ---
 
-The audit is a rubric your agent runs against your codebase. It scores each [pillar](/) — Guides, Verification, Closing the loop — flags where the harness is thin, and recommends a next step grounded in the tooling you already use.
+The audit is a rubric your agent runs against your codebase. It scores each [pillar](/) — Guides, Verification, Observation, Closing the loop — flags where the harness is thin, and recommends a next step grounded in the tooling you already use.
 
 ## The prompt
 
@@ -11,6 +11,8 @@ The audit is a rubric your agent runs against your codebase. It scores each [pil
 Audit this repository against the rubric at
 https://www.harnessed.md/audit/llms.txt and follow the instructions there.
 ```
+
+For each rubric item, fetch the linked section before scoring — use the `/llms.txt` variant of any harnessed.md link (e.g. `/guides/llms.txt#agents-md` rather than `/guides#agents-md`). Score from evidence in the repo, not from intent.
 
 ## Scoring
 
@@ -30,11 +32,11 @@ One markdown table per section, plus an aggregate at the end:
 | Item | Score | Evidence | Next step |
 | --- | --- | --- | --- |
 
-The **Next step** column should reference the tooling already in the repo (extend the existing ESLint config, not introduce Biome alongside it). One concrete action per row.
+The **Next step** column should reference the tooling already in the repo (extend the existing ESLint config, not introduce Biome alongside it). One concrete action per row, or blank if the score is 5.
 
 ## The rubric
 
-Each item links to where the best-practice guidance lives on [/guides](/guides) or [/verification](/verification). Follow the link to ground your scoring and recommendation before assigning a number.
+Each item links to where the best-practice guidance lives on [/guides](/guides), [/verification](/verification), or [/observation](/observation). Follow the link to ground your scoring and recommendation before assigning a number.
 
 ### Guides
 
@@ -53,6 +55,12 @@ Each item links to where the best-practice guidance lives on [/guides](/guides) 
 - **[Tests](/verification#tests)** — unit and integration in place; tests don't mock the system they're verifying.
 - **[Agentic review](/verification#agentic-review)** — PR review by other agents — hosted (e.g. [CodeRabbit](https://coderabbit.ai/), [Greptile](https://www.greptile.com/)) or a [local subagent set](/verification#the-subagent-reviewer-pattern).
 - **[Mutation testing](/verification#tests)** — for high-stakes code, signal beyond line coverage.
+
+### Observation
+
+- **[Error tracking](/observation#error-tracking)** — exceptions captured with stack traces, source maps, and deploy markers that tie incidents back to the PR that caused them.
+- **[Usage analytics](/observation#usage-analytics)** — meaningful user actions instrumented per change; activation cohorts and drop-off measurable, not just pageviews.
+- **[Agentic investigation](/observation#agentic-investigation)** — an agent (hosted like [Vercel Agent](https://vercel.com/agent), or a custom loop with MCP access to logs) runs on alert and posts a root-cause hypothesis before a human looks.
 
 ### Closing the loop
 

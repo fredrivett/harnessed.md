@@ -18,21 +18,23 @@ export const GET: APIRoute = async () => {
 		...companiesWithJobs.flatMap(({ company: c, jobCount }) => {
 			const slug = c.id.replace(/^\d+-/, '');
 			const sources = c.data.sources || [];
+			const extraSources = sources.filter((s) => s.url !== c.data.reference.url);
 			return [
 				`## [${c.data.name}](${c.data.url})`,
 				'',
 				c.data.description,
 				'',
+				`Read: [${c.data.reference.title}](${c.data.reference.url})`,
+				'',
 				`- Stage: ${c.data.stage}`,
 				`- Headcount: ${c.data.headcount}`,
 				`- Open roles: ${jobCount}`,
-				`- Reference: [${c.data.reference.title}](${c.data.reference.url})`,
 				...(c.data.careers ? [`- Careers: ${c.data.careers}`] : []),
 				`- Detail: [/companies/${slug}/llms.txt](/companies/${slug}/llms.txt)`,
-				...(sources.length > 0 ? [
+				...(extraSources.length > 0 ? [
 					'',
-					'Sources:',
-					...sources.map((s) => `- [${s.title}](${s.url})`),
+					'More sources:',
+					...extraSources.map((s) => `- [${s.title}](${s.url})`),
 				] : []),
 				'',
 			];
