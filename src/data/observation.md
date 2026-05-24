@@ -50,7 +50,7 @@ The newest layer. When an alert fires, an LLM agent queries your logs and metric
 
 [Vercel Agent Investigation](https://vercel.com/docs/agent/investigation) is the clearest GA example — runs automatically when an anomaly alert fires, queries logs and metrics, looks for related errors, and posts findings to the alert. Built on the [Vercel MCP server](https://vercel.com/changelog/agents-can-now-access-runtime-logs-with-vercels-mcp-server), so the agent has authenticated access to runtime data.
 
-The emerging pattern beyond alert-triggered: hand a coding agent a bug report — screenshots, repro details, severity — and give it tools to query logs, deploy a debug branch with added instrumentation, and compare against baseline. The pieces exist ([vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) for screenshot capture, [`vercel logs`](https://vercel.com/changelog/vercel-logs-cli-command-now-optimized-for-agents-with-historical-log) for queryable history, MCP for live data), but the workflow isn't packaged as a single product yet.
+The emerging pattern beyond alert-triggered: hand a coding agent a bug report — screenshots, repro details, severity — and give it tools to query logs, deploy a debug branch with added instrumentation, and compare against baseline. Compose it from primitives: [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) for screenshot capture, [`vercel logs`](https://vercel.com/changelog/vercel-logs-cli-command-now-optimized-for-agents-with-historical-log) for queryable history, MCP for live data.
 
 ## Closing the loop
 
