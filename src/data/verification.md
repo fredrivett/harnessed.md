@@ -76,7 +76,7 @@ Beyond Anthropic's own offering, a handful of options have emerged:
 - **[Greptile](https://www.greptile.com/)** — full-repo context, pitched at large/legacy codebases
 - **[cubic](https://www.cubic.dev/)** — emphasis on high-signal output; used by Granola, n8n, Cal.com
 - **[Graphite Diamond](https://graphite.com/)** — built around Graphite's stacked-PR workflow
-- **[Vercel Agent](https://vercel.com/agent)** — tight integration with Vercel deployments
+- **[Vercel Agent](https://vercel.com/agent)** — sandbox-validates suggested patches against your real build, tests, and linters before posting
 
 They all do roughly the same job — pick by where your code already lives.
 
@@ -104,23 +104,23 @@ Starting points: Anthropic's built-in [`/security-review`](https://www.anthropic
 
 ## Closing the loop
 
-Verification only compounds when its signals flow back into the guides. When the same class of bug appears twice, the fix isn't a better prompt — it's a new lint rule, a new test fixture, or a new entry in AGENTS.md.
+Verification only compounds when its signals flow back into the guides. When the same class of bug appears twice, the fix isn't a better prompt — push it into the harness. If a deterministic check can catch the pattern — a lint rule, a hook, or a test — use that. Otherwise pick the advisory form that fits: a path-scoped rule for code-area specifics, a skill for workflows, AGENTS.md for what every session needs to know.
 
 Three questions to ask after every failure:
 
-1. **Should this have been caught earlier?** If a reviewer caught what a linter could have, add the lint rule.
-2. **Is this a class or an instance?** Recurring defects become rules. One-offs just get fixed.
-3. **Was the rule unwritten?** If the agent followed AGENTS.md and still made the mistake, the guide is missing something.
+1. **Should this have been caught earlier?** Push enforcement upstream — to whichever cheaper layer would catch it next time.
+2. **Pattern or one-off?** Patterns get hard-coded into the harness; one-offs just get fixed.
+3. **Did an advisory rule fail to stick?** Upgrade it to a deterministic check — a hook, lint, or test.
 
 ### Wiring up the loop
 
 Four levels of automation, ordered by friction:
 
 - **Quick capture.** In Claude Code, prefix a prompt with `#` to append a [memory entry](https://code.claude.com/docs/en/memory). Zero ceremony.
-- **A `/learn` skill.** Slash command that takes a bug plus the diff and proposes a candidate rule, lint, or test fixture for review.
+- **A `/learn` skill.** Slash command that takes a bug plus the diff and proposes a candidate rule, lint, or test for review.
 - **Session-end hooks.** A [`Stop` or `SessionEnd` hook](https://code.claude.com/docs/en/hooks) reflects over the session and appends learnings to a tracked file. Starters: [claude-mem](https://github.com/thedotmack/claude-mem), [claude-memory-compiler](https://github.com/coleam00/claude-memory-compiler).
 - **Dreaming.** [Anthropic's Managed Agents](https://claude.com/blog/new-in-claude-managed-agents) (May 2026) curate memory automatically via scheduled reflection. Harvey saw a ~6× completion-rate lift.
 
-Whatever the mechanism: extract one durable artefact (rule, test, hook) per recurring defect — never a one-off prompt fix.
+Whatever the mechanism: push one improvement into the harness (rule, test, hook) per recurring defect — never a one-off prompt fix.
 
 Verification is where the agent meets reality. The cleaner the layers beneath, the less you need humans at the top.

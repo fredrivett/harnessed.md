@@ -64,6 +64,7 @@ checkFile('llms.txt', 'llms.txt', (content) => {
   assert(content.includes('## Sections'), 'llms.txt should have Sections');
   assert(content.includes('/guides/llms.txt'), 'llms.txt should link to guides/llms.txt');
   assert(content.includes('/verification/llms.txt'), 'llms.txt should link to verification/llms.txt');
+  assert(content.includes('/observation/llms.txt'), 'llms.txt should link to observation/llms.txt');
   assert(content.includes('/audit/llms.txt'), 'llms.txt should link to audit/llms.txt');
   assert(content.includes('/jobs/llms.txt'), 'llms.txt should link to jobs/llms.txt');
   assert(content.includes('/companies/llms.txt'), 'llms.txt should link to companies/llms.txt');
@@ -75,6 +76,14 @@ checkFile('audit/llms.txt', 'audit/llms.txt', (content) => {
   assert(content.includes('# Audit'), 'audit/llms.txt should have title');
   assert(content.includes('## The prompt'), 'audit/llms.txt should include the prompt section');
   assert(content.includes('## The rubric'), 'audit/llms.txt should include the rubric section');
+});
+
+// /observation/llms.txt
+checkFile('observation/llms.txt', 'observation/llms.txt', (content) => {
+  assert(content.includes('# Observation'), 'observation/llms.txt should have title');
+  assert(content.includes('## Error tracking'), 'observation/llms.txt should have Error tracking section');
+  assert(content.includes('## Agentic investigation'), 'observation/llms.txt should have Agentic investigation section');
+  assert(content.includes('## Further reading'), 'observation/llms.txt should have Further reading');
 });
 
 // /llms-full.txt — everything in one file
