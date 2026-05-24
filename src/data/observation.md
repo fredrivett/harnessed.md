@@ -34,11 +34,11 @@ Tools: [Sentry](https://sentry.io/), [Bugsnag](https://www.bugsnag.com/), [Rollb
 
 ## Usage analytics
 
-Errors tell you when things break. Usage tells you when nothing breaks but no one's using it — the silent failure mode. An agent ships a feature, no exceptions fire, but adoption is flat: the implementation may technically work but miss the actual intent.
+Errors tell you when things break. Usage tells you about the silent failures — a new feature ships and adoption stays flat, a working one starts losing traction, a funnel step drops users. Things technically work but something is off.
 
 Patterns that earn their place:
 
-- **Per-change instrumentation** — every meaningful surface emits at least one event
+- **Per-change instrumentation** — every meaningful user action emits at least one event
 - **Activation cohorts** — first use, repeat use, drop-off by step
 - **Flag-scoped rollout** — ship dark, observe, ramp up
 
@@ -46,7 +46,7 @@ Tools: [PostHog](https://posthog.com/) (open source, self-hostable), [Amplitude]
 
 ## Agentic investigation
 
-The newest layer. When an alert fires, an LLM agent queries your logs and metrics around the time of the incident, looks for what changed, and surfaces a root-cause hypothesis. The shift is from _"alert fired, dig manually"_ to _"alert fired, here's the analysis."_
+When an alert fires, an LLM agent queries your logs and metrics around the time of the incident, looks for what changed, and surfaces a root-cause hypothesis. The shift is from _"alert fired, dig manually"_ to _"alert fired, here's the analysis."_
 
 [Vercel Agent Investigation](https://vercel.com/docs/agent/investigation) is the clearest GA example — runs automatically when an anomaly alert fires, queries logs and metrics, looks for related errors, and posts findings to the alert. Built on the [Vercel MCP server](https://vercel.com/changelog/agents-can-now-access-runtime-logs-with-vercels-mcp-server), so the agent has authenticated access to runtime data.
 
