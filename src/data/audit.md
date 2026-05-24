@@ -3,7 +3,7 @@ title: Audit
 description: A rubric your agent runs against your codebase to score how harnessed it is.
 ---
 
-Want to know where your project's harness is thin? Paste the prompt below into your agent of choice. It'll work through a rubric covering the [three pillars](/), score each item, and recommend the next step — grounded in what your codebase already uses.
+The audit is a rubric your agent runs against your codebase. It scores each [pillar](/) — Guides, Verification, Closing the loop — flags where the harness is thin, and recommends a next step grounded in the tooling you already use.
 
 ## The prompt
 
