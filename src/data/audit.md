@@ -34,25 +34,27 @@ The **Next step** column should reference the tooling already in the repo (exten
 
 ## The rubric
 
+Each item links to where the best-practice guidance lives on [/guides](/guides) or [/verification](/verification). Follow the link to ground your scoring and recommendation before assigning a number.
+
 ### Guides
 
-- **AGENTS.md at root** — exists in the portable form, with tool aliases like `CLAUDE.md` symlinked to it; focused enough that the agent will actually read it.
-- **Commands documented** — build, test, lint, deploy paths the agent can run.
-- **Boundaries declared** — explicit "always do / never do / ask first."
-- **Path-scoped rules** — used where the codebase has distinct subtrees (e.g. `apps/api` vs `apps/web`).
-- **Skills** — repeatable workflows captured in `SKILL.md` format per the [agentskills.io spec](https://agentskills.io/specification), placed in `.agents/skills/` with tool-specific paths configured or symlinked.
-- **Hooks** — mechanical enforcement for what an advisory rule can't reliably guarantee.
+- **[AGENTS.md at root](/guides#agents-md)** — exists in the portable form, with tool aliases like `CLAUDE.md` symlinked to it; focused enough that the agent will actually read it.
+- **[Commands documented](/guides#agents-md)** — build, test, lint, deploy paths the agent can run.
+- **[Boundaries declared](/guides#agents-md)** — explicit "always do / never do / ask first."
+- **[Path-scoped rules](/guides#the-config-stack)** — used where the codebase has distinct subtrees (e.g. `apps/api` vs `apps/web`).
+- **[Skills](/guides#skills)** — repeatable workflows captured in `SKILL.md` format per the [agentskills.io spec](https://agentskills.io/specification), placed in `.agents/skills/` with tool-specific paths configured or symlinked.
+- **[Hooks](/guides#hooks)** — mechanical enforcement for what an advisory rule can't reliably guarantee.
 
 ### Verification
 
-- **Types** — strict mode on; escape hatches (`any`, untyped) blocked at the linter.
-- **Linting** — present, with rules targeting [agent anti-patterns](/verification#deterministic-checks) (stubs, untyped, etc.).
-- **Security scanning** — security ruleset wired into CI ([Semgrep](https://semgrep.dev/p/owasp-top-ten), [Snyk](https://snyk.io/), or equivalent).
-- **Tests** — unit and integration in place; tests don't mock the system they're verifying.
-- **Agentic review** — PR review by other agents — hosted (e.g. [CodeRabbit](https://coderabbit.ai/), [Greptile](https://www.greptile.com/)) or [a local subagent set](/verification#the-subagent-reviewer-pattern).
-- **Mutation testing** — for high-stakes code, signal beyond line coverage.
+- **[Types](/verification#deterministic-checks)** — strict mode on; escape hatches (`any`, untyped) blocked at the linter.
+- **[Linting](/verification#deterministic-checks)** — present, with rules targeting agent anti-patterns (stubs, untyped, etc.).
+- **[Security scanning](/verification#deterministic-checks)** — security ruleset wired into CI ([Semgrep](https://semgrep.dev/p/owasp-top-ten), [Snyk](https://snyk.io/), or equivalent).
+- **[Tests](/verification#tests)** — unit and integration in place; tests don't mock the system they're verifying.
+- **[Agentic review](/verification#agentic-review)** — PR review by other agents — hosted (e.g. [CodeRabbit](https://coderabbit.ai/), [Greptile](https://www.greptile.com/)) or a [local subagent set](/verification#the-subagent-reviewer-pattern).
+- **[Mutation testing](/verification#tests)** — for high-stakes code, signal beyond line coverage.
 
 ### Closing the loop
 
-- **Durable learnings** — recurring defects get extracted into rules / tests / hooks, not absorbed as one-off prompt fixes.
-- **Persistence** — a mechanism that carries learnings across sessions (memory file, `/learn` skill, [`SessionEnd` hook](https://code.claude.com/docs/en/hooks), or similar).
+- **[Durable learnings](/verification#closing-the-loop)** — recurring defects get extracted into rules / tests / hooks, not absorbed as one-off prompt fixes.
+- **[Persistence](/verification#wiring-up-the-loop)** — a mechanism that carries learnings across sessions (memory file, `/learn` skill, [`SessionEnd` hook](https://code.claude.com/docs/en/hooks), or similar).
