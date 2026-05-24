@@ -58,16 +58,13 @@ The emerging pattern beyond alert-triggered: hand a coding agent a bug report �
 
 ## Closing the loop
 
-Observation feeds two flows.
+Production signals feed two flows. Recurring patterns become [harness](/) improvements; one-off signals become tasks. The work is sorting which is which — see [Verification: Closing the loop](/verification#closing-the-loop) for the three-question framing that applies here verbatim.
 
-Recurring patterns improve the [harness](/). When error tracking surfaces the same defect class twice, the fix isn't another patch — push it into the harness. If a deterministic check can catch the pattern — a lint rule, a hook, or a test — use that. Otherwise pick the advisory form that fits: a path-scoped rule for code-area specifics, a skill for workflows, AGENTS.md for what every session needs to know.
+The signals you have to wire up are different, though. Errors and analytics live in third-party tools; the harness lives in your repo. Four ways to close the gap, ordered by friction:
 
-One-off signals feed the task list. A feature nobody uses gets investigated, then fixed or removed. A one-time error becomes a regular bug. These are tasks, not harness rules.
-
-Three questions to ask when a signal lands:
-
-1. **Should this have been caught earlier?** Push enforcement upstream — to whichever cheaper layer would catch it next time.
-2. **Pattern or one-off?** Patterns get hard-coded into the harness; one-offs just get fixed.
-3. **Did an advisory rule fail to stick?** Upgrade it to a deterministic check — a hook, lint, or test.
+- **Manual capture.** Incident retros write a one-line learning to the same file you'd use after a verification failure. Zero infra, full context.
+- **Deploy-marker linking.** Tag every release with the commit SHA in Sentry/PostHog. Now every error and every funnel regression points at a PR, and the PR points at the agent prompt that produced it.
+- **Alert-triggered investigation.** [Vercel Agent Investigation](https://vercel.com/docs/agent/investigation), [Sentry Seer](https://sentry.io/welcome/), or a custom MCP loop — when an anomaly fires, an agent queries logs, identifies the change, and posts a root-cause hypothesis to the alert thread before a human reads it.
+- **Triage into fix or harness rule.** The step most teams skip. Sort each finding using the [three questions](/verification#closing-the-loop): one-offs go to the task list as a fix; recurring patterns get extracted into the harness — a lint rule, a test, or an AGENTS.md entry. Skip the triage and observation becomes a notification system, not a learning loop.
 
 Observation closes the loop. Without it, the harness stops learning the moment something passes verification.
