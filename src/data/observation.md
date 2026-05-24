@@ -24,8 +24,6 @@ The first two surface that something is wrong. The third tells you why.
 
 The minimum bar. Every change carries some risk of a runtime failure; error tracking is what tells you it happened. Sentry-class tools attach source maps to stack traces, group similar errors, and link incidents back to the deploy that caused them.
 
-The agent-era nuance: agents ship classes of error humans wouldn't (unhandled promise rejections in code paths the tests didn't cover, mishandled `null` after a refactor). Error tracking is what surfaces those once they reach production.
-
 What to capture beyond the exception itself:
 
 - **Deploy markers** — every error attributable to a deploy, and through it to the PR
