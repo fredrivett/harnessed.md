@@ -63,9 +63,18 @@ checkFile('llms.txt', 'llms.txt', (content) => {
   assert(content.includes('# harnessed.md'), 'llms.txt should have title');
   assert(content.includes('## Sections'), 'llms.txt should have Sections');
   assert(content.includes('/guides/llms.txt'), 'llms.txt should link to guides/llms.txt');
+  assert(content.includes('/verification/llms.txt'), 'llms.txt should link to verification/llms.txt');
+  assert(content.includes('/audit/llms.txt'), 'llms.txt should link to audit/llms.txt');
   assert(content.includes('/jobs/llms.txt'), 'llms.txt should link to jobs/llms.txt');
   assert(content.includes('/companies/llms.txt'), 'llms.txt should link to companies/llms.txt');
   assert(content.includes('## Companies'), 'llms.txt should have Companies section');
+});
+
+// /audit/llms.txt
+checkFile('audit/llms.txt', 'audit/llms.txt', (content) => {
+  assert(content.includes('# Audit'), 'audit/llms.txt should have title');
+  assert(content.includes('## The prompt'), 'audit/llms.txt should include the prompt section');
+  assert(content.includes('## The rubric'), 'audit/llms.txt should include the rubric section');
 });
 
 // /llms-full.txt — everything in one file

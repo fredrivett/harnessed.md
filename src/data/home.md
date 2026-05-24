@@ -72,3 +72,5 @@ Observation ····························┴···╯
 </code></pre>
 
 The system improves itself. Signals from verification and observation loop back into the guides — you don't just fix the code, you refine the harness to stop it breaking that way again.
+
+Want to see where your project's harness stands? Run the [audit](/audit) — paste a one-line prompt and your agent works through a rubric against the repo.
