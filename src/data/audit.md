@@ -12,8 +12,6 @@ Audit this repository against the rubric at
 https://www.harnessed.md/audit/llms.txt and follow the instructions there.
 ```
 
-That's it. The scoring scale, output format, and rubric items all live on the site, so the prompt stays small even as the rubric evolves. Your saved prompt never goes stale.
-
 ## Scoring
 
 For each item, the agent assigns one number:
@@ -24,8 +22,6 @@ For each item, the agent assigns one number:
 - **3** — solid baseline
 - **4** — thorough, well-maintained
 - **5** — exemplary
-
-Forcing a single number — instead of a tick or a hedge — keeps the report honest.
 
 ## Output
 
@@ -60,9 +56,3 @@ The **Next step** column should reference the tooling already in the repo (exten
 
 - **Durable learnings** — recurring defects get extracted into rules / tests / hooks, not absorbed as one-off prompt fixes.
 - **Persistence** — a mechanism that carries learnings across sessions (memory file, `/learn` skill, [`SessionEnd` hook](https://code.claude.com/docs/en/hooks), or similar).
-
-## After the audit
-
-The aggregate is a tracking number, not a target. Most teams won't — and shouldn't — score 70/70. The point is to see where the harness is thin, fix the parts that matter for the work you actually do, and re-run when the codebase or practices shift.
-
-If the agent recommends a parallel stack, push back. Extending what's already wired in is almost always cheaper than introducing a second tool to do the same job.
