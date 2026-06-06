@@ -26,25 +26,27 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 		<p>Engineering jobs at companies that have gone all-in on harness engineering.</p>
 
 		<div class="jobs-filters">
-			<input type="text" id="filter-role" placeholder="Search roles…" />
-			{companyNames.length > 1 && (
-				<select id="filter-company">
-					<option value="">All companies</option>
-					{companyNames.map((c) => <option value={c}>{c}</option>)}
-				</select>
-			)}
-			{departments.length > 1 && (
-				<select id="filter-department">
-					<option value="">All departments</option>
-					{departments.map((d) => <option value={d}>{d}</option>)}
-				</select>
-			)}
-			{locations.length > 1 && (
-				<select id="filter-location">
-					<option value="">All locations</option>
-					{locations.map((l) => <option value={l}>{l}</option>)}
-				</select>
-			)}
+			<div class="jobs-filters-inner">
+				<input type="text" id="filter-role" placeholder="Search roles…" />
+				{companyNames.length > 1 && (
+					<select id="filter-company">
+						<option value="">All companies</option>
+						{companyNames.map((c) => <option value={c}>{c}</option>)}
+					</select>
+				)}
+				{departments.length > 1 && (
+					<select id="filter-department">
+						<option value="">All departments</option>
+						{departments.map((d) => <option value={d}>{d}</option>)}
+					</select>
+				)}
+				{locations.length > 1 && (
+					<select id="filter-location">
+						<option value="">All locations</option>
+						{locations.map((l) => <option value={l}>{l}</option>)}
+					</select>
+				)}
+			</div>
 		</div>
 
 		<div class="table-wrap">
@@ -114,6 +116,7 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 		function applyFilters() {
 			if (!tbody) return;
 			const role = (roleInput?.value || '').toLowerCase();
+			const roleTerms = role.split(/\s+/).filter(Boolean);
 			const company = companySelect?.value || '';
 			const dept = deptSelect?.value || '';
 			const loc = locSelect?.value || '';
@@ -122,7 +125,8 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 
 			rows.forEach((row) => {
 				const tr = row as HTMLElement;
-				const matchRole = !role || (tr.dataset.role || '').includes(role);
+				const roleData = tr.dataset.role || '';
+				const matchRole = roleTerms.every((term) => roleData.includes(term));
 				const matchCompany = !company || tr.dataset.company === company;
 				const matchDept = !dept || tr.dataset.department === dept;
 				const matchLoc = !loc || tr.dataset.location === loc;
@@ -149,20 +153,44 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 		margin-bottom: 2rem;
 	}
 
+	.all-jobs .table-wrap {
+		padding-top: 1rem;
+		/* The global bleed assumes a 65ch prose gutter; this page's main is
+		   the wide 1440px layout, so the 5rem bleed overflows. Don't bleed. */
+		margin-left: 0;
+		margin-right: 0;
+	}
+
 	.all-jobs p {
 		color: var(--text-secondary);
 	}
 
 	.all-jobs .jobs-filters {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: var(--bg);
+		border-bottom: 1px solid var(--border);
+		/* Full-bleed: span the viewport regardless of main's max-width/padding.
+		   main is centered with symmetric padding, so its content box is
+		   viewport-centered and 50% resolves to half that box. */
+		margin-left: calc(50% - 50vw);
+		margin-right: calc(50% - 50vw);
+		padding: 1rem 0;
+	}
+
+	.all-jobs .jobs-filters-inner {
 		display: flex;
 		gap: 0.5rem;
-		margin-bottom: 1rem;
 		flex-wrap: wrap;
+		max-width: 1440px;
+		margin: 0 auto;
+		padding: 0 1.5rem;
 	}
 
 	.all-jobs .jobs-filters input,
 	.all-jobs .jobs-filters select {
-		padding: 0.4rem 0.6rem;
+		padding: 0.55rem 0.75rem;
 		font-family: inherit;
 		font-size: 0.85rem;
 		color: var(--text);
@@ -171,9 +199,32 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 		border-radius: 4px;
 	}
 
+	/* Prevent iOS from zooming when focusing a sub-16px field. */
+	@media (max-width: 600px) {
+		.all-jobs .jobs-filters input,
+		.all-jobs .jobs-filters select {
+			font-size: 16px;
+		}
+	}
+
 	.all-jobs .jobs-filters input {
-		flex: 1;
-		min-width: 150px;
+		flex: 2 1 200px;
+		min-width: 12.5em;
+	}
+
+	.all-jobs .jobs-filters select {
+		flex: 1 1 140px;
+		min-width: 10.5em;
+		appearance: none;
+		-webkit-appearance: none;
+		padding-right: 1.8rem;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 0.7rem center;
+	}
+
+	.all-jobs .jobs-filters #filter-department {
+		min-width: 13em;
 	}
 
 	.all-jobs .filter-count {
