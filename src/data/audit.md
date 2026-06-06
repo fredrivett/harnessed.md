@@ -27,8 +27,10 @@ Score each item from evidence in the repo, not from intent. For each item, the a
 
 One markdown table per section, plus an aggregate at the end:
 
+```text
 | Item | Score | Evidence | Next step |
 | --- | --- | --- | --- |
+```
 
 The **Next step** column should reference the tooling already in the repo (extend the existing ESLint config, not introduce Biome alongside it). One concrete action per row, or blank if the score is 5.
 
