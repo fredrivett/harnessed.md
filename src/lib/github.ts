@@ -14,12 +14,15 @@ async function fetchStars(): Promise<number | null> {
 	try {
 		const res = await fetch(`https://api.github.com/repos/${REPO}`, {
 			headers: { Accept: 'application/vnd.github+json' },
+			// Don't let a slow/hanging GitHub stall the build — the count is
+			// non-critical (the client refreshes it live) so degrade fast.
+			signal: AbortSignal.timeout(3000),
 		});
 		if (!res.ok) return null;
 		const data: RawGithubRepo = await res.json();
 		return typeof data.stargazers_count === 'number' ? data.stargazers_count : null;
 	} catch {
-		// Offline build or rate limit — render the button without a count.
+		// Offline, rate-limited, or timed out — render the en dash placeholder.
 		return null;
 	}
 }
