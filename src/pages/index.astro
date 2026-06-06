@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import ReadingList from '../components/ReadingList.astro';
 import { getEntry, getCollection, render } from 'astro:content';
 import { fetchJobs, salaryRange, type Job } from '../lib/jobs';
+import { slugFromId } from '../lib/slug';
 
 const home = await getEntry('pages', 'home');
 if (!home) throw new Error('Missing pages/home entry');
@@ -60,9 +61,9 @@ const anySalary = allJobs.some((j) => j.salary);
 						const range = salaryRange(jobs);
 						return (
 						<tr>
-							<td><a href={`/companies/${company.id.replace(/^\d+-/, '')}`}>{company.data.name}</a></td>
+							<td><a href={`/companies/${slugFromId(company.id)}`}>{company.data.name}</a></td>
 							<td>{jobCount
-								? <a href={`/companies/${company.id.replace(/^\d+-/, '')}#jobs`}>{jobCount}</a>
+								? <a href={`/companies/${slugFromId(company.id)}#jobs`}>{jobCount}</a>
 								: '—'}</td>
 							{anySalary && <td style="white-space:nowrap">{range || '—'}</td>}
 							<td style="white-space:nowrap">{company.data.stage}</td>

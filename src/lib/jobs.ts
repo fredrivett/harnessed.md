@@ -28,7 +28,7 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	}
 }
 
-function extractGreenhouseSalary(job: any): string | undefined {
+export function extractGreenhouseSalary(job: any): string | undefined {
 	// Check metadata for salary fields
 	const meta = job.metadata as any[] | undefined;
 	if (meta) {
@@ -56,15 +56,15 @@ function extractGreenhouseSalary(job: any): string | undefined {
 	return undefined;
 }
 
-async function fetchGreenhouse(boardId: string, departmentFilter: string): Promise<Job[]> {
-	const res = await fetchWithTimeout(`https://boards-api.greenhouse.io/v1/boards/${boardId}/jobs?content=true`);
-	if (!res.ok) return [];
-	const data = await res.json();
-
+// Pure transform from the Greenhouse jobs API shape to our Job[], including the
+// department filter and the field fallback chains. Separated from the fetch so
+// it can be tested against captured API payloads.
+export function normalizeGreenhouseJobs(data: any, departmentFilter: string): Job[] {
+	const filter = departmentFilter.toLowerCase();
 	return (data.jobs || [])
 		.filter((job: any) => {
 			const dept = (job.departments?.[0]?.name || '').toLowerCase();
-			return dept.includes(departmentFilter);
+			return dept.includes(filter);
 		})
 		.map((job: any) => ({
 			title: job.title,
@@ -76,15 +76,17 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string): Promi
 		}));
 }
 
-async function fetchCareersPage(url: string, departmentFilter: string): Promise<Job[]> {
-	const res = await fetchWithTimeout(url, 15000);
-	if (!res.ok) {
-		console.warn(`[careers-page] ${url} returned ${res.status}`);
-		return [];
-	}
-	const html = await res.text();
-	const baseUrl = new URL(url).origin;
+async function fetchGreenhouse(boardId: string, departmentFilter: string): Promise<Job[]> {
+	const res = await fetchWithTimeout(`https://boards-api.greenhouse.io/v1/boards/${boardId}/jobs?content=true`);
+	if (!res.ok) return [];
+	return normalizeGreenhouseJobs(await res.json(), departmentFilter);
+}
 
+// Pure scraper for careers-page HTML. Separated from fetchCareersPage so the
+// fragile regex parsing — which breaks whenever a site changes markup — can be
+// pinned with fixtures. baseUrl is the page origin, used to absolutise relative
+// hrefs (Pattern 2).
+export function parseCareersHtml(html: string, baseUrl: string, departmentFilter: string): Job[] {
 	const jobs: Job[] = [];
 
 	// Pattern 1: Every-style (span department → h3 title → Apply link)
@@ -124,11 +126,20 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	});
 }
 
-async function fetchAshby(boardId: string, departmentFilter: string): Promise<Job[]> {
-	const res = await fetchWithTimeout(`https://api.ashbyhq.com/posting-api/job-board/${boardId}`);
-	if (!res.ok) return [];
-	const data = await res.json();
+async function fetchCareersPage(url: string, departmentFilter: string): Promise<Job[]> {
+	const res = await fetchWithTimeout(url, 15000);
+	if (!res.ok) {
+		console.warn(`[careers-page] ${url} returned ${res.status}`);
+		return [];
+	}
+	const html = await res.text();
+	const baseUrl = new URL(url).origin;
+	return parseCareersHtml(html, baseUrl, departmentFilter);
+}
 
+// Pure transform from the Ashby job-board API shape to our Job[]. boardId is
+// only used to synthesise a URL fallback when the payload omits jobUrl.
+export function normalizeAshbyJobs(data: any, boardId: string, departmentFilter: string): Job[] {
 	return (data.jobs || [])
 		.filter((job: any) => {
 			const dept = (job.departmentName || job.department || '').toLowerCase();
@@ -145,6 +156,12 @@ async function fetchAshby(boardId: string, departmentFilter: string): Promise<Jo
 			company: '',
 			salary: job.compensationTierSummary || undefined,
 		}));
+}
+
+async function fetchAshby(boardId: string, departmentFilter: string): Promise<Job[]> {
+	const res = await fetchWithTimeout(`https://api.ashbyhq.com/posting-api/job-board/${boardId}`);
+	if (!res.ok) return [];
+	return normalizeAshbyJobs(await res.json(), boardId, departmentFilter);
 }
 
 export function salaryRange(jobs: Job[]): string | undefined {

@@ -1,11 +1,12 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { generateOgImage } from '../../../lib/og';
+import { slugFromId } from '../../../lib/slug';
 
 export async function getStaticPaths() {
   const companies = await getCollection('companies');
   return companies.map((company) => ({
-    params: { slug: company.id.replace(/^\d+-/, '') },
+    params: { slug: slugFromId(company.id) },
     props: { company },
   }));
 }
