@@ -1,14 +1,16 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getEntry, render } from 'astro:content';
+import { lastModified } from '../../lib/gitdate';
 
 const audit = await getEntry('pages', 'audit');
 if (!audit) throw new Error('Missing pages/audit entry');
 const { description } = audit.data;
 const { Content } = await render(audit);
+const updated = lastModified('src/data/audit.md');
 ---
 
-<Base title={`Audit — harnessed.md`} description={description} class="narrow">
+<Base title={`Audit — harnessed.md`} description={description} class="narrow" updated={updated}>
 	<section class="prose">
 		<Content />
 	</section>
