@@ -42,6 +42,7 @@ Domain-specific workflows live in `.agents/skills/` (symlinked to `.claude/skill
 
 - **writing-pages** — tone and formatting conventions for content pages (`src/data/*.md`).
 - **adding-a-company** — fields and file layout for a company entry under `src/data/companies/`.
+- **learn** — after a recurring defect or review finding, extract one durable harness improvement (test, lint rule, hook, path-scoped rule, or a `LEARNINGS.md` note) instead of a one-off fix.
 
 ## Verification
 
