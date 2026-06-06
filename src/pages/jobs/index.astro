@@ -155,6 +155,10 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 
 	.all-jobs .table-wrap {
 		padding-top: 1rem;
+		/* The global bleed assumes a 65ch prose gutter; this page's main is
+		   the wide 1440px layout, so the 5rem bleed overflows. Don't bleed. */
+		margin-left: 0;
+		margin-right: 0;
 	}
 
 	.all-jobs p {
