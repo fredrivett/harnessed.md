@@ -2,14 +2,16 @@
 import Base from '../../layouts/Base.astro';
 import ReadingList from '../../components/ReadingList.astro';
 import { getEntry, render } from 'astro:content';
+import { lastModified } from '../../lib/gitdate';
 
 const observation = await getEntry('pages', 'observation');
 if (!observation) throw new Error('Missing pages/observation entry');
 const { description, reading } = observation.data;
 const { Content } = await render(observation);
+const updated = lastModified('src/data/observation.md');
 ---
 
-<Base title={`Observation — harnessed.md`} description={description} class="narrow">
+<Base title={`Observation — harnessed.md`} description={description} class="narrow" updated={updated}>
 	<section class="prose">
 		<Content />
 	</section>

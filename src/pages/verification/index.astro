@@ -2,14 +2,16 @@
 import Base from '../../layouts/Base.astro';
 import ReadingList from '../../components/ReadingList.astro';
 import { getEntry, render } from 'astro:content';
+import { lastModified } from '../../lib/gitdate';
 
 const verification = await getEntry('pages', 'verification');
 if (!verification) throw new Error('Missing pages/verification entry');
 const { description, reading } = verification.data;
 const { Content } = await render(verification);
+const updated = lastModified('src/data/verification.md');
 ---
 
-<Base title={`Verification — harnessed.md`} description={description} class="narrow">
+<Base title={`Verification — harnessed.md`} description={description} class="narrow" updated={updated}>
 	<section class="prose">
 		<Content />
 	</section>
