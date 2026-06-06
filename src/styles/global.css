@@ -228,6 +228,52 @@ pre code {
 	font-size: inherit;
 }
 
+/* Copy-to-clipboard button, injected by scripts/copy-code.ts. The wrapper is
+   the positioning context so the button stays put when the code scrolls. */
+.code-block {
+	position: relative;
+}
+
+.copy-btn {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.25rem 0.5rem;
+	font-family: inherit;
+	font-size: 0.7rem;
+	line-height: 1;
+	color: var(--text-secondary);
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 4px;
+	cursor: pointer;
+	transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.copy-btn:hover {
+	color: var(--text);
+}
+
+.copy-btn.copied {
+	color: var(--syntax-inserted);
+}
+
+/* On devices with a real pointer, reveal on hover/focus only. Touch devices
+   (no hover) keep it always visible. */
+@media (hover: hover) {
+	.copy-btn {
+		opacity: 0;
+	}
+
+	.code-block:hover .copy-btn,
+	.copy-btn:focus-visible {
+		opacity: 1;
+	}
+}
+
 /* Shiki: tokens get .tok-* classes via the harnessed:token-classes transformer.
    Colours come from --syntax-* variables so they follow the theme. */
 /* Astro injects inline CSS vars (--shiki-light-bg etc.) on the wrapper
