@@ -112,7 +112,7 @@ body {
 
 main {
 	margin: 0 auto;
-	padding: 4rem 1.5rem 2rem;
+	padding: 0 1.5rem 2rem;
 	flex: 1;
 	max-width: 1440px;
 	width: 100%;
@@ -128,9 +128,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 header {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background: color-mix(in srgb, var(--bg) 70%, transparent);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+}
+
+.header-inner {
+	margin: 0 auto;
+	max-width: 1440px;
+	width: 100%;
+	padding: 2rem 1.5rem 0;
 	display: flex;
 	align-items: baseline;
 	justify-content: space-between;
+}
+
+.header-inner.narrow {
+	max-width: var(--max-width);
 }
 
 h1 {
