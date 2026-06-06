@@ -181,7 +181,7 @@ export function normalizeAshbyJobs(data: { jobs?: RawAshbyJob[] }, boardId: stri
 			const salary = job.compensationTierSummary || undefined;
 			return {
 				title: job.title ?? '',
-				url: job.jobUrl || `https://jobs.ashbyhq.com/${boardId}/${job.id}`,
+				url: job.jobUrl || (job.id ? `https://jobs.ashbyhq.com/${boardId}/${job.id}` : ''),
 				location: job.locationName || job.location || 'Remote',
 				department: job.departmentName || job.department || '',
 				company: '',

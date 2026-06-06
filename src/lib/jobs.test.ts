@@ -248,6 +248,11 @@ describe('normalizeAshbyJobs', () => {
 		expect(result.map((j) => j.title)).toEqual(['Designer', 'Platform Engineer']);
 	});
 
+	it('emits an empty url when both jobUrl and id are missing', () => {
+		const data = { jobs: [{ title: 'Eng', departmentName: 'Engineering' }] };
+		expect(normalizeAshbyJobs(data, 'acme', '')[0]!.url).toBe('');
+	});
+
 	it('falls back from departmentName to department', () => {
 		const data = { jobs: [{ title: 'Eng', id: '1', department: 'Engineering' }] };
 		expect(normalizeAshbyJobs(data, 'acme', '')[0]!.department).toBe('Engineering');
