@@ -88,7 +88,9 @@ checkFile('llms.txt', 'llms.txt', (content) => {
 // /audit/llms.txt
 checkFile('audit/llms.txt', 'audit/llms.txt', (content) => {
   assert(content.includes('# Audit'), 'audit/llms.txt should have title');
-  assert(content.includes('## The prompt'), 'audit/llms.txt should include the prompt section');
+  assert(content.includes('do not fetch external pages'), 'audit/llms.txt should gate against external fetches');
+  assert(!content.includes('## The prompt'), 'audit/llms.txt should omit the human-only prompt section');
+  assert(content.includes('# Reference material'), 'audit/llms.txt should inline the reference material');
   assert(content.includes('## The rubric'), 'audit/llms.txt should include the rubric section');
   assert(content.includes('### Guides'), 'audit/llms.txt should include the Guides pillar');
   assert(content.includes('### Verification'), 'audit/llms.txt should include the Verification pillar');

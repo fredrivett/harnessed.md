@@ -11,7 +11,8 @@
     "check": "astro check --minimumFailingSeverity warning",
     "check:links": "tsx scripts/check-links.ts",
     "check:llms-txt": "tsx scripts/check-llms-txt.ts",
-    "build": "astro check --minimumFailingSeverity warning && astro build && tsx scripts/check-links.ts && tsx scripts/check-llms-txt.ts",
+    "test": "vitest run",
+    "build": "astro check --minimumFailingSeverity warning && vitest run && astro build && tsx scripts/check-links.ts && tsx scripts/check-llms-txt.ts",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -26,6 +27,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@types/node": "^25.5.2",
-    "tsx": "^4.21.0"
+    "@vitest/coverage-v8": "^4.1.8",
+    "tsx": "^4.21.0",
+    "vitest": "^4.1.8"
   }
 }

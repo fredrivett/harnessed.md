@@ -12,11 +12,9 @@ Audit this repository against the rubric at
 https://www.harnessed.md/audit/llms.txt and follow the instructions there.
 ```
 
-For each rubric item, fetch the linked section before scoring — use the `/llms.txt` variant of any harnessed.md link (e.g. `/guides/llms.txt#agents-md` rather than `/guides#agents-md`). Score from evidence in the repo, not from intent.
-
 ## Scoring
 
-For each item, the agent assigns one number:
+Score each item from evidence in the repo, not from intent. For each item, the agent assigns one number:
 
 - **0** — not present
 - **1** — token: exists but unused or trivially empty
@@ -36,7 +34,7 @@ The **Next step** column should reference the tooling already in the repo (exten
 
 ## The rubric
 
-Each item links to where the best-practice guidance lives on [/guides](/guides), [/verification](/verification), or [/observation](/observation). Follow the link to ground your scoring and recommendation before assigning a number.
+Each item links to where the best-practice guidance lives on [/guides](/guides), [/verification](/verification), or [/observation](/observation). Those sections are bundled into the rubric page the agent reads, so it grounds each score and recommendation without fetching anything.
 
 ### Guides
 
