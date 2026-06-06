@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getEntry, getCollection } from 'astro:content';
 import { toPlainMarkdown } from '../lib/markdown';
+import { slugFromId } from '../lib/slug';
 
 export const GET: APIRoute = async () => {
 	const home = await getEntry('pages', 'home');
@@ -28,7 +29,7 @@ export const GET: APIRoute = async () => {
 		'## Companies',
 		'',
 		...companies.map((c) => {
-			const slug = c.id.replace(/^\d+-/, '');
+			const slug = slugFromId(c.id);
 			return `- [${c.data.name}](/companies/${slug}/llms.txt) — ${c.data.description}`;
 		}),
 		'',

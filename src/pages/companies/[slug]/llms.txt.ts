@@ -1,11 +1,12 @@
 import type { APIRoute, GetStaticPaths, InferGetStaticPropsType } from 'astro';
 import { getCollection } from 'astro:content';
 import { fetchJobs } from '../../../lib/jobs';
+import { slugFromId } from '../../../lib/slug';
 
 export const getStaticPaths = (async () => {
 	const companies = await getCollection('companies');
 	return companies.map((company) => ({
-		params: { slug: company.id.replace(/^\d+-/, '') },
+		params: { slug: slugFromId(company.id) },
 		props: { company },
 	}));
 }) satisfies GetStaticPaths;

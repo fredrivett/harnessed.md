@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { fetchJobs, type Job } from '../../lib/jobs';
+import { slugFromId } from '../../lib/slug';
 
 const companies = await getCollection('companies');
 
@@ -16,7 +17,7 @@ const departments = [...new Set(allJobs.map((j) => j.department).filter(Boolean)
 const locations = [...new Set(allJobs.map((j) => j.location).filter(Boolean))].sort();
 
 const companySlugMap = new Map<string, string>();
-companies.forEach((c) => companySlugMap.set(c.data.name, c.id.replace(/^\d+-/, '')));
+companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 ---
 
 <Base title="All openings — harnessed.md" description="Engineering jobs at companies that have gone all-in on harness engineering.">

@@ -2,11 +2,12 @@
 import Base from '../../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { fetchJobs } from '../../../lib/jobs';
+import { slugFromId } from '../../../lib/slug';
 
 export async function getStaticPaths() {
 	const companies = await getCollection('companies');
 	return companies.map((company) => ({
-		params: { slug: company.id.replace(/^\d+-/, '') },
+		params: { slug: slugFromId(company.id) },
 		props: { company },
 	}));
 }
@@ -19,7 +20,7 @@ const locations = [...new Set(jobs.map((j) => j.location).filter(Boolean))].sort
 const sources = company.data.sources || [];
 ---
 
-<Base title={`${company.data.name} — harnessed.md`} description={`${company.data.name}: ${company.data.description}`} image={`/companies/${company.id.replace(/^\d+-/, '')}/og.png`}>
+<Base title={`${company.data.name} — harnessed.md`} description={`${company.data.name}: ${company.data.description}`} image={`/companies/${slugFromId(company.id)}/og.png`}>
 	<section class="company-header">
 		<h2><a href={company.data.url} target="_blank" rel="noopener">{company.data.name}</a></h2>
 		<p>{company.data.description}</p>

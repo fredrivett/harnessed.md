@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { fetchJobs } from '../../lib/jobs';
+import { slugFromId } from '../../lib/slug';
 
 export const GET: APIRoute = async () => {
 	const companies = await getCollection('companies');
@@ -16,7 +17,7 @@ export const GET: APIRoute = async () => {
 		'# Companies practicing harness engineering',
 		'',
 		...companiesWithJobs.flatMap(({ company: c, jobCount }) => {
-			const slug = c.id.replace(/^\d+-/, '');
+			const slug = slugFromId(c.id);
 			const sources = c.data.sources || [];
 			const extraSources = sources.filter((s) => s.url !== c.data.reference.url);
 			return [
