@@ -13,7 +13,7 @@ const { title, items } = Astro.props;
 const id = title.toLowerCase().replace(/\s+/g, '-');
 ---
 
-<section class="reading">
+<section class="reading" data-section-title={title}>
 	<h2 id={id}><a class="heading-hash" href={`#${id}`}>##</a>{title}</h2>
 	<ul>
 		{items.map((item) => (
@@ -21,3 +21,18 @@ const id = title.toLowerCase().replace(/\s+/g, '-');
 		))}
 	</ul>
 </section>
+<script is:inline>
+	document.addEventListener('DOMContentLoaded', function () {
+		document.querySelectorAll('.reading a[href]').forEach(function (link) {
+			if (link.classList.contains('heading-hash')) return;
+			link.addEventListener('click', function () {
+				const section = link.closest('.reading');
+				window.posthog?.capture('reading_item_clicked', {
+					title: link.textContent ? link.textContent.trim() : '',
+					url: link.getAttribute('href') || '',
+					section_title: section ? (section.dataset.sectionTitle || '') : ''
+				});
+			});
+		});
+	});
+</script>

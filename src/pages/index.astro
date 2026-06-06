@@ -106,4 +106,35 @@ const updated = lastModified('src/data/home.md', 'src/data/companies');
 			}, 500);
 		});
 	</script>
+	<script is:inline>
+		document.addEventListener('DOMContentLoaded', function () {
+			// Newsletter subscription
+			const newsletterForm = document.querySelector('.newsletter form');
+			if (newsletterForm) {
+				newsletterForm.addEventListener('submit', function () {
+					const emailInput = newsletterForm.querySelector('input[type="email"]');
+					const email = emailInput ? emailInput.value : '';
+					if (email) window.posthog?.identify(email);
+					window.posthog?.capture('newsletter_subscribed');
+				});
+			}
+
+			// Company name clicks in the homepage companies table
+			document.querySelectorAll('.companies tbody td:first-child a').forEach(function (link) {
+				link.addEventListener('click', function () {
+					window.posthog?.capture('company_clicked', {
+						company_name: link.textContent ? link.textContent.trim() : ''
+					});
+				});
+			});
+
+			// "Browse all openings" link
+			const browseLink = document.querySelector('.all-jobs-link a');
+			if (browseLink) {
+				browseLink.addEventListener('click', function () {
+					window.posthog?.capture('browse_all_openings_clicked');
+				});
+			}
+		});
+	</script>
 </Base>

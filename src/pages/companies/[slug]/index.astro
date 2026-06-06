@@ -93,6 +93,71 @@ const updated = lastModified(`src/data/companies/${company.id}.yaml`);
 			<p>No jobs available via API. Check <a href={company.data.careers || company.data.url} target="_blank" rel="noopener">{company.data.name}'s careers page</a> directly.</p>
 		)}
 	</section>
+	<script is:inline define:vars={{ companyName: company.data.name }}>
+		document.addEventListener('DOMContentLoaded', function () {
+			// Company page view (top of funnel)
+			window.posthog?.capture('company_viewed', { company_name: companyName });
+
+			// Careers page link
+			const careersLink = document.querySelector('.careers-link');
+			if (careersLink) {
+				careersLink.addEventListener('click', function () {
+					window.posthog?.capture('careers_page_clicked', { company_name: companyName });
+				});
+			}
+
+			// Job link clicks
+			document.querySelectorAll('.jobs tbody td:first-child a').forEach(function (link) {
+				link.addEventListener('click', function () {
+					const row = link.closest('tr');
+					window.posthog?.capture('job_clicked', {
+						job_title: link.textContent ? link.textContent.trim() : '',
+						company_name: companyName,
+						department: row ? (row.dataset.department || '') : '',
+						location: row ? (row.dataset.location || '') : '',
+						page_context: 'company_page'
+					});
+				});
+			});
+
+			// Source link clicks ("What they've said")
+			document.querySelectorAll('.sources a').forEach(function (link) {
+				link.addEventListener('click', function () {
+					window.posthog?.capture('source_link_clicked', {
+						company_name: companyName,
+						title: link.textContent ? link.textContent.trim() : '',
+						url: link.getAttribute('href') || ''
+					});
+				});
+			});
+
+			// Filter events
+			let filterTimer;
+			function captureFilter() {
+				const roleInput = document.getElementById('filter-role');
+				const deptSelect = document.getElementById('filter-department');
+				const locSelect = document.getElementById('filter-location');
+				window.posthog?.capture('jobs_filtered', {
+					company_name: companyName,
+					role_query: roleInput ? roleInput.value : '',
+					department_filter: deptSelect ? deptSelect.value : '',
+					location_filter: locSelect ? locSelect.value : '',
+					page_context: 'company_page'
+				});
+			}
+			const roleInputEl = document.getElementById('filter-role');
+			if (roleInputEl) {
+				roleInputEl.addEventListener('input', function () {
+					clearTimeout(filterTimer);
+					filterTimer = setTimeout(captureFilter, 600);
+				});
+			}
+			['filter-department', 'filter-location'].forEach(function (id) {
+				const el = document.getElementById(id);
+				if (el) el.addEventListener('change', captureFilter);
+			});
+		});
+	</script>
 	<script>
 		// Sorting
 		document.querySelectorAll('th[data-sort]').forEach((th) => {

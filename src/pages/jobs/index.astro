@@ -76,6 +76,61 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 		<p class="filter-count"></p>
 	</section>
 
+	<script is:inline>
+		document.addEventListener('DOMContentLoaded', function () {
+			// Job link clicks
+			document.querySelectorAll('.all-jobs tbody td:first-child a').forEach(function (link) {
+				link.addEventListener('click', function () {
+					const row = link.closest('tr');
+					window.posthog?.capture('job_clicked', {
+						job_title: link.textContent ? link.textContent.trim() : '',
+						company_name: row ? (row.dataset.company || '') : '',
+						department: row ? (row.dataset.department || '') : '',
+						location: row ? (row.dataset.location || '') : '',
+						page_context: 'all_jobs'
+					});
+				});
+			});
+
+			// Filter events (debounced for text input)
+			let filterTimer;
+			function captureFilter() {
+				const roleInput = document.getElementById('filter-role');
+				const companySelect = document.getElementById('filter-company');
+				const deptSelect = document.getElementById('filter-department');
+				const locSelect = document.getElementById('filter-location');
+				window.posthog?.capture('jobs_filtered', {
+					role_query: roleInput ? roleInput.value : '',
+					company_filter: companySelect ? companySelect.value : '',
+					department_filter: deptSelect ? deptSelect.value : '',
+					location_filter: locSelect ? locSelect.value : '',
+					page_context: 'all_jobs'
+				});
+			}
+			const roleInputEl = document.getElementById('filter-role');
+			if (roleInputEl) {
+				roleInputEl.addEventListener('input', function () {
+					clearTimeout(filterTimer);
+					filterTimer = setTimeout(captureFilter, 600);
+				});
+			}
+			['filter-company', 'filter-department', 'filter-location'].forEach(function (id) {
+				const el = document.getElementById(id);
+				if (el) el.addEventListener('change', captureFilter);
+			});
+
+			// Sort events
+			document.querySelectorAll('.all-jobs th[data-sort]').forEach(function (th) {
+				th.addEventListener('click', function () {
+					window.posthog?.capture('jobs_sorted', {
+						column: th.textContent ? th.textContent.trim().replace(/\s*[↕↑↓]$/, '') : '',
+						direction: th.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending',
+						page_context: 'all_jobs'
+					});
+				});
+			});
+		});
+	</script>
 	<script>
 		// Sorting
 		document.querySelectorAll('th[data-sort]').forEach((th) => {
