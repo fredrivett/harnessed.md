@@ -17,6 +17,14 @@ Content pages (`src/data/*.md` rendered through `.prose`) follow a few conventio
 - **Reading lives in the frontmatter.** Add to the `reading:` list; don't write "for further reading."
 - **External links open in a new tab automatically** via `rehype-external-links` — don't add the attributes by hand.
 
+## Agent-facing outputs (llms.txt)
+
+The `*/llms.txt` routes are payloads an agent consumes, not pages a human browses. One principle governs whether to link or inline:
+
+- **Inline when the content is always needed, small, and co-generated; link out when it's optional, large, or an independent entry point.** A mandatory fetch is a reliability dice-roll — every link the agent *must* follow is a chance to skip, fail, or half-read it. Spend that risk only when the content isn't always needed or is too large to inline.
+- **Inlining is cheap here because routes pull `.body` from `src/data/*.md` at build time** — there's no duplicated copy to maintain, so freshness and single-source-of-truth are free. (See `src/pages/audit/llms.txt.ts`, which bundles the three pillar sections so the audit runs from one self-contained file.)
+- **Keep instructions consistent with the payload.** If an llms.txt inlines its reference material, don't also tell the agent to fetch it — contradictory instructions are worse than either alone.
+
 ## Adding a company
 
 Company files live in `src/data/companies/`. The numeric prefix (e.g. `01-`) controls sort order on the homepage; the slug is the filename minus the prefix (e.g. `01-openai.yaml` → `/companies/openai`).
