@@ -49,4 +49,9 @@ Run `npm run build` to check for errors before pushing. This runs:
 4. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
 5. `check-llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
 
-Unit tests cover pure logic (string transforms, parsers); the `check-*` scripts cover the built output end-to-end.
+### Two test layers, on purpose
+
+- **Unit tests (Vitest, `*.test.ts`)** — pure logic: string transforms, parsers, anything with branching that's cheap to call directly. Fast feedback, rich assertions.
+- **Integration checks (`tsx scripts/check-*.ts`)** — assert against the *built* `dist/` output, not mocks. They verify the real artifact ships correctly (valid links, well-formed llms.txt), which is the thing we actually care about and can't fake at the unit level.
+
+Keep them separate. The check scripts intentionally aren't ported into Vitest — they test a different layer (rendered output vs. pure functions) and need no test-runner machinery. When adding a test, pick the layer by what you're verifying: function behaviour → unit; "does the shipped site hold this property" → a check script.
