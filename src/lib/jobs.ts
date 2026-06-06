@@ -28,7 +28,7 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	}
 }
 
-function extractGreenhouseSalary(job: any): string | undefined {
+export function extractGreenhouseSalary(job: any): string | undefined {
 	// Check metadata for salary fields
 	const meta = job.metadata as any[] | undefined;
 	if (meta) {
