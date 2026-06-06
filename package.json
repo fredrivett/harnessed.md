@@ -11,8 +11,10 @@
     "check": "astro check --minimumFailingSeverity warning",
     "check:links": "tsx scripts/check-links.ts",
     "check:llms-txt": "tsx scripts/check-llms-txt.ts",
+    "lint": "eslint .",
     "test": "vitest run",
-    "build": "astro check --minimumFailingSeverity warning && vitest run && astro build && tsx scripts/check-links.ts && tsx scripts/check-llms-txt.ts",
+    "build:site": "astro build",
+    "build": "npm run check && npm run lint && npm run test && npm run build:site && npm run check:links && npm run check:llms-txt",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -26,9 +28,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.5.2",
     "@vitest/coverage-v8": "^4.1.8",
+    "eslint": "^10.4.1",
+    "eslint-plugin-astro": "^1.7.0",
+    "globals": "^17.6.0",
     "tsx": "^4.21.0",
+    "typescript-eslint": "^8.60.1",
     "vitest": "^4.1.8"
   }
 }

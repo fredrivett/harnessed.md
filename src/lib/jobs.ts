@@ -13,6 +13,32 @@ interface AtsConfig {
 	departmentFilter: string;
 }
 
+// Loose models of the raw ATS API payloads. Every field is optional because
+// these come off the network untyped — the normalisers defend with fallbacks
+// rather than trusting the shape. Narrower than `any`, so the field-access
+// fallback chains are checked against a real type.
+interface RawGreenhouseJob {
+	title?: string;
+	absolute_url?: string;
+	content?: string;
+	location?: { name?: string };
+	departments?: { name?: string }[];
+	metadata?: { name?: string; value?: unknown }[];
+}
+
+interface RawAshbyJob {
+	id?: string;
+	title?: string;
+	jobUrl?: string;
+	departmentName?: string;
+	department?: string;
+	teamName?: string;
+	team?: string;
+	locationName?: string;
+	location?: string;
+	compensationTierSummary?: string;
+}
+
 async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	const controller = new AbortController();
 	const timeout = setTimeout(() => controller.abort(), ms);
@@ -28,9 +54,9 @@ async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
 	}
 }
 
-export function extractGreenhouseSalary(job: any): string | undefined {
+export function extractGreenhouseSalary(job: RawGreenhouseJob): string | undefined {
 	// Check metadata for salary fields
-	const meta = job.metadata as any[] | undefined;
+	const meta = job.metadata;
 	if (meta) {
 		for (const m of meta) {
 			const name = (m.name || '').toLowerCase();
@@ -42,7 +68,7 @@ export function extractGreenhouseSalary(job: any): string | undefined {
 
 	// Check HTML content for pay-transparency section
 	// Greenhouse returns double-encoded HTML (e.g. &lt;div&gt;), so decode entities first
-	const content = (job.content as string | undefined)
+	const content = job.content
 		?.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
 	if (content) {
 		const payMatch = content.match(/class="pay-range">([\s\S]*?)<\/div>/);
@@ -59,21 +85,24 @@ export function extractGreenhouseSalary(job: any): string | undefined {
 // Pure transform from the Greenhouse jobs API shape to our Job[], including the
 // department filter and the field fallback chains. Separated from the fetch so
 // it can be tested against captured API payloads.
-export function normalizeGreenhouseJobs(data: any, departmentFilter: string): Job[] {
+export function normalizeGreenhouseJobs(data: { jobs?: RawGreenhouseJob[] }, departmentFilter: string): Job[] {
 	const filter = departmentFilter.toLowerCase();
 	return (data.jobs || [])
-		.filter((job: any) => {
+		.filter((job) => {
 			const dept = (job.departments?.[0]?.name || '').toLowerCase();
 			return dept.includes(filter);
 		})
-		.map((job: any) => ({
-			title: job.title,
-			url: job.absolute_url,
-			location: job.location?.name || 'Remote',
-			department: job.departments?.[0]?.name || '',
-			company: '',
-			salary: extractGreenhouseSalary(job),
-		}));
+		.map((job) => {
+			const salary = extractGreenhouseSalary(job);
+			return {
+				title: job.title ?? '',
+				url: job.absolute_url ?? '',
+				location: job.location?.name || 'Remote',
+				department: job.departments?.[0]?.name || '',
+				company: '',
+				...(salary ? { salary } : {}),
+			};
+		});
 }
 
 async function fetchGreenhouse(boardId: string, departmentFilter: string): Promise<Job[]> {
@@ -139,23 +168,26 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 
 // Pure transform from the Ashby job-board API shape to our Job[]. boardId is
 // only used to synthesise a URL fallback when the payload omits jobUrl.
-export function normalizeAshbyJobs(data: any, boardId: string, departmentFilter: string): Job[] {
+export function normalizeAshbyJobs(data: { jobs?: RawAshbyJob[] }, boardId: string, departmentFilter: string): Job[] {
 	return (data.jobs || [])
-		.filter((job: any) => {
+		.filter((job) => {
 			const dept = (job.departmentName || job.department || '').toLowerCase();
 			const team = (job.teamName || job.team || '').toLowerCase();
 			const title = (job.title || '').toLowerCase();
 			const filter = departmentFilter.toLowerCase();
 			return dept.includes(filter) || team.includes(filter) || title.includes(filter);
 		})
-		.map((job: any) => ({
-			title: job.title,
-			url: job.jobUrl || `https://jobs.ashbyhq.com/${boardId}/${job.id}`,
-			location: job.locationName || job.location || 'Remote',
-			department: job.departmentName || job.department || '',
-			company: '',
-			salary: job.compensationTierSummary || undefined,
-		}));
+		.map((job) => {
+			const salary = job.compensationTierSummary || undefined;
+			return {
+				title: job.title ?? '',
+				url: job.jobUrl || (job.id ? `https://jobs.ashbyhq.com/${boardId}/${job.id}` : ''),
+				location: job.locationName || job.location || 'Remote',
+				department: job.departmentName || job.department || '',
+				company: '',
+				...(salary ? { salary } : {}),
+			};
+		});
 }
 
 async function fetchAshby(boardId: string, departmentFilter: string): Promise<Job[]> {

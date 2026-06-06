@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Cancel superseded runs on the same branch to save minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # One step per gate stage so a red X names exactly what failed. These are the
+  # same npm scripts `npm run build` composes locally — single source of truth,
+  # no drift between local and CI.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json # reads engines.node (24.x)
+          cache: npm
+      - run: npm ci
+      - name: Type-check
+        run: npm run check
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm run test
+      - name: Build site
+        run: npm run build:site
+      - name: Check links
+        run: npm run check:links
+      - name: Check llms.txt
+        run: npm run check:llms-txt
