@@ -210,6 +210,12 @@ h2, h3 {
 a {
 	color: var(--link);
 	text-underline-offset: 3px;
+	text-decoration-color: color-mix(in srgb, currentColor 50%, transparent);
+	transition: text-decoration-color 0.15s ease;
+}
+
+a:hover {
+	text-decoration-color: currentColor;
 }
 
 hr {
