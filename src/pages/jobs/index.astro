@@ -174,8 +174,19 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 	}
 
 	.all-jobs .jobs-filters input {
-		flex: 1;
-		min-width: 150px;
+		flex: 2 1 200px;
+		min-width: 170px;
+	}
+
+	.all-jobs .jobs-filters select {
+		flex: 1 1 140px;
+		min-width: 140px;
+		appearance: none;
+		-webkit-appearance: none;
+		padding-right: 1.8rem;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 0.7rem center;
 	}
 
 	.all-jobs .filter-count {
