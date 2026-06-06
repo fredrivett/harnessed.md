@@ -55,6 +55,20 @@ const tokenClasses: ShikiTransformer = {
 	},
 };
 
+// Opt a code block into soft-wrapping by adding `wrap` to its fence meta
+// (e.g. ```text wrap). Code blocks scroll horizontally by default; this adds
+// a .wrap class the CSS uses to wrap long lines instead.
+const wrapMeta: ShikiTransformer = {
+	name: 'harnessed:wrap-meta',
+	pre(node) {
+		const meta = this.options.meta?.__raw ?? '';
+		if (/\bwrap\b/.test(meta)) {
+			const existing = node.properties.class;
+			node.properties.class = existing ? `${existing} wrap` : 'wrap';
+		}
+	},
+};
+
 // https://astro.build/config
 export default defineConfig({
 	server: {
@@ -69,7 +83,7 @@ export default defineConfig({
 				dark: 'vitesse-dark',
 			},
 			defaultColor: false,
-			transformers: [tokenClasses],
+			transformers: [tokenClasses, wrapMeta],
 		},
 		rehypePlugins: [
 			[rehypeExternalLinks, { target: '_blank', rel: ['noopener'] }],

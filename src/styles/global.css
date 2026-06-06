@@ -222,6 +222,13 @@ pre {
 	overflow-x: auto;
 }
 
+/* Soft-wrap opt-in via ```text wrap fence meta (see wrapMeta in astro.config.ts). */
+pre.wrap,
+pre.wrap code {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
 pre code {
 	background: none;
 	padding: 0;

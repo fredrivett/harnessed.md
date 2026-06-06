@@ -7,7 +7,7 @@ The audit is a rubric your agent runs against your codebase. It scores each [pil
 
 ## The prompt
 
-```
+```text wrap
 Audit this repository against the rubric at
 https://www.harnessed.md/audit/llms.txt and follow the instructions there.
 ```
