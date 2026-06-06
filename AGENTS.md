@@ -7,6 +7,10 @@
 - `npm test` — unit tests (Vitest) for pure helpers.
 - `npm run build` — the full pre-push gate: type-check → lint → tests → build → link + llms.txt checks. See [Verification](#verification) for the steps.
 
+## Deploy
+
+No deploy command lives in this repo — shipping is handled by Vercel's GitHub integration. Pushing to `main` deploys production (`https://www.harnessed.md`); pull requests get preview deployments automatically. Vercel serves the static Astro output (`dist/`); there's no committed `vercel.json`, so build settings live in the Vercel project dashboard.
+
 ## Rules
 
 - All external links must open in a new tab using `target="_blank" rel="noopener"`.
