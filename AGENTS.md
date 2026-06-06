@@ -11,9 +11,22 @@
 
 No deploy command lives in this repo — shipping is handled by Vercel's GitHub integration. Pushing to `main` deploys production (`https://www.harnessed.md`); pull requests get preview deployments automatically. Vercel serves the static Astro output (`dist/`); there's no committed `vercel.json`, so build settings live in the Vercel project dashboard.
 
-## Rules
+## Boundaries
 
-- All external links must open in a new tab using `target="_blank" rel="noopener"`.
+**Always**
+- Run `npm run build` and get it green before pushing — it's the full gate (type-check → lint → tests → build → link/llms.txt checks).
+- Work on a branch and open a PR; let the Vercel preview deploy validate before merge.
+
+**Never**
+- Push directly to `main` — it deploys straight to production (`www.harnessed.md`).
+- Use `any` or other type escape hatches — the linter blocks it; type the real shape (see `RawGreenhouseJob`/`RawAshbyJob` in `src/lib/jobs.ts`).
+- Hand-add `target="_blank" rel="noopener"` to links — `rehype-external-links` adds it at build and `check-links` enforces it.
+- Reformat code for style — lint is correctness-only and the repo uses tabs; match the surrounding file.
+
+**Ask first**
+- Adding a dependency — the stack is deliberately lean (Astro + a few rehype plugins).
+- Adding an ATS provider or changing the company schema — touches `src/lib/jobs.ts` and every `src/data/companies/*.yaml`.
+- Changing the harness taxonomy (Guides / Verification / Observation) — it's the site's core thesis and recurs across pages and llms.txt.
 
 ## Agent-facing outputs (llms.txt)
 
