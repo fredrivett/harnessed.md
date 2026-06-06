@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { salaryRange, extractGreenhouseSalary, parseCareersHtml, type Job } from './jobs';
+import {
+	salaryRange,
+	extractGreenhouseSalary,
+	parseCareersHtml,
+	normalizeGreenhouseJobs,
+	normalizeAshbyJobs,
+	type Job,
+} from './jobs';
 
 const job = (overrides: Partial<Job>): Job => ({
 	title: 'Engineer',
@@ -138,5 +145,103 @@ describe('parseCareersHtml', () => {
 
 	it('returns an empty array when nothing matches', () => {
 		expect(parseCareersHtml('<div>no jobs</div>', 'https://x.com', '')).toEqual([]);
+	});
+});
+
+describe('normalizeGreenhouseJobs', () => {
+	it('returns an empty array when the payload has no jobs', () => {
+		expect(normalizeGreenhouseJobs({}, '')).toEqual([]);
+		expect(normalizeGreenhouseJobs({ jobs: [] }, 'engineering')).toEqual([]);
+	});
+
+	it('filters by department and maps fields including salary from metadata', () => {
+		const data = {
+			jobs: [
+				{
+					title: 'Staff Engineer',
+					absolute_url: 'https://boards.greenhouse.io/acme/1',
+					departments: [{ name: 'Engineering' }],
+					location: { name: 'Remote - US' },
+					metadata: [{ name: 'Pay Range', value: '$180k–$220k' }],
+				},
+				{
+					title: 'Marketer',
+					absolute_url: 'https://boards.greenhouse.io/acme/2',
+					departments: [{ name: 'Marketing' }],
+					location: { name: 'NYC' },
+				},
+			],
+		};
+		expect(normalizeGreenhouseJobs(data, 'engineering')).toEqual([
+			{
+				title: 'Staff Engineer',
+				url: 'https://boards.greenhouse.io/acme/1',
+				location: 'Remote - US',
+				department: 'Engineering',
+				company: '',
+				salary: '$180k–$220k',
+			},
+		]);
+	});
+
+	it('falls back to Remote location and undefined salary when absent', () => {
+		const data = { jobs: [{ title: 'Eng', absolute_url: 'https://x/1', departments: [{ name: 'Eng' }] }] };
+		expect(normalizeGreenhouseJobs(data, '')[0]).toMatchObject({ location: 'Remote', salary: undefined });
+	});
+});
+
+describe('normalizeAshbyJobs', () => {
+	it('returns an empty array when the payload has no jobs', () => {
+		expect(normalizeAshbyJobs({}, 'acme', '')).toEqual([]);
+	});
+
+	it('maps fields and uses jobUrl when present', () => {
+		const data = {
+			jobs: [
+				{
+					title: 'Backend Engineer',
+					jobUrl: 'https://jobs.ashbyhq.com/acme/abc',
+					departmentName: 'Engineering',
+					locationName: 'Remote',
+					compensationTierSummary: '$140k–$170k',
+				},
+			],
+		};
+		expect(normalizeAshbyJobs(data, 'acme', 'engineering')).toEqual([
+			{
+				title: 'Backend Engineer',
+				url: 'https://jobs.ashbyhq.com/acme/abc',
+				location: 'Remote',
+				department: 'Engineering',
+				company: '',
+				salary: '$140k–$170k',
+			},
+		]);
+	});
+
+	it('synthesises a URL from boardId + id and falls back to Remote when fields are missing', () => {
+		const data = { jobs: [{ title: 'Eng', id: 'xyz', departmentName: 'Engineering' }] };
+		expect(normalizeAshbyJobs(data, 'acme', '')[0]).toMatchObject({
+			url: 'https://jobs.ashbyhq.com/acme/xyz',
+			location: 'Remote',
+			salary: undefined,
+		});
+	});
+
+	it('matches the filter on team or title, not just department', () => {
+		const data = {
+			jobs: [
+				{ title: 'Designer', id: '1', teamName: 'Platform' },
+				{ title: 'Platform Engineer', id: '2', departmentName: 'Engineering' },
+				{ title: 'Recruiter', id: '3', departmentName: 'People' },
+			],
+		};
+		const result = normalizeAshbyJobs(data, 'acme', 'platform');
+		expect(result.map((j) => j.title)).toEqual(['Designer', 'Platform Engineer']);
+	});
+
+	it('falls back from departmentName to department', () => {
+		const data = { jobs: [{ title: 'Eng', id: '1', department: 'Engineering' }] };
+		expect(normalizeAshbyJobs(data, 'acme', '')[0]!.department).toBe('Engineering');
 	});
 });

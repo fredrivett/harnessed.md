@@ -56,11 +56,10 @@ export function extractGreenhouseSalary(job: any): string | undefined {
 	return undefined;
 }
 
-async function fetchGreenhouse(boardId: string, departmentFilter: string): Promise<Job[]> {
-	const res = await fetchWithTimeout(`https://boards-api.greenhouse.io/v1/boards/${boardId}/jobs?content=true`);
-	if (!res.ok) return [];
-	const data = await res.json();
-
+// Pure transform from the Greenhouse jobs API shape to our Job[], including the
+// department filter and the field fallback chains. Separated from the fetch so
+// it can be tested against captured API payloads.
+export function normalizeGreenhouseJobs(data: any, departmentFilter: string): Job[] {
 	return (data.jobs || [])
 		.filter((job: any) => {
 			const dept = (job.departments?.[0]?.name || '').toLowerCase();
@@ -74,6 +73,12 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string): Promi
 			company: '',
 			salary: extractGreenhouseSalary(job),
 		}));
+}
+
+async function fetchGreenhouse(boardId: string, departmentFilter: string): Promise<Job[]> {
+	const res = await fetchWithTimeout(`https://boards-api.greenhouse.io/v1/boards/${boardId}/jobs?content=true`);
+	if (!res.ok) return [];
+	return normalizeGreenhouseJobs(await res.json(), departmentFilter);
 }
 
 // Pure scraper for careers-page HTML. Separated from fetchCareersPage so the
@@ -131,11 +136,9 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	return parseCareersHtml(html, baseUrl, departmentFilter);
 }
 
-async function fetchAshby(boardId: string, departmentFilter: string): Promise<Job[]> {
-	const res = await fetchWithTimeout(`https://api.ashbyhq.com/posting-api/job-board/${boardId}`);
-	if (!res.ok) return [];
-	const data = await res.json();
-
+// Pure transform from the Ashby job-board API shape to our Job[]. boardId is
+// only used to synthesise a URL fallback when the payload omits jobUrl.
+export function normalizeAshbyJobs(data: any, boardId: string, departmentFilter: string): Job[] {
 	return (data.jobs || [])
 		.filter((job: any) => {
 			const dept = (job.departmentName || job.department || '').toLowerCase();
@@ -152,6 +155,12 @@ async function fetchAshby(boardId: string, departmentFilter: string): Promise<Jo
 			company: '',
 			salary: job.compensationTierSummary || undefined,
 		}));
+}
+
+async function fetchAshby(boardId: string, departmentFilter: string): Promise<Job[]> {
+	const res = await fetchWithTimeout(`https://api.ashbyhq.com/posting-api/job-board/${boardId}`);
+	if (!res.ok) return [];
+	return normalizeAshbyJobs(await res.json(), boardId, departmentFilter);
 }
 
 export function salaryRange(jobs: Job[]): string | undefined {
