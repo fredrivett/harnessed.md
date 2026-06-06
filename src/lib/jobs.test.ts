@@ -184,6 +184,11 @@ describe('normalizeGreenhouseJobs', () => {
 		]);
 	});
 
+	it('matches the department filter case-insensitively', () => {
+		const data = { jobs: [{ title: 'Eng', absolute_url: 'https://x/1', departments: [{ name: 'Engineering' }] }] };
+		expect(normalizeGreenhouseJobs(data, 'ENGINEERING')).toHaveLength(1);
+	});
+
 	it('falls back to Remote location and undefined salary when absent', () => {
 		const data = { jobs: [{ title: 'Eng', absolute_url: 'https://x/1', departments: [{ name: 'Eng' }] }] };
 		expect(normalizeGreenhouseJobs(data, '')[0]).toMatchObject({ location: 'Remote', salary: undefined });

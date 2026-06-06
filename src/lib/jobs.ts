@@ -60,10 +60,11 @@ export function extractGreenhouseSalary(job: any): string | undefined {
 // department filter and the field fallback chains. Separated from the fetch so
 // it can be tested against captured API payloads.
 export function normalizeGreenhouseJobs(data: any, departmentFilter: string): Job[] {
+	const filter = departmentFilter.toLowerCase();
 	return (data.jobs || [])
 		.filter((job: any) => {
 			const dept = (job.departments?.[0]?.name || '').toLowerCase();
-			return dept.includes(departmentFilter);
+			return dept.includes(filter);
 		})
 		.map((job: any) => ({
 			title: job.title,
