@@ -42,6 +42,7 @@ Domain-specific workflows live in `.agents/skills/` (symlinked to `.claude/skill
 
 - **writing-pages** — tone and formatting conventions for content pages (`src/data/*.md`).
 - **adding-a-company** — fields and file layout for a company entry under `src/data/companies/`.
+- **learn** — after a recurring defect or review finding, extract one durable harness improvement (test, lint rule, hook, path-scoped rule, or a `LEARNINGS.md` note) instead of a one-off fix.
 
 ## Verification
 
@@ -56,7 +57,11 @@ Run `npm run build` to check for errors before pushing. It's a composition of th
 
 ### CI
 
-`.github/workflows/ci.yml` runs these same six scripts as separate steps on every PR (and on `main`), so a failure names the exact stage. It's the same definitions `npm run build` composes — no drift. To make it *block* merges, mark the `CI` check as required in the `main` branch protection rules (Settings → Branches); the workflow only reports status on its own.
+`.github/workflows/ci.yml` runs these same six scripts as separate steps on every PR (and on `main`), so a failure names the exact stage. It's the same definitions `npm run build` composes — no drift. A parallel `security` job runs Semgrep's free OWASP Top 10 ruleset (`--error`, so findings fail it). The `build` job is required in `main` branch protection; promote `security` to required too once you're comfortable (it's currently clean).
+
+### Edit-time enforcement (hook)
+
+`.claude/settings.json` defines a `PostToolUse` hook that runs `npm run lint` after every `Edit`/`Write` to a JS/TS/Astro file, so anti-patterns like the `any` escape hatch land in the agent's next turn rather than waiting for CI. The heavier stages (type-check, tests) stay in the pre-push gate. (Changes to `.claude/settings.json` need a `/hooks` reload or restart to take effect mid-session.)
 
 ### Two test layers, on purpose
 

@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); case \"$f\" in *.ts|*.tsx|*.js|*.mjs|*.cjs|*.astro) cd \"$CLAUDE_PROJECT_DIR\" 2>/dev/null; npm run lint ;; esac",
+            "statusMessage": "Linting…",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

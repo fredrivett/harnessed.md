@@ -38,3 +38,18 @@ jobs:
         run: npm run check:links
       - name: Check llms.txt
         run: npm run check:llms-txt
+
+  # Static security scan (Semgrep's free OWASP Top 10 ruleset). Runs in parallel
+  # with build. `--error` makes findings fail the job so it's a real signal, not
+  # log noise. Not yet a required check — promote it in branch protection once
+  # it's confirmed clean on this codebase.
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install semgrep
+      - name: Semgrep OWASP Top 10
+        run: semgrep scan --config p/owasp-top-ten --error
