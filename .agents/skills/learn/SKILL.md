@@ -22,7 +22,7 @@ Skip it for genuine one-offs (a typo, a copy tweak). Not everything is a pattern
 
 Answer in order. Any **stop** means drop it and move on — *not* capturing a non-learning is as valuable as capturing a real one; it's what keeps the harness signal-dense.
 
-0. **Is it already caught at the fastest practical layer?** If an existing check already fails on this *and* there's no earlier layer to move it to — e.g. the type-checker flags a type error at edit time — the harness already enforces it. Stop. But caught *late* is not the same as caught: if only CI or a test catches it when a lint rule, type-check, or hook could catch it at edit time, that's a shift-left learning — keep going (Q2).
+0. **Is it already caught at the fastest practical layer?** If an existing check already fails on this *and* there's no earlier layer to move it to — e.g. the type-checker flags a type error at edit time — the harness already enforces it. Stop. But caught *late* is not the same as caught: if only CI or a test catches it when a lint rule, type-check, or hook could catch it at edit time, that's a shift-left candidate — keep going in order (it still has to clear Q1).
 1. **Pattern or one-off?** A single occurrence is a one-off — fix it and stop. Only capture once it has recurred, or you can concretely predict it will.
 2. **Should it have been caught earlier?** If yes, the fix is to push enforcement to a faster layer (type-check/lint before tests before CI) — go to Step 2.
 3. **Did an advisory rule already exist and fail to stick?** If a rule in AGENTS.md or a skill was ignored, that's the signal to upgrade it from prose to a deterministic check.
