@@ -1,5 +1,11 @@
 # AGENTS.md
 
+## Commands
+
+- `npm run dev` — local dev server (Astro, default port 4321).
+- `npm test` — unit tests (Vitest) for pure helpers.
+- `npm run build` — the full pre-push gate: type-check → tests → build → link + llms.txt checks. See [Verification](#verification) for the steps.
+
 ## Rules
 
 - All external links must open in a new tab using `target="_blank" rel="noopener"`.
@@ -43,4 +49,4 @@ Run `npm run build` to check for errors before pushing. This runs:
 4. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
 5. `check-llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
 
-Unit tests cover pure logic (string transforms, parsers); the `check-*` scripts cover the built output end-to-end. Run tests alone with `npm test`.
+Unit tests cover pure logic (string transforms, parsers); the `check-*` scripts cover the built output end-to-end.
