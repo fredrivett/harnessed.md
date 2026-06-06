@@ -16,7 +16,7 @@ async function fetchStars(): Promise<number | null> {
 			headers: { Accept: 'application/vnd.github+json' },
 			// Don't let a slow/hanging GitHub stall the build — the count is
 			// non-critical (the client refreshes it live) so degrade fast.
-			signal: AbortSignal.timeout(3000),
+			signal: AbortSignal.timeout(5000),
 		});
 		if (!res.ok) return null;
 		const data: RawGithubRepo = await res.json();
