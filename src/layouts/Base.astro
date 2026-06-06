@@ -1,4 +1,6 @@
 ---
+import PostHog from '../components/posthog.astro';
+
 interface Props {
 	title: string;
 	description: string;
@@ -21,6 +23,7 @@ const path = Astro.url.pathname.replace(/\/$/, '');
 
 <html lang="en" data-theme="auto">
 	<head>
+		<PostHog />
 		<meta charset="utf-8" />
 		<script is:inline>
 			(function() {
