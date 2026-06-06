@@ -143,6 +143,13 @@ h1 {
 	color: var(--text-secondary);
 }
 
+.header-path {
+	margin-left: 0.5rem;
+	font-size: 0.9rem;
+	font-weight: 400;
+	color: var(--text-secondary);
+}
+
 .header-actions {
 	display: flex;
 	align-items: center;
