@@ -7,7 +7,12 @@ interface Props {
 	updated?: Date | null;
 }
 
+import { getStarCount, formatStars } from '../lib/github';
+
 const { title, description, class: className, image, updated } = Astro.props;
+const stars = await getStarCount();
+// En dash placeholder until a real positive count is known — avoids flashing "0".
+const starsLabel = stars && stars > 0 ? formatStars(stars) : '–';
 const updatedLabel = updated?.toLocaleDateString('en-GB', {
 	day: 'numeric',
 	month: 'short',
@@ -61,6 +66,10 @@ const path = Astro.url.pathname.replace(/\/$/, '');
 					<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
 					<svg class="icon-auto" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8a2.83 2.83 0 0 0 4 4 4 4 0 1 1-4-4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
 				</button>
+					<a class="github-star" href="https://github.com/fredrivett/harnessed.md" target="_blank" rel="noopener" aria-label="Star harnessed.md on GitHub" title="Star on GitHub">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+						<span class="star-count">{starsLabel}</span>
+					</a>
 				</div>
 			</header>
 
@@ -83,6 +92,7 @@ const path = Astro.url.pathname.replace(/\/$/, '');
 		<script>
 			import '../scripts/theme.ts';
 			import '../scripts/copy-code.ts';
+			import '../scripts/github-stars.ts';
 		</script>
 	</body>
 </html>
