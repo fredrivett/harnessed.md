@@ -18,11 +18,14 @@ Reach for `/learn` when:
 
 Skip it for genuine one-offs (a typo, a copy tweak). Not everything is a pattern, and over-capturing turns the learnings store into noise.
 
-## Step 1 — Triage (the three questions)
+## Step 1 — Triage
 
-1. **Should this have been caught earlier?** If yes, push enforcement toward the fastest layer (type-check/lint before tests before CI).
-2. **Pattern or one-off?** Patterns get hard-coded into the harness. One-offs just get fixed — stop here.
-3. **Did an advisory rule already exist and fail to stick?** If a rule in AGENTS.md or a skill was ignored, that's the signal to upgrade it to a deterministic check.
+Answer in order. Any **stop** means drop it and move on — *not* capturing a non-learning is as valuable as capturing a real one; it's what keeps the harness signal-dense.
+
+0. **Is it already caught by an existing check?** If the type-checker, a lint rule, a test, or CI already fails on this, the harness already enforces it — there's nothing to capture. Stop.
+1. **Pattern or one-off?** A single occurrence is a one-off — fix it and stop. Only capture once it has recurred, or you can concretely predict it will.
+2. **Should it have been caught earlier?** If yes, the fix is to push enforcement to a faster layer (type-check/lint before tests before CI) — go to Step 2.
+3. **Did an advisory rule already exist and fail to stick?** If a rule in AGENTS.md or a skill was ignored, that's the signal to upgrade it from prose to a deterministic check.
 
 ## Step 2 — Route to the right layer (by scope)
 
@@ -34,13 +37,21 @@ Pick the *most enforced* layer the learning fits. Default to mechanization; fall
 | "This must happen on every edit/commit" | a **hook** (`.claude/settings.json`) | mechanical, zero exceptions |
 | Narrow to one directory or file-type | a **path-scoped rule** or the relevant **skill** | loads only in context; keeps hot memory lean |
 | Broad policy that applies to ~every session | an **AGENTS.md** boundary | hot memory — use sparingly |
-| A gotcha, judgment call, or dead-end that resists all the above | an entry in **`LEARNINGS.md`** | cold storage, read on demand |
+| A gotcha or dead-end that clears the bar below | an entry in **`LEARNINGS.md`** | cold storage, read on demand |
 
 Rules of thumb, straight from the guides:
 
 - Prefer a test/lint/hook over a prose rule — an advisory rule is a reliability dice-roll.
 - Keep AGENTS.md to what applies to *every* session; it's loaded every time. Narrow things belong in skills or path-scoped rules.
 - `LEARNINGS.md` is the last resort, not the default. If it can be a test, make it a test.
+
+**The bar for a `LEARNINGS.md` entry — all three must hold:**
+
+1. **Non-mechanizable** — it can't be a test, lint rule, hook, or path-scoped rule, *and* no existing check already catches it. ("It's a judgment call" is not sufficient on its own — most judgments don't need recording.)
+2. **Likely to recur** — it has already bitten more than once, or you can concretely name when it will again.
+3. **Costly or non-obvious** — it cost real time and the next person won't trivially rediscover it.
+
+If it fails any one, don't log it.
 
 ## Step 3 — Make the change and verify
 
