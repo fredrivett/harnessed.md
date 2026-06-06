@@ -76,15 +76,11 @@ async function fetchGreenhouse(boardId: string, departmentFilter: string): Promi
 		}));
 }
 
-async function fetchCareersPage(url: string, departmentFilter: string): Promise<Job[]> {
-	const res = await fetchWithTimeout(url, 15000);
-	if (!res.ok) {
-		console.warn(`[careers-page] ${url} returned ${res.status}`);
-		return [];
-	}
-	const html = await res.text();
-	const baseUrl = new URL(url).origin;
-
+// Pure scraper for careers-page HTML. Separated from fetchCareersPage so the
+// fragile regex parsing — which breaks whenever a site changes markup — can be
+// pinned with fixtures. baseUrl is the page origin, used to absolutise relative
+// hrefs (Pattern 2).
+export function parseCareersHtml(html: string, baseUrl: string, departmentFilter: string): Job[] {
 	const jobs: Job[] = [];
 
 	// Pattern 1: Every-style (span department → h3 title → Apply link)
@@ -122,6 +118,17 @@ async function fetchCareersPage(url: string, departmentFilter: string): Promise<
 	return jobs.filter((j) => {
 		return j.department.toLowerCase().includes(filter) || j.title.toLowerCase().includes(filter);
 	});
+}
+
+async function fetchCareersPage(url: string, departmentFilter: string): Promise<Job[]> {
+	const res = await fetchWithTimeout(url, 15000);
+	if (!res.ok) {
+		console.warn(`[careers-page] ${url} returned ${res.status}`);
+		return [];
+	}
+	const html = await res.text();
+	const baseUrl = new URL(url).origin;
+	return parseCareersHtml(html, baseUrl, departmentFilter);
 }
 
 async function fetchAshby(boardId: string, departmentFilter: string): Promise<Job[]> {

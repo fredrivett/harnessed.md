@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { salaryRange, extractGreenhouseSalary, type Job } from './jobs';
+import { salaryRange, extractGreenhouseSalary, parseCareersHtml, type Job } from './jobs';
 
 const job = (overrides: Partial<Job>): Job => ({
 	title: 'Engineer',
@@ -76,5 +76,67 @@ describe('extractGreenhouseSalary', () => {
 	it('returns undefined when there is no metadata or pay-range content', () => {
 		expect(extractGreenhouseSalary({})).toBeUndefined();
 		expect(extractGreenhouseSalary({ content: '<div>no salary here</div>' })).toBeUndefined();
+	});
+});
+
+describe('parseCareersHtml', () => {
+	// Pattern 1: Every-style — span department, h3 title, Apply link, gated on #open-roles
+	const everyHtml = [
+		'<section>',
+		'<div id="open-roles">',
+		'<span>Engineering</span><h3>Staff Engineer</h3><a href="https://every.to/jobs/staff">Apply now</a>',
+		'<span>Design</span><h3>Product Designer</h3><a href="https://every.to/jobs/designer">Apply</a>',
+		'<span>Other</span><h3>Don\'t see your role? Reach out</h3><a href="https://every.to/contact">Apply</a>',
+		'</div>',
+		'</section>',
+	].join('\n');
+
+	it('parses Every-style cards and drops the "Don\'t see your role" card', () => {
+		expect(parseCareersHtml(everyHtml, 'https://every.to', '')).toEqual([
+			{ title: 'Staff Engineer', url: 'https://every.to/jobs/staff', location: '—', department: 'Engineering', company: '' },
+			{ title: 'Product Designer', url: 'https://every.to/jobs/designer', location: '—', department: 'Design', company: '' },
+		]);
+	});
+
+	it('filters Every-style results by department', () => {
+		const result = parseCareersHtml(everyHtml, 'https://every.to', 'engineering');
+		expect(result).toHaveLength(1);
+		expect(result[0]!.title).toBe('Staff Engineer');
+	});
+
+	// Pattern 2: Shopify-style — only runs when Pattern 1 finds nothing
+	const shopifyHtml = [
+		'<ul>',
+		'<a href="/careers/senior-dev_abc123"><h4>Senior Developer</h4><span>Ottawa</span></a>',
+		'<a href="/careers/designer_def456"><h4>Designer</h4><span>Remote</span></a>',
+		'</ul>',
+	].join('\n');
+
+	it('falls back to Shopify-style links and absolutises relative hrefs', () => {
+		expect(parseCareersHtml(shopifyHtml, 'https://shopify.com', '')).toEqual([
+			{ title: 'Senior Developer', url: 'https://shopify.com/careers/senior-dev_abc123', location: 'Ottawa', department: '', company: '' },
+			{ title: 'Designer', url: 'https://shopify.com/careers/designer_def456', location: 'Remote', department: '', company: '' },
+		]);
+	});
+
+	it('skips Shopify-style links with query strings, missing h4, and treats "Apply" as no location', () => {
+		const html = [
+			'<a href="/careers/old_role?foo=bar"><h4>Old Role</h4><span>NY</span></a>',
+			'<a href="/careers/no-title_x1"><span>Nope</span></a>',
+			'<a href="/careers/applyish_x2"><h4>Open Role</h4><span>Apply</span></a>',
+		].join('\n');
+		expect(parseCareersHtml(html, 'https://shopify.com', '')).toEqual([
+			{ title: 'Open Role', url: 'https://shopify.com/careers/applyish_x2', location: '—', department: '', company: '' },
+		]);
+	});
+
+	it('filters Shopify-style results by title when there is no department', () => {
+		const result = parseCareersHtml(shopifyHtml, 'https://shopify.com', 'designer');
+		expect(result).toHaveLength(1);
+		expect(result[0]!.title).toBe('Designer');
+	});
+
+	it('returns an empty array when nothing matches', () => {
+		expect(parseCareersHtml('<div>no jobs</div>', 'https://x.com', '')).toEqual([]);
 	});
 });
