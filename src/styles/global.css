@@ -143,6 +143,13 @@ h1 {
 	color: var(--text-secondary);
 }
 
+.header-path {
+	margin-left: 0.5rem;
+	font-size: 0.9rem;
+	font-weight: 400;
+	color: var(--text-secondary);
+}
+
 .header-actions {
 	display: flex;
 	align-items: center;
@@ -203,6 +210,12 @@ h2, h3 {
 a {
 	color: var(--link);
 	text-underline-offset: 3px;
+	text-decoration-color: color-mix(in srgb, currentColor 50%, transparent);
+	transition: text-decoration-color 0.15s ease;
+}
+
+a:hover {
+	text-decoration-color: currentColor;
 }
 
 hr {
