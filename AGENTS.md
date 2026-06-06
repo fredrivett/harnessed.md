@@ -3,8 +3,9 @@
 ## Commands
 
 - `npm run dev` — local dev server (Astro, default port 4321).
+- `npm run lint` — ESLint (correctness + agent anti-patterns; no formatting rules).
 - `npm test` — unit tests (Vitest) for pure helpers.
-- `npm run build` — the full pre-push gate: type-check → tests → build → link + llms.txt checks. See [Verification](#verification) for the steps.
+- `npm run build` — the full pre-push gate: type-check → lint → tests → build → link + llms.txt checks. See [Verification](#verification) for the steps.
 
 ## Rules
 
@@ -43,11 +44,12 @@ Supported ATS providers: check `src/lib/jobs.ts` for the current list.
 
 Run `npm run build` to check for errors before pushing. This runs:
 
-1. `astro check` — TypeScript type checking
-2. `vitest run` — unit tests (`*.test.ts`) for pure helpers like `src/lib/markdown.ts`
-3. `astro build` — static site generation
-4. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
-5. `check-llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
+1. `astro check` — TypeScript type checking (`astro/tsconfigs/strictest`)
+2. `eslint .` — flat-config lint; blocks the `any` escape hatch (`@typescript-eslint/no-explicit-any`). Correctness only, no formatting rules, so it leaves the tab style alone. Config in `eslint.config.js`.
+3. `vitest run` — unit tests (`*.test.ts`) for pure helpers like `src/lib/markdown.ts`
+4. `astro build` — static site generation
+5. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
+6. `check-llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
 
 ### Two test layers, on purpose
 

@@ -189,9 +189,11 @@ describe('normalizeGreenhouseJobs', () => {
 		expect(normalizeGreenhouseJobs(data, 'ENGINEERING')).toHaveLength(1);
 	});
 
-	it('falls back to Remote location and undefined salary when absent', () => {
+	it('falls back to Remote location and omits salary when absent', () => {
 		const data = { jobs: [{ title: 'Eng', absolute_url: 'https://x/1', departments: [{ name: 'Eng' }] }] };
-		expect(normalizeGreenhouseJobs(data, '')[0]).toMatchObject({ location: 'Remote', salary: undefined });
+		const result = normalizeGreenhouseJobs(data, '')[0]!;
+		expect(result).toMatchObject({ location: 'Remote' });
+		expect(result).not.toHaveProperty('salary');
 	});
 });
 
@@ -224,13 +226,14 @@ describe('normalizeAshbyJobs', () => {
 		]);
 	});
 
-	it('synthesises a URL from boardId + id and falls back to Remote when fields are missing', () => {
+	it('synthesises a URL from boardId + id, falls back to Remote, and omits salary when fields are missing', () => {
 		const data = { jobs: [{ title: 'Eng', id: 'xyz', departmentName: 'Engineering' }] };
-		expect(normalizeAshbyJobs(data, 'acme', '')[0]).toMatchObject({
+		const result = normalizeAshbyJobs(data, 'acme', '')[0]!;
+		expect(result).toMatchObject({
 			url: 'https://jobs.ashbyhq.com/acme/xyz',
 			location: 'Remote',
-			salary: undefined,
 		});
+		expect(result).not.toHaveProperty('salary');
 	});
 
 	it('matches the filter on team or title, not just department', () => {
