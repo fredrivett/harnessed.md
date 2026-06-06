@@ -15,19 +15,6 @@ No deploy command lives in this repo — shipping is handled by Vercel's GitHub 
 
 - All external links must open in a new tab using `target="_blank" rel="noopener"`.
 
-## Writing pages
-
-Content pages (`src/data/*.md` rendered through `.prose`) follow a few conventions:
-
-- **Direct, not conversational.** Lead with the substance. Skip rhetorical questions, calls to action, and chatty framing — every sentence should carry information, not warmth. "Verification is the highest-leverage layer of the harness" beats "Want cleaner code?"
-- **Browsable, not a manual.** Paragraphs and bullets are 1–2 sentences max — if it runs longer, split it. Cut sentences that just restate the previous one or the table above.
-- **Concrete over vague.** Use specific stats tied to a named source (e.g. "Snyk found 36–40%…") instead of "studies show" or "many teams." If you can't attribute it, don't claim it.
-- **Primary sources.** Link to the vendor's or author's own page (`claude.com/blog/...`) before a secondary writeup (InfoQ, TechCrunch).
-- **Real headings.** Use `###` under `##` for sub-sections — don't fake hierarchy with `**Title.**` inline.
-- **Tool/option lists** are bullets with a bold linked name, em-dash, and a one-line differentiator.
-- **Reading lives in the frontmatter.** Add to the `reading:` list; don't write "for further reading."
-- **External links open in a new tab automatically** via `rehype-external-links` — don't add the attributes by hand.
-
 ## Agent-facing outputs (llms.txt)
 
 The `*/llms.txt` routes are payloads an agent consumes, not pages a human browses. One principle governs whether to link or inline:
@@ -36,13 +23,12 @@ The `*/llms.txt` routes are payloads an agent consumes, not pages a human browse
 - **Inlining is cheap here because routes pull `.body` from `src/data/*.md` at build time** — there's no duplicated copy to maintain, so freshness and single-source-of-truth are free. (See `src/pages/audit/llms.txt.ts`, which bundles the three pillar sections so the audit runs from one self-contained file.)
 - **Keep instructions consistent with the payload.** If an llms.txt inlines its reference material, don't also tell the agent to fetch it — contradictory instructions are worse than either alone.
 
-## Adding a company
+## Skills
 
-Company files live in `src/data/companies/`. The numeric prefix (e.g. `01-`) controls sort order on the homepage; the slug is the filename minus the prefix (e.g. `01-openai.yaml` → `/companies/openai`).
+Domain-specific workflows live in `.agents/skills/` (symlinked to `.claude/skills/`) and load on demand — keep them out of this file. Current skills:
 
-Required YAML fields: `name`, `url`, `reference` (`title`, `url`), `description`, `headcount`, `stage`, `ats` (`provider`, `boardId`, `departmentFilter`). Optional: `careers`.
-
-Supported ATS providers: check `src/lib/jobs.ts` for the current list.
+- **writing-pages** — tone and formatting conventions for content pages (`src/data/*.md`).
+- **adding-a-company** — fields and file layout for a company entry under `src/data/companies/`.
 
 ## Verification
 
