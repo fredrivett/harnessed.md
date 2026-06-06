@@ -45,14 +45,18 @@ Domain-specific workflows live in `.agents/skills/` (symlinked to `.claude/skill
 
 ## Verification
 
-Run `npm run build` to check for errors before pushing. This runs:
+Run `npm run build` to check for errors before pushing. It's a composition of the named scripts below (`check`, `lint`, `test`, `build:site`, `check:links`, `check:llms-txt`) — each stays runnable on its own:
 
-1. `astro check` — TypeScript type checking (`astro/tsconfigs/strictest`)
-2. `eslint .` — flat-config lint; blocks the `any` escape hatch (`@typescript-eslint/no-explicit-any`). Correctness only, no formatting rules, so it leaves the tab style alone. Config in `eslint.config.js`.
-3. `vitest run` — unit tests (`*.test.ts`) for pure helpers like `src/lib/markdown.ts`
-4. `astro build` — static site generation
-5. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
-6. `check-llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
+1. `npm run check` (`astro check`) — TypeScript type checking (`astro/tsconfigs/strictest`)
+2. `npm run lint` (`eslint .`) — flat-config lint; blocks the `any` escape hatch (`@typescript-eslint/no-explicit-any`). Correctness only, no formatting rules, so it leaves the tab style alone. Config in `eslint.config.js`.
+3. `npm run test` (`vitest run`) — unit tests (`*.test.ts`) for pure helpers like `src/lib/markdown.ts`
+4. `npm run build:site` (`astro build`) — static site generation
+5. `npm run check:links` — verifies all external links have `target="_blank" rel="noopener"`
+6. `npm run check:llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
+
+### CI
+
+`.github/workflows/ci.yml` runs these same six scripts as separate steps on every PR (and on `main`), so a failure names the exact stage. It's the same definitions `npm run build` composes — no drift. To make it *block* merges, mark the `CI` check as required in the `main` branch protection rules (Settings → Branches); the workflow only reports status on its own.
 
 ### Two test layers, on purpose
 
