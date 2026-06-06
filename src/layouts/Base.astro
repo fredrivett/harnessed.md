@@ -60,8 +60,8 @@ const path = Astro.url.pathname.replace(/\/$/, '');
 		<meta name="twitter:image" content={ogImage} />
 	</head>
 	<body>
-		<main class={className}>
-			<header>
+		<header>
+			<div class:list={['header-inner', className]}>
 				<h1 id="harnessed"><a class="heading-hash" href="/">#</a><a href="/">harnessed<span class="ext">.md</span></a>{path && <span class="header-path">{path}</span>}</h1>
 				<div class="header-actions">
 					<button id="theme-toggle" type="button" aria-label="Toggle theme" title="system">
@@ -74,8 +74,10 @@ const path = Astro.url.pathname.replace(/\/$/, '');
 						<span class="star-count">{starsLabel}</span>
 					</a>
 				</div>
-			</header>
+			</div>
+		</header>
 
+		<main class={className}>
 			<slot />
 		</main>
 
