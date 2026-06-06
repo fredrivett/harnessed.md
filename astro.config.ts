@@ -4,6 +4,8 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeExternalLinks from 'rehype-external-links';
 import { h } from 'hastscript';
 import type { ShikiTransformer } from 'shiki';
+import type { PluginOption } from 'vite';
+import posthog from '@posthog/rollup-plugin';
 
 // Maps vitesse-light token colours to semantic classes so we can style
 // syntax with our own CSS variables (see .tok-* rules in global.css).
@@ -69,12 +71,42 @@ const wrapMeta: ShikiTransformer = {
 	},
 };
 
+// Upload client source maps to PostHog Error Tracking so captured stack traces
+// resolve to real source, not minified bundles. Build-time only and gated on the
+// personal API key (POSTHOG_API_KEY): local and CI builds don't have it, so they
+// skip upload and stay green — only the Vercel production build, where the secret
+// is set, generates, uploads, and (deleteAfterUpload) discards the maps. None of
+// these are PUBLIC_*, so the key never reaches the client bundle. releaseVersion
+// tags errors with the deploy's commit SHA for deploy-marker attribution.
+const posthogApiKey = process.env.POSTHOG_API_KEY;
+// Cast bridges a Rollup-vs-Vite plugin type-version skew; the plugin is a valid
+// Vite plugin at runtime.
+const sourcemapPlugins: PluginOption[] = posthogApiKey
+	? [
+			posthog({
+				personalApiKey: posthogApiKey,
+				...(process.env.POSTHOG_PROJECT_ID ? { projectId: process.env.POSTHOG_PROJECT_ID } : {}),
+				...(process.env.POSTHOG_HOST ? { host: process.env.POSTHOG_HOST } : {}),
+				sourcemaps: {
+					enabled: true,
+					deleteAfterUpload: true,
+					...(process.env.VERCEL_GIT_COMMIT_SHA
+						? { releaseVersion: process.env.VERCEL_GIT_COMMIT_SHA }
+						: {}),
+				},
+			}) as PluginOption,
+		]
+	: [];
+
 // https://astro.build/config
 export default defineConfig({
 	server: {
 		port: Number(process.env.PORT || 4321),
 	},
 	site: 'https://www.harnessed.md',
+	vite: {
+		plugins: sourcemapPlugins,
+	},
 	markdown: {
 		syntaxHighlight: 'shiki',
 		shikiConfig: {

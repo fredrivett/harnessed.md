@@ -17,6 +17,8 @@ Product analytics is PostHog, loaded via an env-driven inline snippet in `src/co
 
 The client token is read from `PUBLIC_POSTHOG_PROJECT_TOKEN` / `PUBLIC_POSTHOG_HOST` (Astro inlines `PUBLIC_*` at build time). They live in `.env` for local dev and **must also be set in the Vercel project env (Production + Preview)** — otherwise the production build inlines `undefined` and analytics silently no-op.
 
+Error tracking is PostHog exception autocapture — toggled on in the PostHog project settings, not in code. Stack traces are de-minified by source maps uploaded at build time via `@posthog/rollup-plugin` in `astro.config.ts`, gated on `POSTHOG_API_KEY` (a **build-time, server-side** personal API key — never `PUBLIC_`). Only the Vercel production build, where that secret plus `POSTHOG_PROJECT_ID` are set, generates and uploads maps (then deletes them); local and CI builds have no key, so the plugin is skipped and the gate stays green. `releaseVersion` is the deploy's commit SHA, for deploy-marker attribution.
+
 ## Boundaries
 
 **Always**
