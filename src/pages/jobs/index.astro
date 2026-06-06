@@ -114,6 +114,7 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 		function applyFilters() {
 			if (!tbody) return;
 			const role = (roleInput?.value || '').toLowerCase();
+			const roleTerms = role.split(/\s+/).filter(Boolean);
 			const company = companySelect?.value || '';
 			const dept = deptSelect?.value || '';
 			const loc = locSelect?.value || '';
@@ -122,7 +123,8 @@ companies.forEach((c) => companySlugMap.set(c.data.name, slugFromId(c.id)));
 
 			rows.forEach((row) => {
 				const tr = row as HTMLElement;
-				const matchRole = !role || (tr.dataset.role || '').includes(role);
+				const roleData = tr.dataset.role || '';
+				const matchRole = roleTerms.every((term) => roleData.includes(term));
 				const matchCompany = !company || tr.dataset.company === company;
 				const matchDept = !dept || tr.dataset.department === dept;
 				const matchLoc = !loc || tr.dataset.location === loc;
