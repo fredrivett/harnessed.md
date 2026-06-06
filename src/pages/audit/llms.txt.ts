@@ -1,28 +1,12 @@
 import type { APIRoute } from 'astro';
 import { getEntry } from 'astro:content';
-import { toPlainMarkdown } from '../../lib/markdown';
+import { toPlainMarkdown, stripPromptSection, demoteHeadings } from '../../lib/markdown';
 
 // The audit is meant to always run against all three pillars, so we inline their
 // full content here rather than asking the agent to fetch each one. The source
 // still lives in src/data/{guides,verification,observation}.md — this only pulls
 // it in at build time, so there is no duplicated copy to keep in sync.
 const REFERENCE_SLUGS = ['guides', 'verification', 'observation'] as const;
-
-// "## The prompt" is human onboarding (the copy-paste invocation) — an agent
-// reading this payload was already pointed here, so drop it from the llms.txt.
-function stripPromptSection(body: string): string {
-	return body.replace(/\n## The prompt\n[\s\S]*?(?=\n## )/, '');
-}
-
-// Inlined sections become reference material nested under a "## {title}" wrapper,
-// so demote their headings one level to keep the hierarchy intact. Fence-aware so
-// `#` lines inside code blocks are left alone. Capped at h6.
-function demoteHeadings(md: string): string {
-	return md
-		.split(/(```[\s\S]*?```)/g)
-		.map((segment, i) => (i % 2 === 1 ? segment : segment.replace(/^(#{1,5}) /gm, '#$1 ')))
-		.join('');
-}
 
 export const GET: APIRoute = async () => {
 	const audit = await getEntry('pages', 'audit');

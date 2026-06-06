@@ -38,6 +38,9 @@ Supported ATS providers: check `src/lib/jobs.ts` for the current list.
 Run `npm run build` to check for errors before pushing. This runs:
 
 1. `astro check` — TypeScript type checking
-2. `astro build` — static site generation
-3. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
-4. `check-llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
+2. `vitest run` — unit tests (`*.test.ts`) for pure helpers like `src/lib/markdown.ts`
+3. `astro build` — static site generation
+4. `check-links` — verifies all external links have `target="_blank" rel="noopener"`
+5. `check-llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
+
+Unit tests cover pure logic (string transforms, parsers); the `check-*` scripts cover the built output end-to-end. Run tests alone with `npm test`.
