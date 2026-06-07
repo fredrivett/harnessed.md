@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, relative } from 'path';
+import { fileToRoute, normalizeRoute } from '../src/lib/routes';
 
 const dist = join(import.meta.dirname, '..', 'dist');
 const errors: string[] = [];
@@ -17,16 +18,7 @@ function walk(dir: string): string[] {
   return files;
 }
 
-// dist/guides/index.html -> "/guides"; dist/index.html -> "/"
-function fileToRoute(file: string): string {
-  const rel = relative(dist, file).replace(/\\/g, '/').replace(/index\.html$/, '').replace(/\.html$/, '');
-  return '/' + rel.replace(/\/$/, '');
-}
-
-// "/guides/" and "/guides" both normalize to "/guides"; "/" stays "/"
-function normalizeRoute(path: string): string {
-  return path === '/' ? '/' : '/' + path.replace(/^\//, '').replace(/\/$/, '');
-}
+const routeOf = (file: string) => fileToRoute(relative(dist, file));
 
 const htmlFiles = walk(dist);
 
@@ -42,7 +34,7 @@ for (const file of htmlFiles) {
   while ((match = idRegex.exec(html)) !== null) {
     if (match[1]) ids.add(match[1]);
   }
-  idsByRoute.set(fileToRoute(file), ids);
+  idsByRoute.set(routeOf(file), ids);
 }
 
 const linkRegex = /<a\s[^>]*href="([^"]*)"[^>]*>/g;
@@ -51,7 +43,7 @@ const targetRegex = /\btarget="([^"]*)"/;
 
 for (const file of htmlFiles) {
   const html = readFileSync(file, 'utf-8');
-  const route = fileToRoute(file);
+  const route = routeOf(file);
   const path = relative(dist, file);
   let match;
   while ((match = linkRegex.exec(html)) !== null) {
