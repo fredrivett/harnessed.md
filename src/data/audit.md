@@ -25,7 +25,7 @@ Score each item from evidence in the repo, not from intent. For each item, the a
 
 ## Output
 
-One markdown table per section, plus an aggregate at the end:
+One markdown table per section:
 
 ```text
 | Item | Score | Evidence | Next step |
@@ -33,6 +33,13 @@ One markdown table per section, plus an aggregate at the end:
 ```
 
 The **Next step** column should reference the tooling already in the repo (extend the existing ESLint config, not introduce Biome alongside it). One concrete action per row, or blank if the score is 5.
+
+Then an aggregate, computed the same way every time:
+
+- **Pillar score** — the mean of that pillar's item scores, rounded to one decimal place.
+- **Overall score** — the unweighted mean of the four pillar scores, rounded to one decimal place.
+
+Average the pillars, not the items, so each pillar counts equally regardless of how many items it has — and don't weight any pillar above the others.
 
 ## The rubric
 
