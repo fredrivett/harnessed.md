@@ -11,12 +11,6 @@
 
 No deploy command lives in this repo — shipping is handled by Vercel's GitHub integration. Pushing to `main` deploys production (`https://www.harnessed.md`); pull requests get preview deployments automatically. Vercel serves the static Astro output (`dist/`); there's no committed `vercel.json`, so build settings live in the Vercel project dashboard.
 
-## Observation
-
-Product analytics is PostHog, loaded via an env-driven inline snippet in `src/components/posthog.astro` and pulled into every page through `Base.astro`. Page and funnel events fire through `window.posthog?.capture(...)`, so they no-op safely when the library hasn't loaded (e.g. no key). PostHog ships from its own CDN at runtime (`/static/array.js`) — there's no `posthog-js` dependency.
-
-The client token is read from `PUBLIC_POSTHOG_PROJECT_TOKEN` / `PUBLIC_POSTHOG_HOST` (Astro inlines `PUBLIC_*` at build time). They live in `.env` for local dev and **must also be set in the Vercel project env (Production + Preview)** — otherwise the production build inlines `undefined` and analytics silently no-op.
-
 ## Boundaries
 
 **Always**
@@ -49,6 +43,7 @@ Domain-specific workflows live in `.agents/skills/` (symlinked to `.claude/skill
 - **writing-pages** — tone and formatting conventions for content pages (`src/data/*.md`).
 - **adding-a-company** — fields and file layout for a company entry under `src/data/companies/`.
 - **learn** — after a recurring defect or review finding, extract one durable harness improvement (test, lint rule, hook, path-scoped rule, or a `LEARNINGS.md` note) instead of a one-off fix.
+- **observability** — how the site is instrumented (PostHog analytics, error tracking, source-map upload) and the env vars it needs.
 
 ## Verification
 
