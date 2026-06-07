@@ -15,7 +15,7 @@ Events fire through `window.posthog?.capture(...)` (and one `identify` on newsle
 
 ## Error tracking
 
-Exception autocapture (wrapping `window.onerror` / unhandled rejections) can be turned on two ways: the **`capture_exceptions` init option** (`capture_exceptions: true` for defaults, or an object for finer control) in `posthog.astro`, or the **project-settings toggle** in PostHog's Error Tracking settings (remote config). This repo currently relies on the project-settings toggle, so the `posthog.init(...)` call doesn't set `capture_exceptions` — prefer moving it in-code if you want the config version-controlled rather than dependent on a dashboard state. Manual `posthog.captureException(err)` is available for real client-side error boundaries, but the existing catch blocks here (GitHub star fetch, clipboard copy) are low-signal externals not worth capturing.
+Exception autocapture is enabled **in code** via `capture_exceptions: true` in `posthog.init(...)` (`posthog.astro`) — it wraps `window.onerror` / unhandled rejections, and being in code it's version-controlled rather than dependent on the dashboard's remote-config toggle. Manual `posthog.captureException(err)` is available for real error boundaries, but the only client catch blocks here (GitHub star fetch, clipboard copy) are low-signal externals not worth capturing.
 
 ## Source maps
 
