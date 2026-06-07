@@ -35,5 +35,6 @@ Exception autocapture is enabled **in code** via `capture_exceptions: true` in `
 ## Turning it on (manual steps)
 
 1. Set the four vars above in the Vercel project env, then redeploy (env changes don't apply retroactively).
-2. Enable exception autocapture in the PostHog project's Error Tracking settings.
-3. Verify: a `/<token>/view` request fires on page load (analytics), and a deploy uploads a symbol set to PostHog (source maps — check the Vercel build log).
+2. Verify: a `/<token>/view` request fires on page load (analytics), and a deploy uploads a symbol set to PostHog (source maps — check the Vercel build log).
+
+Exception autocapture needs no dashboard step — it's set in code via `capture_exceptions` (see above).
