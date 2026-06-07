@@ -40,9 +40,9 @@ Each item links to where the best-practice guidance lives on [/guides](/guides),
 
 ### Guides
 
-- **[AGENTS.md at root](/guides#agents-md)** — exists in the portable form, with tool aliases like `CLAUDE.md` symlinked to it; focused enough that the agent will actually read it.
-- **[Commands documented](/guides#agents-md)** — build, test, lint, deploy paths the agent can run.
-- **[Boundaries declared](/guides#agents-md)** — explicit "always do / never do / ask first."
+- **[AGENTS.md at root](/guides#agentsmd)** — exists in the portable form, with tool aliases like `CLAUDE.md` symlinked to it; focused enough that the agent will actually read it.
+- **[Commands documented](/guides#agentsmd)** — build, test, lint, deploy paths the agent can run.
+- **[Boundaries declared](/guides#agentsmd)** — explicit "always do / never do / ask first."
 - **[Path-scoped rules](/guides#the-config-stack)** — used where the codebase has distinct subtrees (e.g. `apps/api` vs `apps/web`).
 - **[Skills](/guides#skills)** — repeatable workflows captured in `SKILL.md` format per the [agentskills.io spec](https://agentskills.io/specification), placed in `.agents/skills/` with tool-specific paths configured or symlinked.
 - **[Hooks](/guides#hooks)** — mechanical enforcement for what an advisory rule can't reliably guarantee.
