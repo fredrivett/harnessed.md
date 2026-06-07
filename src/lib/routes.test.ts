@@ -64,6 +64,14 @@ describe('findBrokenAnchor', () => {
 		expect(findBrokenAnchor('/guides/#hooks', '/audit', ids)).toBeNull();
 	});
 
+	it('resolves a target route carrying a query string before the fragment', () => {
+		expect(findBrokenAnchor('/guides?v=1#agentsmd', '/audit', ids)).toBeNull();
+		expect(findBrokenAnchor('/guides?v=1#nope', '/audit', ids)).toEqual({
+			targetRoute: '/guides',
+			fragment: 'nope',
+		});
+	});
+
 	// The deliberate skips: each must return null, never a false positive.
 	it('skips external links', () => {
 		expect(findBrokenAnchor('https://x.com/guides#agents-md', '/audit', ids)).toBeNull();

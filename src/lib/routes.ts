@@ -27,8 +27,9 @@ export function findBrokenAnchor(
 ): { targetRoute: string; fragment: string } | null {
 	if (/^https?:\/\//.test(href)) return null; // external — checked elsewhere
 	if (!href.includes('#')) return null;
-	const [pathPart = '', fragment = ''] = href.split('#');
+	const [beforeFragment = '', fragment = ''] = href.split('#');
 	if (!fragment) return null;
+	const pathPart = beforeFragment.split('?')[0] ?? ''; // drop any query string
 	const targetRoute = pathPart === '' ? currentRoute : normalizeRoute(pathPart);
 	const ids = idsByRoute.get(targetRoute);
 	if (ids === undefined) return null; // not an HTML route we built — skip
