@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, relative } from 'path';
-import { fileToRoute, normalizeRoute } from '../src/lib/routes';
+import { fileToRoute, findBrokenAnchor } from '../src/lib/routes';
 
 const dist = join(import.meta.dirname, '..', 'dist');
 const errors: string[] = [];
@@ -66,14 +66,9 @@ for (const file of htmlFiles) {
     }
 
     // Internal anchors must resolve to a real id on the target page.
-    if (!href.includes('#')) continue;
-    const [pathPart = '', fragment = ''] = href.split('#');
-    if (!fragment) continue;
-    const targetRoute = pathPart === '' ? route : normalizeRoute(pathPart);
-    const ids = idsByRoute.get(targetRoute);
-    if (ids === undefined) continue; // not an HTML route we built — skip
-    if (!ids.has(fragment)) {
-      errors.push(`${path}: broken anchor "#${fragment}" -> ${targetRoute} (no matching id)`);
+    const broken = findBrokenAnchor(href, route, idsByRoute);
+    if (broken) {
+      errors.push(`${path}: broken anchor "#${broken.fragment}" -> ${broken.targetRoute} (no matching id)`);
     }
   }
 }
