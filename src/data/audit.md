@@ -25,7 +25,7 @@ Score each item from evidence in the repo, not from intent. For each item, the a
 
 ## Output
 
-One markdown table per section, plus an aggregate at the end:
+One markdown table per section:
 
 ```text
 | Item | Score | Evidence | Next step |
@@ -34,15 +34,22 @@ One markdown table per section, plus an aggregate at the end:
 
 The **Next step** column should reference the tooling already in the repo (extend the existing ESLint config, not introduce Biome alongside it). One concrete action per row, or blank if the score is 5.
 
+Then an aggregate, computed the same way every time:
+
+- **Pillar score** — the mean of that pillar's item scores, rounded to one decimal place.
+- **Overall score** — the unweighted mean of the four pillar scores, rounded to one decimal place.
+
+Average the pillars, not the items, so each pillar counts equally regardless of how many items it has — and don't weight any pillar above the others.
+
 ## The rubric
 
 Each item links to where the best-practice guidance lives on [/guides](/guides), [/verification](/verification), or [/observation](/observation). Those sections are bundled into the rubric page the agent reads, so it grounds each score and recommendation without fetching anything.
 
 ### Guides
 
-- **[AGENTS.md at root](/guides#agents-md)** — exists in the portable form, with tool aliases like `CLAUDE.md` symlinked to it; focused enough that the agent will actually read it.
-- **[Commands documented](/guides#agents-md)** — build, test, lint, deploy paths the agent can run.
-- **[Boundaries declared](/guides#agents-md)** — explicit "always do / never do / ask first."
+- **[AGENTS.md at root](/guides#agentsmd)** — exists in the portable form, with tool aliases like `CLAUDE.md` symlinked to it; focused enough that the agent will actually read it.
+- **[Commands documented](/guides#agentsmd)** — build, test, lint, deploy paths the agent can run.
+- **[Boundaries declared](/guides#agentsmd)** — explicit "always do / never do / ask first."
 - **[Path-scoped rules](/guides#the-config-stack)** — used where the codebase has distinct subtrees (e.g. `apps/api` vs `apps/web`).
 - **[Skills](/guides#skills)** — repeatable workflows captured in `SKILL.md` format per the [agentskills.io spec](https://agentskills.io/specification), placed in `.agents/skills/` with tool-specific paths configured or symlinked.
 - **[Hooks](/guides#hooks)** — mechanical enforcement for what an advisory rule can't reliably guarantee.
