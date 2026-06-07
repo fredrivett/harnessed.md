@@ -53,7 +53,7 @@ Run `npm run build` to check for errors before pushing. It's a composition of th
 2. `npm run lint` (`eslint .`) — flat-config lint; blocks the `any` escape hatch (`@typescript-eslint/no-explicit-any`). Correctness only, no formatting rules, so it leaves the tab style alone. Config in `eslint.config.js`.
 3. `npm run test` (`vitest run`) — unit tests (`*.test.ts`) for pure helpers like `src/lib/markdown.ts`
 4. `npm run build:site` (`astro build`) — static site generation
-5. `npm run check:links` — verifies all external links have `target="_blank" rel="noopener"`
+5. `npm run check:links` — verifies external links have `target="_blank" rel="noopener"`, and that every internal `#fragment` link resolves to a real id on the target page (catches anchors broken by `rehype-slug`, e.g. `## AGENTS.md` → `#agentsmd`, not `#agents-md`)
 6. `npm run check:llms-txt` — verifies llms.txt has no raw HTML and contains expected sections
 
 ### CI

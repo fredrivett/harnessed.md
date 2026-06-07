@@ -17,35 +17,80 @@ function walk(dir: string): string[] {
   return files;
 }
 
-const linkRegex = /<a\s[^>]*href="(https?:\/\/[^"]*)"[^>]*>/g;
+// dist/guides/index.html -> "/guides"; dist/index.html -> "/"
+function fileToRoute(file: string): string {
+  const rel = relative(dist, file).replace(/\\/g, '/').replace(/index\.html$/, '').replace(/\.html$/, '');
+  return '/' + rel.replace(/\/$/, '');
+}
+
+// "/guides/" and "/guides" both normalize to "/guides"; "/" stays "/"
+function normalizeRoute(path: string): string {
+  return path === '/' ? '/' : '/' + path.replace(/^\//, '').replace(/\/$/, '');
+}
+
+const htmlFiles = walk(dist);
+
+// Map every route to the set of element ids it renders, so we can check that
+// internal #fragment links actually resolve. rehype-slug strips dots, so a
+// heading like "AGENTS.md" yields id="agentsmd" — a link to #agents-md is dead.
+const idsByRoute = new Map<string, Set<string>>();
+const idRegex = /\sid="([^"]+)"/g;
+for (const file of htmlFiles) {
+  const html = readFileSync(file, 'utf-8');
+  const ids = new Set<string>();
+  let match;
+  while ((match = idRegex.exec(html)) !== null) {
+    if (match[1]) ids.add(match[1]);
+  }
+  idsByRoute.set(fileToRoute(file), ids);
+}
+
+const linkRegex = /<a\s[^>]*href="([^"]*)"[^>]*>/g;
 const relRegex = /\brel="([^"]*)"/;
 const targetRegex = /\btarget="([^"]*)"/;
 
-for (const file of walk(dist)) {
+for (const file of htmlFiles) {
   const html = readFileSync(file, 'utf-8');
+  const route = fileToRoute(file);
+  const path = relative(dist, file);
   let match;
   while ((match = linkRegex.exec(html)) !== null) {
     const tag = match[0];
-    const path = relative(dist, file);
+    const href = match[1] ?? '';
 
-    const hasTargetBlank = targetRegex.test(tag) && tag.match(targetRegex)?.[1] === '_blank';
-    const hasRelNoopener = relRegex.test(tag) && (tag.match(relRegex)?.[1] ?? '').includes('noopener');
+    if (/^https?:\/\//.test(href)) {
+      // External links must open safely.
+      const hasTargetBlank = targetRegex.test(tag) && tag.match(targetRegex)?.[1] === '_blank';
+      const hasRelNoopener = relRegex.test(tag) && (tag.match(relRegex)?.[1] ?? '').includes('noopener');
 
-    if (!hasTargetBlank || !hasRelNoopener) {
-      const missing = [
-        !hasTargetBlank && 'target="_blank"',
-        !hasRelNoopener && 'rel="noopener"',
-      ].filter(Boolean).join(' and ');
-      errors.push(`${path}: missing ${missing} on ${tag.slice(0, 80)}`);
+      if (!hasTargetBlank || !hasRelNoopener) {
+        const missing = [
+          !hasTargetBlank && 'target="_blank"',
+          !hasRelNoopener && 'rel="noopener"',
+        ].filter(Boolean).join(' and ');
+        errors.push(`${path}: missing ${missing} on ${tag.slice(0, 80)}`);
+      }
+      continue;
+    }
+
+    // Internal anchors must resolve to a real id on the target page.
+    if (!href.includes('#')) continue;
+    const [pathPart = '', fragment = ''] = href.split('#');
+    if (!fragment) continue;
+    const targetRoute = pathPart === '' ? route : normalizeRoute(pathPart);
+    const ids = idsByRoute.get(targetRoute);
+    if (ids === undefined) continue; // not an HTML route we built — skip
+    if (!ids.has(fragment)) {
+      errors.push(`${path}: broken anchor "#${fragment}" -> ${targetRoute} (no matching id)`);
     }
   }
 }
 
 if (errors.length) {
-  console.error(`\n❌ ${errors.length} external link(s) missing target="_blank" rel="noopener":\n`);
+  console.error(`\n❌ ${errors.length} link issue(s):\n`);
   errors.forEach((e) => console.error(`  ${e}`));
   console.error('');
   process.exit(1);
 } else {
-  console.log('✓ All external links have target="_blank" rel="noopener"');
+  console.log('✓ External links open safely and all internal anchors resolve');
 }
