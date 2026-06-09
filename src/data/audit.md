@@ -62,6 +62,7 @@ Each item links to where the best-practice guidance lives on [/guides](/guides),
 - **[Tests](/verification#tests)** — unit and integration in place; tests don't mock the system they're verifying.
 - **[Agentic review](/verification#agentic-review)** — PR review by other agents — hosted (e.g. [CodeRabbit](https://coderabbit.ai/), [Greptile](https://www.greptile.com/)) or a [local subagent set](/verification#the-subagent-reviewer-pattern).
 - **[Mutation testing](/verification#tests)** — for high-stakes code, signal beyond line coverage.
+- **[Guardrails](/verification#guardrails)** — autonomous or background loops have explicit stopping conditions: a max-iteration ceiling, no-progress detection, and a token/dollar budget cap.
 
 ### Observation
 

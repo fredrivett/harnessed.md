@@ -102,6 +102,16 @@ Rounds 1–2 capture [~75% of the improvement](https://dev.to/yannick555/iterati
 
 Starting points: Anthropic's built-in [`/security-review`](https://www.anthropic.com/news/automate-security-reviews-with-claude-code), or [Every's compound-engineering plugin](https://github.com/EveryInc/compound-engineering-plugin) for a full plan → work → review → compound loop.
 
+## Guardrails
+
+Every layer above answers _is the work good?_ — the loop's **intended** stop: verification passes, the work ships, the loop ends. Inside an autonomous loop there's no human watching it spin, so you need a second, **defensive** stop for when it _isn't_ converging. An open-ended agent doesn't fail loudly; it fails expensively. Production write-ups converge on the same three hard stops:
+
+- **Max iterations.** A ceiling on rounds. As with the [review loop above](#the-subagent-reviewer-pattern), the first couple of passes capture most of the gain; past 5–6 a loop that hasn't converged usually won't.
+- **No-progress detection.** Stop when successive iterations stop changing state — the same test still red, the diff unchanged, the failure count flat. A loop making no progress is just burning tokens.
+- **Budget ceiling.** A token or dollar cap per run. Once the model writes code for almost nothing, the cost moves to the loop that runs it — the line item that runs orders of magnitude over budget.
+
+Verification tells the loop when it _may_ stop; guardrails, when it _must_.
+
 ## Closing the loop
 
 Verification only compounds when its signals flow back into the guides. When the same class of bug appears twice, the fix isn't a better prompt — push it into the harness. If a deterministic check can catch the pattern — a lint rule, a hook, or a test — use that. Otherwise pick the advisory form that fits: a path-scoped rule for code-area specifics, a skill for workflows, AGENTS.md for what every session needs to know.
