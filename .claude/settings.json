@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); case \"$f\" in *.ts|*.tsx|*.js|*.mjs|*.cjs|*.astro) cd \"$CLAUDE_PROJECT_DIR\" 2>/dev/null; npm run lint ;; esac",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); case \"$f\" in *.ts|*.tsx|*.js|*.mjs|*.cjs|*.astro) cd \"$CLAUDE_PROJECT_DIR\" 2>/dev/null; npm run lint 1>&2 || exit 2 ;; esac",
             "statusMessage": "Linting…",
             "timeout": 120
           }
