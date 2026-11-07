@@ -62,7 +62,7 @@ Run `npm run build` to check for errors before pushing. It's a composition of th
 
 ### Edit-time enforcement (hook)
 
-`.claude/settings.json` defines a `PostToolUse` hook that runs `npm run lint` after every `Edit`/`Write` to a JS/TS/Astro file, so anti-patterns like the `any` escape hatch land in the agent's next turn rather than waiting for CI. On failure it sends lint output to stderr and exits 2 — the only way a `PostToolUse` hook's output reaches the agent; exit 1 just shows the user a notice. The heavier stages (type-check, tests) stay in the pre-push gate. (Changes to `.claude/settings.json` need a `/hooks` reload or restart to take effect mid-session.)
+`.claude/settings.json` defines a `PostToolUse` hook that runs `npm run lint` after every `Edit`/`Write` to a JS/TS/Astro file, so anti-patterns like the `any` escape hatch land in the agent's next turn rather than waiting for CI. On failure it sends lint output to stderr and exits 2 — Claude Code only passes a failing `PostToolUse` hook's stderr to the agent on exit 2; exit 1 just shows the user a notice. The heavier stages (type-check, tests) stay in the pre-push gate. (Changes to `.claude/settings.json` need a `/hooks` reload or restart to take effect mid-session.)
 
 ### Two test layers, on purpose
 
