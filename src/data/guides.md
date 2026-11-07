@@ -86,7 +86,7 @@ Common hooks:
 - Auto-format code on save
 - Validate that migrations have a corresponding rollback
 
-The rule of thumb: if you've written a rule in AGENTS.md and the agent keeps ignoring it, convert it to a hook. A `PostToolUse` hook that runs your verification suite on every edit is six lines of config:
+The rule of thumb: if you've written a rule in AGENTS.md and the agent keeps ignoring it, convert it to a hook. A `PostToolUse` hook that lints after every edit:
 
 ```jsonc
 // .claude/settings.json
@@ -95,14 +95,21 @@ The rule of thumb: if you've written a rule in AGENTS.md and the agent keeps ign
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
-        "hooks": [{ "type": "command", "command": "npm test && npm run lint" }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run lint 1>&2 || exit 2"
+          }
+        ]
       }
     ]
   }
 }
 ```
 
-The agent sees the failure in its next turn and fixes it before you read the diff.
+The exit code is what makes it work. In Claude Code, only [exit 2](https://code.claude.com/docs/en/hooks#exit-code-2-behavior-per-event) sends the hook's stderr back to the agent; any other failure shows the user a notice and the agent never sees it. Linters print to stdout, hence the `1>&2`.
+
+Keep on-edit hooks fast — lint or type-check — and leave the test suite to the pre-push gate. The agent sees the failure in its next turn and fixes it before you read the diff.
 
 ## Context tiers
 
