@@ -20,8 +20,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: package.json # reads engines.node (24.x)
           cache: npm
@@ -43,13 +43,14 @@ jobs:
   # with build. `--error` makes findings fail the job so it's a real signal, not
   # log noise. Not yet a required check — promote it in branch protection once
   # it's confirmed clean on this codebase.
+  #
+  # Runs in Semgrep's own image at a pinned version rather than `pip install`
+  # on the runner's Python: Python 3.15 segfaults semgrep-core, and an
+  # unpinned install silently changes the scanner under us. Bump deliberately.
   security:
     runs-on: ubuntu-latest
+    container: semgrep/semgrep@sha256:cc1b68266f267878b39739373ea9985b9a78e5d64497dd875c8de100b22695ed # 1.184.0
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - run: pip install semgrep
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Semgrep OWASP Top 10
         run: semgrep scan --config p/owasp-top-ten --error
