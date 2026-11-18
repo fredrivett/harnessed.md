@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=https://cubic.dev/schema/cubic-repository-config.schema.json
+version: 1
+reviews:
+  ignore:
+    files:
+      - package-lock.json # npm-generated lockfile; dependency changes are reviewed in package.json
